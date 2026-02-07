@@ -1,0 +1,106 @@
+const express = require('express');
+const router = express.Router();
+const { authenticate } = require('../middleware/auth');
+const { supabaseAdmin } = require('../config/supabase');
+
+/**
+ * GET /notificacoes
+ * Listar histórico de notificações
+ */
+router.get('/', authenticate, async (req, res) => {
+    try {
+        const { tipo, status } = req.query;
+
+        let query = supabaseAdmin
+            .from('notification_log')
+            .select('*')
+            .eq('professor_id', req.professorId)
+            .order('created_at', { ascending: false })
+            .limit(100);
+
+        if (tipo) {
+            query = query.eq('tipo', tipo);
+        }
+
+        if (status) {
+            query = query.eq('status', status);
+        }
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+
+        res.json({
+            success: true,
+            data
+        });
+    } catch (error) {
+        console.error('Erro ao listar notificações:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao listar notificações'
+        });
+    }
+});
+
+/**
+ * POST /notificacoes/testar
+ * Enviar notificação de teste
+ */
+router.post('/testar', authenticate, async (req, res) => {
+    try {
+        const { aluno_id, mensagem } = req.body;
+
+        if (!aluno_id || !mensagem) {
+            return res.status(400).json({
+                success: false,
+                error: 'Aluno e mensagem são obrigatórios'
+            });
+        }
+
+        // Buscar aluno
+        const { data: aluno } = await supabaseAdmin
+            .from('alunos')
+            .select('telefone_whatsapp')
+            .eq('id', aluno_id)
+            .eq('professor_id', req.professorId)
+            .single();
+
+        if (!aluno) {
+            return res.status(404).json({
+                success: false,
+                error: 'Aluno não encontrado'
+            });
+        }
+
+        // Enviar via Evolution
+        const { enviarMensagem } = require('../config/evolution');
+        const resultado = await enviarMensagem(aluno.telefone_whatsapp, mensagem);
+
+        // Registrar log
+        await supabaseAdmin
+            .from('notification_log')
+            .insert({
+                professor_id: req.professorId,
+                aluno_id,
+                tipo: 'teste',
+                canal: 'whatsapp',
+                mensagem,
+                status: resultado.success ? 'enviado' : 'falha',
+                enviado_em: new Date().toISOString()
+            });
+
+        res.json({
+            success: resultado.success,
+            data: { message: resultado.success ? 'Mensagem enviada' : 'Falha ao enviar' }
+        });
+    } catch (error) {
+        console.error('Erro ao enviar notificação de teste:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao enviar notificação de teste'
+        });
+    }
+});
+
+module.exports = router;

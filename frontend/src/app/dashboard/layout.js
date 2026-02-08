@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ToastProvider } from '@/components/Toast'
 
@@ -69,13 +70,9 @@ export default function DashboardLayout({ children }) {
 
                     <nav style={{ padding: '1rem' }}>
                         {menuItems.map((item) => (
-                            <a
+                            <Link
                                 key={item.href}
                                 href={item.href}
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    router.push(item.href)
-                                }}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -92,7 +89,7 @@ export default function DashboardLayout({ children }) {
                             >
                                 <span style={{ fontSize: '1.25rem' }}>{item.icon}</span>
                                 {sidebarOpen && <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>{item.label}</span>}
-                            </a>
+                            </Link>
                         ))}
                     </nav>
 

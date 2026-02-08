@@ -19,15 +19,33 @@ export default function LoginPage() {
         setLoading(true)
 
         try {
-            const response = await api.post('/api/auth/login', formData)
+            const response = await api.post('/auth/login', formData)
 
-            if (response.data.token) {
-                localStorage.setItem('token', response.data.token)
-                localStorage.setItem('professor', JSON.stringify(response.data.professor))
+            // Debug avançado da estrutura
+            console.log('Resposta bruta do login:', JSON.stringify(response.data, null, 2));
+
+            // Tentativa resiliente de pegar o token
+            // Pode estar em response.data.token (se backend mudou) ou response.data.data.token (padrão atual)
+            const token = response.data?.token || response.data?.data?.token;
+            const professor = response.data?.professor || response.data?.data?.professor;
+
+            if (token) {
+                console.log('Login realizado com sucesso! Token encontrado.');
+                localStorage.setItem('token', token)
+                if (professor) {
+                    localStorage.setItem('professor', JSON.stringify(professor))
+                }
+
+                console.log('Redirecionando para /dashboard...');
                 router.push('/dashboard')
+            } else {
+                console.error('NÃO FOI POSSÍVEL ENCONTRAR O TOKEN NA RESPOSTA');
+                setError('Erro inesperado: token de acesso não recebido.');
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Erro ao fazer login')
+            console.error('Erro detalhado no login:', err.response || err);
+            const msg = err.response?.data?.error || 'Erro ao realizar login. Verifique o console.';
+            setError(msg);
         } finally {
             setLoading(false)
         }
@@ -114,16 +132,23 @@ export default function LoginPage() {
                 </form>
 
                 <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-                    <a
-                        href="#"
-                        style={{ color: 'var(--primary)', fontSize: '0.875rem', textDecoration: 'none' }}
-                        onClick={(e) => {
-                            e.preventDefault()
-                            alert('Entre em contato com o administrador para recuperar sua senha')
-                        }}
-                    >
-                        Esqueceu sua senha?
-                    </a>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                        <a href="/register" style={{ color: 'var(--primary)', fontWeight: '600', textDecoration: 'none' }}>
+                            Não tem conta? Crie grátis agora
+                        </a>
+                    </div>
+                    <div>
+                        <a
+                            href="#"
+                            style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textDecoration: 'none' }}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                alert('Entre em contato com o suporte para recuperar sua senha')
+                            }}
+                        >
+                            Esqueceu sua senha?
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

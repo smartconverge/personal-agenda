@@ -1,0 +1,36 @@
+# SOLUÇÃO MÁGICA - UPLOAD ALTERNATIVO
+# ====================================
+# Se o SCP e o EasyPanel falharam, vamos usar uma técnica infalível:
+# 1. Compactar tudo em um arquivo .tar.gz
+# 2. Usar o comando `curl` ou `Invoke-WebRequest` para enviar para um servidor temporário (transfer.sh)
+# 3. Baixar direto na VPS
+
+# PASSO 1: No seu Windows (PowerShell)
+# -------------------------------------
+# Cole este bloco inteiro no PowerShell e aperte Enter:
+
+cd "f:\Projetos\Automações\Personal Agenda\backend"
+tar -czf personal-agenda.tar.gz *
+echo "Arquivo criado com sucesso!"
+echo "Enviando para Nuvem Temporária..."
+curl --upload-file personal-agenda.tar.gz https://transfer.sh/personal-agenda.tar.gz
+
+# O comando acima vai gerar um LINK (ex: https://transfer.sh/XyZ123/personal-agenda.tar.gz)
+# COPIE ESSE LINK!
+
+# =========================================================================================
+
+# PASSO 2: Na sua VPS (Terminal Preto)
+# ------------------------------------
+# Rode estes comandos (substitua O_LINK_GERADO pelo link que você copiou):
+
+cd /var/www/personal-agenda-backend
+rm -rf *  # Limpa pasta atual (cuidado)
+wget O_LINK_GERADO -O personal-agenda.tar.gz
+tar -xzf personal-agenda.tar.gz
+rm personal-agenda.tar.gz
+npm install --production
+pm2 restart personal-agenda || pm2 start src/server.js --name personal-agenda
+pm2 save
+
+# PRONTO!

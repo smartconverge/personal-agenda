@@ -21,8 +21,8 @@ export default function AlunosPage() {
 
     const loadAlunos = async () => {
         try {
-            const response = await api.get('/api/alunos')
-            setAlunos(response.data)
+            const response = await api.get('/alunos')
+            setAlunos(response.data.data)
         } catch (error) {
             alert('Erro ao carregar alunos')
         } finally {
@@ -35,9 +35,9 @@ export default function AlunosPage() {
 
         try {
             if (editingAluno) {
-                await api.put(`/api/alunos/${editingAluno.id}`, formData)
+                await api.put(`/alunos/${editingAluno.id}`, formData)
             } else {
-                await api.post('/api/alunos', formData)
+                await api.post('/alunos', formData)
             }
 
             setShowModal(false)
@@ -64,7 +64,7 @@ export default function AlunosPage() {
         if (!confirm('Tem certeza que deseja excluir este aluno?')) return
 
         try {
-            await api.delete(`/api/alunos/${id}`)
+            await api.delete(`/alunos/${id}`)
             loadAlunos()
         } catch (error) {
             alert('Erro ao excluir aluno')

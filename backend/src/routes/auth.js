@@ -1,6 +1,93 @@
 const express = require('express');
 const router = express.Router();
-const { supabase } = require('../config/supabase');
+const { supabase, supabaseAdmin } = require('../config/supabase');
+
+/**
+ * POST /auth/register
+ * Cadastrar novo professor (SaaS)
+ */
+router.post('/register', async (req, res) => {
+    try {
+        const { nome, email, senha, telefone_whatsapp } = req.body;
+
+        if (!nome || !email || !senha) {
+            return res.status(400).json({
+                success: false,
+                error: 'Nome, email e senha são obrigatórios'
+            });
+        }
+
+        // 1. Criar usuário no Supabase Auth
+        // Usamos supabaseAdmin para garantir a criação mesmo com configurações restritivas
+        const { data: authUser, error: authError } = await supabase.auth.signUp({
+            email,
+            password: senha,
+            options: {
+                data: { nome }
+            }
+        });
+
+        if (authError) {
+            console.error('Erro Supabase Auth:', authError);
+            return res.status(400).json({
+                success: false,
+                error: authError.message || 'Erro ao criar conta de usuário.'
+            });
+        }
+
+        if (!authUser.user) {
+            return res.status(400).json({
+                success: false,
+                error: 'Erro ao criar usuário. Tente novamente.'
+            });
+        }
+
+        // 2. Criar registro na tabela de professores usando admin client (bypass RLS)
+        const { error: dbError } = await supabaseAdmin
+            .from('professores')
+            .insert([
+                {
+                    id: authUser.user.id,
+                    nome,
+                    email,
+                    telefone_whatsapp,
+                    created_at: new Date()
+                }
+            ]);
+
+        if (dbError) {
+            console.error('Erro ao criar professor na tabela (DB):', dbError);
+
+            // Tentar mensagem amigável para chave duplicada
+            if (dbError.code === '23505') {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Este email já está cadastrado como professor.'
+                });
+            }
+
+            return res.status(500).json({
+                success: false,
+                error: 'Erro ao salvar dados do perfil do professor.'
+            });
+        }
+
+        res.status(201).json({
+            success: true,
+            data: {
+                message: 'Cadastro realizado com sucesso! Faça login para continuar.',
+                user: authUser.user
+            }
+        });
+
+    } catch (error) {
+        console.error('Erro no cadastro:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro interno ao realizar cadastro'
+        });
+    }
+});
 
 /**
  * POST /auth/login

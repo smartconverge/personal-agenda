@@ -16,21 +16,21 @@ export default function DashboardPage() {
         try {
             // Carregar estatísticas básicas
             const [alunosRes, servicosRes, contratosRes, sessoesRes] = await Promise.all([
-                api.get('/api/alunos'),
-                api.get('/api/servicos'),
-                api.get('/api/contratos'),
-                api.get('/api/sessoes')
+                api.get('/alunos'),
+                api.get('/servicos'),
+                api.get('/contratos'),
+                api.get('/sessoes')
             ])
 
             const hoje = new Date().toISOString().split('T')[0]
-            const sessoesHoje = sessoesRes.data.filter(s =>
+            const sessoesHoje = sessoesRes.data.data.filter(s =>
                 s.data_hora_inicio.startsWith(hoje) && s.status === 'agendada'
             )
 
             setStats({
-                totalAlunos: alunosRes.data.length,
-                totalServicos: servicosRes.data.length,
-                contratosAtivos: contratosRes.data.filter(c => c.status === 'ativo').length,
+                totalAlunos: alunosRes.data.data.length,
+                totalServicos: servicosRes.data.data.length,
+                contratosAtivos: contratosRes.data.data.filter(c => c.status === 'ativo').length,
                 sessoesHoje: sessoesHoje.length
             })
 

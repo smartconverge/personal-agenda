@@ -67,6 +67,7 @@ router.post('/', authenticate, async (req, res) => {
             .insert({
                 professor_id: req.professorId,
                 nome: nome.trim(),
+                email: email ? email.trim() : null,
                 telefone_whatsapp: telefone_whatsapp.trim(),
                 notificacoes_ativas: notificacoes_ativas || false
             })
@@ -103,10 +104,11 @@ router.post('/', authenticate, async (req, res) => {
 router.put('/:id', authenticate, async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, telefone_whatsapp, notificacoes_ativas } = req.body;
+        const { nome, email, telefone_whatsapp, notificacoes_ativas } = req.body;
 
         const updateData = {};
         if (nome !== undefined) updateData.nome = nome.trim();
+        if (email !== undefined) updateData.email = email ? email.trim() : null;
         if (telefone_whatsapp !== undefined) updateData.telefone_whatsapp = telefone_whatsapp.trim();
         if (notificacoes_ativas !== undefined) updateData.notificacoes_ativas = notificacoes_ativas;
 

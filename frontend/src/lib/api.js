@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+// Força a URL da API de produção, ou usa variável de ambiente e fallback local
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.smartconverge.com.br';
 
 const api = axios.create({
     baseURL: API_URL,

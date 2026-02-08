@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: personal-agenda-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - TZ=America/Sao_Paulo
+      - SUPABASE_URL=https://pzvnwgpjszlufuoqlniv.supabase.co
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6dm53Z3Bqc3psdWZ1b3Fsbml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0OTIyNTEsImV4cCI6MjA4NjA2ODI1MX0.CjWR6xI0Dr-TZRffsuLXF4ResmBXQ9GadLA4Ea-I5kk
+      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6dm53Z3Bqc3psdWZ1b3Fsbml2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDQ5MjI1MSwiZXhwIjoyMDg2MDY4MjUxfQ.A_QqgcaJJnZTidrYuPjHLVpHkuhps-0ZX8J9Nb5yusk
+      - EVOLUTION_API_URL=https://evolution.smartconverge.com.br
+      - EVOLUTION_API_TOKEN=9F3A6C8E2D4B7A1C5E0F9B6D3C8A2E71
+      - EVOLUTION_INSTANCE_NAME=agendapersonal
+      - WEBHOOK_SECRET=personal-agenda-webhook-secret-2026
+      - CRON_RESUMO_DIARIO=0 6 * * *
+      - CRON_LEMBRETE_SESSAO=*/15 * * * *
+      - CRON_LEMBRETE_VENCIMENTO=0 9 * * *
+      - LEMBRETE_SESSAO_HORAS_ANTES=2
+      - LEMBRETE_VENCIMENTO_DIAS_ANTES=3
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

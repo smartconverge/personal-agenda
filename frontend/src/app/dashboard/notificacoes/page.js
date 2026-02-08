@@ -13,8 +13,8 @@ export default function NotificacoesPage() {
 
     const loadNotificacoes = async () => {
         try {
-            const response = await api.get('/api/notificacoes')
-            setNotificacoes(response.data)
+            const response = await api.get('/notificacoes')
+            setNotificacoes(response.data.data || [])
         } catch (error) {
             alert('Erro ao carregar notificações')
         } finally {

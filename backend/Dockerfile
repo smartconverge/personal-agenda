@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar dependências
-RUN npm ci --only=production
+RUN npm install --production
 
 # Copiar código fonte
 COPY src ./src
@@ -19,3 +19,5 @@ ENV TZ=America/Sao_Paulo
 
 # Iniciar aplicação
 CMD ["node", "src/server.js"]
+
+Fix: Change npm ci to npm install

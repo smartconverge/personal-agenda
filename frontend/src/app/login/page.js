@@ -21,10 +21,15 @@ export default function LoginPage() {
         try {
             const response = await api.post('/auth/login', formData)
 
-            if (response.data.token) {
-                console.log('Login realizado com sucesso! Token:', response.data.token);
-                localStorage.setItem('token', response.data.token)
-                localStorage.setItem('professor', JSON.stringify(response.data.professor))
+            // Estrutura esperada: axios.data = { success: true, data: { token: '...', professor: {...} } }
+            const responseData = response.data;
+
+            if (responseData.success && responseData.data?.token) {
+                const { token, professor } = responseData.data;
+
+                console.log('Login realizado com sucesso! Token recebido.');
+                localStorage.setItem('token', token)
+                localStorage.setItem('professor', JSON.stringify(professor))
                 console.log('Redirecionando para /dashboard...');
                 router.push('/dashboard')
             } else {

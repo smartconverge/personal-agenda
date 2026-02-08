@@ -22,7 +22,7 @@ export default function AlunosPage() {
     const loadAlunos = async () => {
         try {
             const response = await api.get('/alunos')
-            setAlunos(response.data)
+            setAlunos(response.data.data)
         } catch (error) {
             alert('Erro ao carregar alunos')
         } finally {

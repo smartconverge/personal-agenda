@@ -1,6 +1,6 @@
 FROM node:18-alpine AS base
 
-# Dependências
+# Dependencies
 FROM base AS deps
 WORKDIR /app
 COPY package*.json ./
@@ -17,8 +17,7 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV TZ=America/Sao_Paulo
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -31,6 +30,6 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 
 CMD ["node", "server.js"]

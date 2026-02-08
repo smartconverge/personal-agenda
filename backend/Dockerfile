@@ -19,5 +19,3 @@ ENV TZ=America/Sao_Paulo
 
 # Iniciar aplicação
 CMD ["node", "src/server.js"]
-
-Fix: Change npm ci to npm install

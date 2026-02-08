@@ -22,12 +22,19 @@ export default function LoginPage() {
             const response = await api.post('/auth/login', formData)
 
             if (response.data.token) {
+                console.log('Login realizado com sucesso! Token:', response.data.token);
                 localStorage.setItem('token', response.data.token)
                 localStorage.setItem('professor', JSON.stringify(response.data.professor))
+                console.log('Redirecionando para /dashboard...');
                 router.push('/dashboard')
+            } else {
+                console.error('Login retornou sucesso mas sem token:', response.data);
+                setError('Erro inesperado no login. Tente novamente.');
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Erro ao fazer login')
+            console.error('Erro detalhado no login:', err.response || err);
+            const msg = err.response?.data?.error || 'Erro ao realizar login. Verifique o console.';
+            setError(msg);
         } finally {
             setLoading(false)
         }

@@ -21,20 +21,26 @@ export default function LoginPage() {
         try {
             const response = await api.post('/auth/login', formData)
 
-            // Estrutura esperada: axios.data = { success: true, data: { token: '...', professor: {...} } }
-            const responseData = response.data;
+            // Debug avançado da estrutura
+            console.log('Resposta bruta do login:', JSON.stringify(response.data, null, 2));
 
-            if (responseData.success && responseData.data?.token) {
-                const { token, professor } = responseData.data;
+            // Tentativa resiliente de pegar o token
+            // Pode estar em response.data.token (se backend mudou) ou response.data.data.token (padrão atual)
+            const token = response.data?.token || response.data?.data?.token;
+            const professor = response.data?.professor || response.data?.data?.professor;
 
-                console.log('Login realizado com sucesso! Token recebido.');
+            if (token) {
+                console.log('Login realizado com sucesso! Token encontrado.');
                 localStorage.setItem('token', token)
-                localStorage.setItem('professor', JSON.stringify(professor))
+                if (professor) {
+                    localStorage.setItem('professor', JSON.stringify(professor))
+                }
+
                 console.log('Redirecionando para /dashboard...');
                 router.push('/dashboard')
             } else {
-                console.error('Login retornou sucesso mas sem token:', response.data);
-                setError('Erro inesperado no login. Tente novamente.');
+                console.error('NÃO FOI POSSÍVEL ENCONTRAR O TOKEN NA RESPOSTA');
+                setError('Erro inesperado: token de acesso não recebido.');
             }
         } catch (err) {
             console.error('Erro detalhado no login:', err.response || err);

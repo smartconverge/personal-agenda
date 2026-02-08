@@ -4,7 +4,7 @@ FROM node:18-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Builder
 FROM base AS builder
@@ -34,3 +34,4 @@ EXPOSE 3000
 ENV PORT 3000
 
 CMD ["node", "server.js"]
+

@@ -14,27 +14,32 @@ export default function DashboardPage() {
 
     const loadDashboard = async () => {
         try {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
+            const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+
             // Carregar estatísticas básicas
             const [alunosRes, servicosRes, contratosRes, sessoesRes] = await Promise.all([
                 api.get('/alunos'),
                 api.get('/servicos'),
-                api.get('/contratos'),
-                api.get('/sessoes')
+                api.get('/contratos', { params: { status: 'ativo' } }),
+                api.get('/sessoes', {
+                    params: {
+                        data_inicio: startOfDay,
+                        data_fim: endOfDay,
+                        status: 'agendada'
+                    }
+                })
             ])
-
-            const hoje = new Date().toISOString().split('T')[0]
-            const sessoesHoje = sessoesRes.data.data.filter(s =>
-                s.data_hora_inicio.startsWith(hoje) && s.status === 'agendada'
-            )
 
             setStats({
                 totalAlunos: alunosRes.data.data.length,
                 totalServicos: servicosRes.data.data.length,
-                contratosAtivos: contratosRes.data.data.filter(c => c.status === 'ativo').length,
-                sessoesHoje: sessoesHoje.length
+                contratosAtivos: contratosRes.data.data.length,
+                sessoesHoje: sessoesRes.data.data.length
             })
 
-            setSessoes(sessoesHoje.slice(0, 5))
+            setSessoes(sessoesRes.data.data.slice(0, 5))
         } catch (error) {
             console.error('Erro ao carregar dashboard:', error)
         } finally {

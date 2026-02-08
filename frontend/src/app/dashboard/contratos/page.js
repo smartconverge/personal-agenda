@@ -34,9 +34,9 @@ export default function ContratosPage() {
                 api.get('/alunos'),
                 api.get('/servicos')
             ])
-            setContratos(contratosRes.data.data || [])
-            setAlunos(alunosRes.data.data || [])
-            setServicos(servicosRes.data.data || [])
+            setContratos(contratosRes.data.data)
+            setAlunos(alunosRes.data.data)
+            setServicos(servicosRes.data.data)
         } catch (error) {
             showToast('Erro ao carregar dados', 'error')
         } finally {

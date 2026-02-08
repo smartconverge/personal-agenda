@@ -46,7 +46,9 @@ export default function RegisterPage() {
             alert('Cadastro realizado com sucesso! Faça login para acessar.')
             router.push('/login')
         } catch (err) {
-            setError(err.response?.data?.error || 'Erro ao realizar cadastro')
+            console.error('Erro detalhado no cadastro:', err.response || err);
+            const errorMessage = err.response?.data?.error || 'Erro ao realizar cadastro. Verifique o console.';
+            setError(errorMessage);
         } finally {
             setLoading(false)
         }

@@ -125,7 +125,23 @@ h6 {
 
 .card-premium:hover {
   box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  border-color: hsla(155, 72%, 32%, 0.15);
+}
+
+.card-highlight {
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px -5px hsla(155, 72%, 32%, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: white;
+}
+
+.card-highlight:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px -5px hsla(155, 72%, 32%, 0.35);
+  filter: brightness(1.05);
 }
 
 .card-flat {
@@ -212,14 +228,15 @@ h6 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background-color: var(--primary);
   color: white;
-  box-shadow: 0 2px 8px hsl(155, 72%, 32%, 0.25);
+  box-shadow: 0 4px 12px hsla(155, 72%, 32%, 0.2);
 }
 
 .btn-primary:hover:not(:disabled) {
-  box-shadow: 0 4px 12px hsl(155, 72%, 32%, 0.35);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 16px hsla(155, 72%, 32%, 0.3);
+  transform: translateY(-2px);
+  filter: brightness(1.05);
 }
 
 .btn-secondary {

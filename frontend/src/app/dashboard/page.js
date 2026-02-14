@@ -167,19 +167,14 @@ export default function DashboardPage() {
                     return (
                         <div
                             key={index}
-                            className={stat.highlight ? "" : "card-premium"}
+                            className={stat.highlight ? "card-highlight" : "card-premium"}
                             style={{
                                 padding: '1.25rem',
                                 position: 'relative',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap: '0.5rem',
-                                background: stat.highlight ? 'var(--primary)' : 'var(--bg-secondary)',
-                                borderRadius: 'var(--radius)',
                                 border: stat.highlight ? 'none' : '1px solid var(--border)',
-                                boxShadow: stat.highlight ? '0 10px 25px -5px hsl(155, 72%, 32%, 0.25)' : 'var(--shadow)',
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                transform: stat.highlight ? 'translateY(-2px)' : 'none'
                             }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

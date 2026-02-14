@@ -15,7 +15,9 @@
         "axios": "^1.6.5",
         "date-fns": "^3.0.6",
         "react-calendar": "^4.7.0",
-        "papaparse": "^5.4.1"
+        "papaparse": "^5.4.1",
+        "@supabase/supabase-js": "^2.39.0",
+        "@supabase/auth-helpers-nextjs": "^0.8.7"
     },
     "devDependencies": {
         "eslint": "^8.56.0",

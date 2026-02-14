@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
 import { Icons } from '@/components/Icons'
+import { createClient } from '@/lib/supabase'
 
 export default function ResetPasswordPage() {
     const router = useRouter()
@@ -37,10 +38,7 @@ export default function ResetPasswordPage() {
         setLoading(true)
 
         try {
-            // O Supabase coloca o token no hash da URL automaticamente após o clique no email de reset
-            // Ao chamar update com uma nova senha, ele usa esse contexto da sessão ativa pelo link
-            const { createClientComponentClient } = await import('@supabase/auth-helpers-nextjs')
-            const supabase = createClientComponentClient()
+            const supabase = createClient()
 
             const { error: authError } = await supabase.auth.updateUser({
                 password: formData.senha

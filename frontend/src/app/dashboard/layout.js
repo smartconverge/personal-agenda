@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import api from '@/lib/api'
 import { ToastProvider } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
 
@@ -12,6 +13,7 @@ export default function DashboardLayout({ children }) {
     const [professor, setProfessor] = useState(null)
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [hoveredPath, setHoveredPath] = useState(null)
+    const [notificacoesCount, setNotificacoesCount] = useState(0)
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -25,12 +27,36 @@ export default function DashboardLayout({ children }) {
         if (professorData) {
             try {
                 setProfessor(JSON.parse(professorData))
+                loadNotificacoesCount()
             } catch (error) {
                 console.error('Erro ao ler dados do professor:', error)
                 router.push('/login')
             }
         }
-    }, [router])
+
+        // Se estiver na página de notificações, marca como lidas
+        if (pathname === '/dashboard/notificacoes') {
+            localStorage.setItem('last_notifications_view', Date.now().toString())
+            setNotificacoesCount(0)
+        }
+    }, [router, pathname])
+
+    const loadNotificacoesCount = async () => {
+        try {
+            const response = await api.get('/notificacoes')
+            const data = response.data.data || []
+
+            // Lógica simples: contar notificações dos últimos 3 dias ou as que o usuário ainda não "limpou"
+            // Para ser real, precisaríamos de um campo 'lida' no banco. 
+            // Como estamos implementando agora, vamos considerar notificações novas ou uma lógica de localStorage
+            const lastViewed = localStorage.getItem('last_notifications_view') || 0
+            const unread = data.filter(n => new Date(n.created_at).getTime() > parseInt(lastViewed)).length
+
+            setNotificacoesCount(unread)
+        } catch (error) {
+            console.error('Erro ao buscar contador de notificações:', error)
+        }
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('token')
@@ -348,19 +374,33 @@ export default function DashboardLayout({ children }) {
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                            <div style={{ position: 'relative', cursor: 'pointer' }}>
+                            <Link href="/dashboard/notificacoes" onClick={() => {
+                                localStorage.setItem('last_notifications_view', Date.now().toString())
+                                setNotificacoesCount(0)
+                            }} style={{ position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
                                 <Icons.Notifications size={22} color="var(--text-secondary)" />
-                                <span style={{
-                                    position: 'absolute',
-                                    top: '-2px',
-                                    right: '-2px',
-                                    width: '12px',
-                                    height: '12px',
-                                    backgroundColor: '#ef4444',
-                                    borderRadius: '50%',
-                                    border: '2px solid var(--bg-secondary)'
-                                }} />
-                            </div>
+                                {notificacoesCount > 0 && (
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: '-6px',
+                                        right: '-8px',
+                                        backgroundColor: '#ef4444',
+                                        color: 'white',
+                                        fontSize: '0.625rem',
+                                        fontWeight: '800',
+                                        padding: '2px 5px',
+                                        borderRadius: '10px',
+                                        border: '2px solid var(--bg-secondary)',
+                                        minWidth: '18px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        lineHeight: 1
+                                    }}>
+                                        {notificacoesCount > 10 ? '10+' : notificacoesCount}
+                                    </span>
+                                )}
+                            </Link>
                             <div className="avatar avatar-sm" style={{
                                 background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
                                 border: '1px solid var(--border)'

@@ -18,12 +18,12 @@
   --bg-secondary: hsl(0, 0%, 100%);
   --bg-tertiary: hsl(150, 20%, 95%);
 
-  /* Sidebar Emerald Escuro - Lovable Style */
-  --sidebar-bg: hsl(164, 45%, 10%);
-  --sidebar-bg-dark: hsl(164, 45%, 8%);
-  --sidebar-text: hsl(164, 15%, 85%);
-  --sidebar-accent: hsla(164, 45%, 18%, 1);
-  --sidebar-border: hsla(164, 45%, 15%, 1);
+  /* Sidebar Green - Matching Application Theme */
+  --sidebar-bg: hsl(155, 72%, 12%);
+  --sidebar-bg-dark: hsl(155, 72%, 10%);
+  --sidebar-text: hsl(155, 20%, 90%);
+  --sidebar-accent: hsla(158, 65%, 42%, 0.15);
+  --sidebar-border: hsla(155, 72%, 18%, 1);
 
   /* Textos */
   --text-primary: hsl(160, 25%, 12%);

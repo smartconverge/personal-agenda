@@ -190,7 +190,7 @@ export default function DashboardPage() {
                                     width: '2.5rem',
                                     height: '2.5rem',
                                     borderRadius: '0.75rem',
-                                    background: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'var(--primary-light)10',
+                                    background: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'hsla(155, 72%, 32%, 0.1)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -218,7 +218,7 @@ export default function DashboardPage() {
                                     alignItems: 'center',
                                     gap: '0.25rem',
                                     padding: '0.125rem 0.5rem',
-                                    backgroundColor: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'var(--success)10',
+                                    backgroundColor: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'hsla(155, 72%, 32%, 0.1)',
                                     borderRadius: '0.5rem'
                                 }}>
                                     <Icons.TrendingUp size={12} />
@@ -254,8 +254,9 @@ export default function DashboardPage() {
                             {sessoes.length} {sessoes.length === 1 ? 'sessão agendada' : 'sessões agendadas'} para hoje
                         </p>
                     </div>
-                    <Link href="/dashboard/agenda" className="btn btn-secondary" style={{ fontSize: '0.875rem', height: '2.5rem' }}>
-                        Ver Agenda Completa
+                    <Link href="/dashboard/agenda" className="btn btn-primary" style={{ height: '2.75rem', padding: '0 1.25rem' }}>
+                        <Icons.Calendar size={18} />
+                        <span>Ver Agenda Completa</span>
                     </Link>
                 </div>
 

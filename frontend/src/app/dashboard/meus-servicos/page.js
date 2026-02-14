@@ -116,36 +116,20 @@ export default function MeusServicosPage() {
     }
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            {/* Header */}
+        <div className="page-enter">
+            {/* Actions Bar */}
             <div style={{
                 display: 'flex',
-                justifyContent: 'space-between',
+                justifyContent: 'flex-end',
                 alignItems: 'center',
-                marginBottom: '2rem',
+                marginBottom: '1.5rem',
                 gap: '1rem',
                 flexWrap: 'wrap'
             }}>
-                <div>
-                    <h1 style={{
-                        fontSize: '2rem',
-                        fontWeight: '800',
-                        marginBottom: '0.25rem',
-                        background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text'
-                    }}>
-                        Meus Serviços
-                    </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                        Configure as modalidades e durações das suas aulas
-                    </p>
-                </div>
                 <button
                     className="btn btn-primary"
                     onClick={openNewModal}
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem' }}
+                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
                 >
                     <Icons.Plus size={18} />
                     <span>Novo Serviço</span>
@@ -163,12 +147,12 @@ export default function MeusServicosPage() {
                         {/* Desktop View Table */}
                         <div className="desktop-only" style={{ overflowX: 'auto' }}>
                             <table className="table" style={{ borderBottom: 'none', margin: '0' }}>
-                                <thead>
+                                <thead style={{ background: 'var(--bg-tertiary)40' }}>
                                     <tr>
-                                        <th style={{ paddingLeft: '1.5rem' }}>Tipo</th>
-                                        <th>Nome do Serviço</th>
-                                        <th>Duração</th>
-                                        <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
+                                        <th style={{ paddingLeft: '1.5rem', fontSize: '0.6875rem', letterSpacing: '0.05em' }}>TIPO</th>
+                                        <th style={{ fontSize: '0.6875rem', letterSpacing: '0.05em' }}>NOME DO SERVIÇO</th>
+                                        <th style={{ fontSize: '0.6875rem', letterSpacing: '0.05em' }}>DURAÇÃO</th>
+                                        <th style={{ paddingRight: '1.5rem', textAlign: 'right', fontSize: '0.6875rem', letterSpacing: '0.05em' }}>AÇÕES</th>
                                     </tr>
                                 </thead>
                                 <tbody>

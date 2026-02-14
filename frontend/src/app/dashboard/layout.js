@@ -311,13 +311,28 @@ export default function DashboardLayout({ children }) {
                                                     pathname.includes('/agenda') ? 'Agenda' : 'Personal Agenda'}
                                 </h1>
                                 {pathname === '/dashboard' && professor?.nome && (
-                                    <p style={{
-                                        fontSize: '0.75rem',
-                                        color: 'var(--text-muted)',
-                                        margin: 0,
-                                        marginTop: '1px'
-                                    }}>
-                                        Welcome back, {professor.nome.split(' ')[0]}. Here's your overview.
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Bem-vindo de volta, {professor.nome.split(' ')[0]}. Aqui está sua visão geral.
+                                    </p>
+                                )}
+                                {pathname.includes('/alunos') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Gerencie seus alunos cadastrados e seus progressos.
+                                    </p>
+                                )}
+                                {pathname.includes('/servicos') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Configure suas modalidades e durações de treino.
+                                    </p>
+                                )}
+                                {pathname.includes('/contratos') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Gerencie planos ativos e faturamento mensal.
+                                    </p>
+                                )}
+                                {pathname.includes('/agenda') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Acompanhe sua agenda de treinos diária e semanal.
                                     </p>
                                 )}
                             </div>

@@ -308,7 +308,8 @@ export default function DashboardLayout({ children }) {
                                         pathname.includes('/alunos') ? 'Alunos' :
                                             pathname.includes('servicos') ? 'Serviços' :
                                                 pathname.includes('/contratos') ? 'Contratos' :
-                                                    pathname.includes('/agenda') ? 'Agenda' : 'Personal Agenda'}
+                                                    pathname.includes('/agenda') ? 'Agenda' :
+                                                        pathname.includes('/notificacoes') ? 'Notificações' : 'Personal Agenda'}
                                 </h1>
                                 {pathname === '/dashboard' && professor?.nome && (
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
@@ -333,6 +334,11 @@ export default function DashboardLayout({ children }) {
                                 {pathname.includes('/agenda') && (
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
                                         Acompanhe sua agenda de treinos diária e semanal.
+                                    </p>
+                                )}
+                                {pathname.includes('/notificacoes') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Histórico de mensagens enviadas aos seus alunos.
                                     </p>
                                 )}
                             </div>

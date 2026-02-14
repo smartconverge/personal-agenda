@@ -130,4 +130,10 @@ export const Icons = {
             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill={color} />
         </svg>
     ),
+    SidebarToggle: ({ size = 20, color = "currentColor" }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+            <line x1="9" x2="9" y1="3" y2="21" />
+        </svg>
+    ),
 }

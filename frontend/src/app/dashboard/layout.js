@@ -255,49 +255,87 @@ export default function DashboardLayout({ children }) {
                         position: 'sticky',
                         top: 0,
                         zIndex: 30,
-                        boxShadow: 'var(--shadow-sm)'
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        minHeight: '4.5rem'
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <button
-                                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                                    className="btn btn-secondary desktop-only"
-                                    style={{
-                                        padding: '0.5rem',
-                                        width: '2.5rem',
-                                        height: '2.5rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}
-                                >
-                                    <Icons.Menu size={20} />
-                                </button>
-                                <h1 className="mobile-only" style={{
-                                    fontSize: '1.25rem',
-                                    fontWeight: '800',
-                                    margin: 0,
-                                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent',
-                                    backgroundClip: 'text'
-                                }}>
-                                    Personal Agenda
-                                </h1>
-                            </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <button
+                                onClick={() => setSidebarOpen(!sidebarOpen)}
+                                style={{
+                                    padding: '0.5rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: 'var(--text-secondary)',
+                                    borderRadius: '0.5rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                className="desktop-only"
+                            >
+                                <Icons.SidebarToggle size={20} />
+                            </button>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <div style={{ textAlign: 'right' }} className="desktop-only">
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0' }}>
-                                        Bem-vindo,
+                            {/* Vertical Separator */}
+                            <div className="desktop-only" style={{
+                                width: '1px',
+                                height: '1.5rem',
+                                backgroundColor: 'var(--border)',
+                                margin: '0 0.5rem'
+                            }} />
+
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <h1 style={{
+                                    fontSize: '1.125rem',
+                                    fontWeight: '700',
+                                    color: 'var(--text-primary)',
+                                    margin: 0,
+                                    lineHeight: 1.2
+                                }}>
+                                    {pathname === '/dashboard' ? 'Dashboard' :
+                                        pathname.includes('/alunos') ? 'Alunos' :
+                                            pathname.includes('/servicos') ? 'Serviços' :
+                                                pathname.includes('/contratos') ? 'Contratos' :
+                                                    pathname.includes('/agenda') ? 'Agenda' : 'Personal Agenda'}
+                                </h1>
+                                {pathname === '/dashboard' && (
+                                    <p style={{
+                                        fontSize: '0.75rem',
+                                        color: 'var(--text-muted)',
+                                        margin: 0,
+                                        marginTop: '1px'
+                                    }}>
+                                        Welcome back, {professor.nome.split(' ')[0]}. Here's your overview.
                                     </p>
-                                    <p style={{ fontSize: '0.875rem', fontWeight: '700', marginTop: '-2px' }}>
-                                        {professor.nome}
-                                    </p>
-                                </div>
-                                <div className="avatar">
-                                    {professor.nome.charAt(0)}
-                                </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                            <div style={{ position: 'relative', cursor: 'pointer' }}>
+                                <Icons.Notifications size={22} color="var(--text-secondary)" />
+                                <span style={{
+                                    position: 'absolute',
+                                    top: '-2px',
+                                    right: '-2px',
+                                    width: '12px',
+                                    height: '12px',
+                                    backgroundColor: '#ef4444',
+                                    borderRadius: '50%',
+                                    border: '2px solid var(--bg-secondary)'
+                                }} />
+                            </div>
+                            <div className="avatar avatar-sm" style={{
+                                background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                                border: '1px solid var(--border)'
+                            }}>
+                                {professor.nome.charAt(0)}
                             </div>
                         </div>
                     </header>

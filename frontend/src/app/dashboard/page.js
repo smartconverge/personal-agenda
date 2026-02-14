@@ -145,21 +145,6 @@ export default function DashboardPage() {
 
     return (
         <div>
-            {/* Page Header */}
-            <div style={{ marginBottom: '2.5rem' }}>
-                <h1 style={{
-                    fontSize: '1.75rem',
-                    fontWeight: '800',
-                    marginBottom: '0.25rem',
-                    color: 'var(--text-primary)',
-                    letterSpacing: '-0.02em'
-                }}>
-                    Dashboard
-                </h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                    Bem-vindo de volta, {stats?.nomeProfessor || 'João'}. Aqui está a sua visão geral.
-                </p>
-            </div>
 
             {/* Stats Grid */}
             <div style={{

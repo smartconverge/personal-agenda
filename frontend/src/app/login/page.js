@@ -7,10 +7,13 @@ import api from '@/lib/api'
 export default function LoginPage() {
     const router = useRouter()
     const [formData, setFormData] = useState({
-        email: '',
+        email: typeof window !== 'undefined' ? localStorage.getItem('remember_email') || '' : '',
         senha: ''
     })
+    const [lembrar, setLembrar] = useState(typeof window !== 'undefined' ? !!localStorage.getItem('remember_email') : false)
     const [loading, setLoading] = useState(false)
+    const [recuperando, setRecuperando] = useState(false)
+    const [successMsg, setSuccessMsg] = useState('')
     const [error, setError] = useState('')
 
     const handleSubmit = async (e) => {
@@ -31,6 +34,13 @@ export default function LoginPage() {
 
             if (token) {
                 console.log('Login realizado com sucesso! Token encontrado.');
+
+                if (lembrar) {
+                    localStorage.setItem('remember_email', formData.email)
+                } else {
+                    localStorage.removeItem('remember_email')
+                }
+
                 localStorage.setItem('token', token)
                 if (professor) {
                     localStorage.setItem('professor', JSON.stringify(professor))
@@ -48,6 +58,26 @@ export default function LoginPage() {
             setError(msg);
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleRecuperarSenha = async () => {
+        if (!formData.email) {
+            setError('Digite seu email para recuperar a senha.')
+            return
+        }
+
+        setRecuperando(true)
+        setError('')
+        setSuccessMsg('')
+
+        try {
+            await api.post('/auth/recuperar-senha', { email: formData.email })
+            setSuccessMsg('Um link de recuperação foi enviado para o seu email.')
+        } catch (err) {
+            setError('Erro ao enviar email de recuperação. Verifique se o email está correto.')
+        } finally {
+            setRecuperando(false)
         }
     }
 
@@ -71,17 +101,17 @@ export default function LoginPage() {
                     </p>
                 </div>
 
-                {error && (
+                {(error || successMsg) && (
                     <div style={{
                         padding: '0.75rem',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid var(--danger)',
+                        backgroundColor: error ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                        border: `1px solid ${error ? 'var(--danger)' : 'var(--success)'}`,
                         borderRadius: '0.375rem',
                         marginBottom: '1rem',
-                        color: 'var(--danger)',
+                        color: error ? 'var(--danger)' : 'var(--success)',
                         fontSize: '0.875rem'
                     }}>
-                        {error}
+                        {error || successMsg}
                     </div>
                 )}
 
@@ -101,19 +131,26 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: '500' }}>
-                            Senha
+                    <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
+                            <input
+                                type="checkbox"
+                                checked={lembrar}
+                                onChange={(e) => setLembrar(e.target.checked)}
+                                style={{ accentColor: 'var(--primary)' }}
+                            />
+                            Lembrar meu email
                         </label>
-                        <input
-                            type="password"
-                            className="input"
-                            value={formData.senha}
-                            onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                            placeholder="••••••••"
-                            required
-                            disabled={loading}
-                        />
+                        <a
+                            href="#"
+                            style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', textDecoration: 'none' }}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                handleRecuperarSenha()
+                            }}
+                        >
+                            {recuperando ? 'Enviando...' : 'Esqueceu a senha?'}
+                        </a>
                     </div>
 
                     <button
@@ -134,21 +171,9 @@ export default function LoginPage() {
                 </form>
 
                 <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-                    <div style={{ marginBottom: '0.5rem' }}>
-                        <a href="/register" style={{ color: 'var(--primary)', fontWeight: '600', textDecoration: 'none' }}>
-                            Não tem conta? Crie grátis agora
-                        </a>
-                    </div>
                     <div>
-                        <a
-                            href="#"
-                            style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textDecoration: 'none' }}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                alert('Entre em contato com o suporte para recuperar sua senha')
-                            }}
-                        >
-                            Esqueceu sua senha?
+                        <a href="/register" style={{ color: 'var(--primary)', fontWeight: '600', textDecoration: 'none', fontSize: '0.875rem' }}>
+                            Não tem uma conta? Crie grátis
                         </a>
                     </div>
                 </div>

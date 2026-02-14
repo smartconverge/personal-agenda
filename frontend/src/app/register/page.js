@@ -17,6 +17,12 @@ export default function RegisterPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
+    const validatePassword = (password) => {
+        // Pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+        return regex.test(password)
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
@@ -26,8 +32,8 @@ export default function RegisterPage() {
             return
         }
 
-        if (formData.senha.length < 6) {
-            setError('A senha deve ter pelo menos 6 caracteres')
+        if (!validatePassword(formData.senha)) {
+            setError('A senha deve ser forte: mínimo 8 caracteres, com letras maiúsculas, minúsculas, números e um símbolo.')
             return
         }
 
@@ -142,10 +148,13 @@ export default function RegisterPage() {
                             className="input"
                             value={formData.senha}
                             onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                            placeholder="Mínimo 6 caracteres"
+                            placeholder="Mínimo 8 caracteres"
                             required
                             disabled={loading}
                         />
+                        <p style={{ fontSize: '0.7rem', color: '#6b7280', marginTop: '0.4rem', lineHeight: '1.4' }}>
+                            A senha deve conter letras (maiúsculas e minúsculas), números e símbolos (ex: @, #, $).
+                        </p>
                     </div>
 
                     <div style={{ marginBottom: '1.5rem' }}>

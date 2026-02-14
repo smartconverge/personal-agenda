@@ -41,12 +41,16 @@ export default function DashboardPage() {
             const sessoesHoje = sessoesHojeRes.data?.data || []
             const sessoesMes = sessoesMesRes.data?.data || []
 
+            const professorData = localStorage.getItem('professor')
+            const nomeProfessor = professorData ? JSON.parse(professorData).nome.split(' ')[0] : 'João'
+
             setStats({
                 totalAlunos: alunosAtivos.length,
                 sessoesHoje: sessoesHoje.length,
                 faturamentoMensal: faturamentoTotal,
                 contratosAtivos: contratosAtivos.length,
-                sessoesMes: sessoesMes.length
+                sessoesMes: sessoesMes.length,
+                nomeProfessor
             })
 
             setSessoes(sessoesHoje.slice(0, 5))
@@ -119,44 +123,41 @@ export default function DashboardPage() {
         {
             label: 'Sessões Hoje',
             value: stats?.sessoesHoje || 0,
-            change: '+3 confirmadas',
+            change: '3 confirmadas',
             iconComponent: Icons.Calendar,
-            color: 'var(--info)'
+            color: 'var(--primary)'
         },
         {
             label: 'Receita Mensal',
             value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.faturamentoMensal || 0),
             change: '+12% vs mês anterior',
             iconComponent: Icons.Money,
-            color: 'var(--success)',
-            highlight: true
+            color: 'var(--primary)'
         },
         {
             label: 'Contratos Ativos',
             value: stats?.contratosAtivos || 0,
-            change: '+2 em aprovação',
-            iconComponent: Icons.Contracts,
-            color: 'var(--warning)'
+            change: '2 a vencer em breve',
+            iconComponent: Icons.TrendingUp,
+            color: 'var(--primary)'
         },
     ]
 
     return (
         <div>
             {/* Page Header */}
-            <div style={{ marginBottom: '2rem' }}>
+            <div style={{ marginBottom: '2.5rem' }}>
                 <h1 style={{
-                    fontSize: '2rem',
+                    fontSize: '1.75rem',
                     fontWeight: '800',
-                    marginBottom: '0.5rem',
-                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
+                    marginBottom: '0.25rem',
+                    color: 'var(--text-primary)',
+                    letterSpacing: '-0.02em'
                 }}>
                     Dashboard
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                    Visão geral da sua agenda
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                    Bem-vindo de volta, {stats?.nomeProfessor || 'João'}. Aqui está a sua visão geral.
                 </p>
             </div>
 
@@ -173,41 +174,62 @@ export default function DashboardPage() {
                     return (
                         <div
                             key={index}
-                            className="stat-card"
+                            className="card-premium"
                             style={{
-                                background: stat.highlight ? 'linear-gradient(135deg, var(--primary), var(--primary-light))' : 'var(--bg-secondary)',
-                                color: stat.highlight ? 'white' : 'var(--text-primary)'
+                                padding: '1.25rem',
+                                position: 'relative',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.5rem'
                             }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                <div className="stat-icon" style={{
-                                    background: stat.highlight
-                                        ? 'rgba(255, 255, 255, 0.2)'
-                                        : `linear-gradient(135deg, ${stat.color}15, ${stat.color}25)`
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <p className="stat-label" style={{
+                                    color: 'var(--text-secondary)',
+                                    fontSize: '0.8125rem',
+                                    fontWeight: '600'
                                 }}>
-                                    <IconComponent
-                                        size={24}
-                                        color={stat.highlight ? 'white' : stat.color}
-                                    />
+                                    {stat.label}
+                                </p>
+                                <div style={{
+                                    width: '2.5rem',
+                                    height: '2.5rem',
+                                    borderRadius: '0.75rem',
+                                    background: 'var(--primary-light)10',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--primary)'
+                                }}>
+                                    <IconComponent size={20} />
                                 </div>
-                                <span className="stat-change positive" style={{
-                                    color: stat.highlight ? 'rgba(255, 255, 255, 0.9)' : 'var(--success)',
-                                    fontSize: '0.7rem'
-                                }}>
-                                    {stat.change}
-                                </span>
                             </div>
-                            <p className="stat-label" style={{
-                                color: stat.highlight ? 'rgba(255, 255, 255, 0.85)' : 'var(--text-secondary)',
-                                marginBottom: '0.5rem'
-                            }}>
-                                {stat.label}
-                            </p>
+
                             <p className="stat-value" style={{
-                                color: stat.highlight ? 'white' : 'var(--text-primary)'
+                                fontSize: '1.75rem',
+                                fontWeight: '800',
+                                color: 'var(--text-primary)',
+                                margin: '0.25rem 0'
                             }}>
                                 {stat.value}
                             </p>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                                <div style={{
+                                    fontSize: '0.75rem',
+                                    fontWeight: '600',
+                                    color: 'var(--success)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.25rem',
+                                    padding: '0.125rem 0.5rem',
+                                    backgroundColor: 'var(--success)10',
+                                    borderRadius: '0.5rem'
+                                }}>
+                                    <Icons.TrendingUp size={12} />
+                                    {stat.change}
+                                </div>
+                            </div>
                         </div>
                     )
                 })}

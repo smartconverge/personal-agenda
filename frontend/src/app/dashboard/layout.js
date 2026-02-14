@@ -109,7 +109,21 @@ export default function DashboardLayout({ children }) {
                     </div>
 
                     {/* Navigation */}
-                    <nav style={{ padding: '1rem 0.75rem' }}>
+                    <nav style={{ padding: '1.5rem 0.75rem' }}>
+                        {sidebarOpen && (
+                            <p style={{
+                                fontSize: '0.625rem',
+                                fontWeight: '800',
+                                color: 'var(--sidebar-text)',
+                                opacity: 0.4,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                marginBottom: '1rem',
+                                paddingLeft: '1rem'
+                            }}>
+                                Menu
+                            </p>
+                        )}
                         {menuItems.map((item) => {
                             const IconComponent = Icons[item.icon]
                             const isActive = pathname === item.href
@@ -158,12 +172,16 @@ export default function DashboardLayout({ children }) {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '0.75rem',
-                                marginBottom: '0.75rem',
-                                padding: '0.5rem',
-                                borderRadius: '0.5rem',
-                                background: 'rgba(255, 255, 255, 0.05)'
+                                marginBottom: '1rem',
+                                padding: '0.75rem',
+                                borderRadius: '0.75rem',
+                                background: 'rgba(255, 255, 255, 0.04)',
+                                border: '1px solid rgba(255, 255, 255, 0.05)'
                             }}>
-                                <div className="avatar avatar-sm">
+                                <div className="avatar avatar-sm" style={{
+                                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                                }}>
                                     {professor.nome.charAt(0)}
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -191,23 +209,31 @@ export default function DashboardLayout({ children }) {
                             onClick={handleLogout}
                             style={{
                                 width: '100%',
-                                padding: '0.625rem',
-                                background: 'rgba(239, 68, 68, 0.15)',
-                                color: '#ff6b6b',
-                                border: '1px solid rgba(239, 68, 68, 0.3)',
-                                borderRadius: '0.5rem',
-                                fontSize: '0.875rem',
-                                fontWeight: '600',
+                                padding: '0.75rem',
+                                background: 'rgba(239, 68, 68, 0.08)',
+                                color: '#ff8a8a',
+                                border: '1px solid rgba(239, 68, 68, 0.15)',
+                                borderRadius: '0.75rem',
+                                fontSize: '0.8125rem',
+                                fontWeight: '700',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: '0.5rem'
+                                gap: '0.625rem'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)'
+                                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.25)'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'
+                                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.15)'
                             }}
                         >
-                            <Icons.Logout size={18} color="#ff6b6b" />
-                            {sidebarOpen && <span>Sair</span>}
+                            <Icons.Logout size={16} color="#ff8a8a" />
+                            {sidebarOpen && <span>Sair da Conta</span>}
                         </button>
                     </div>
                 </aside>

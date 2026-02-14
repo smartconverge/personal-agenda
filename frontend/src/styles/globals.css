@@ -18,12 +18,12 @@
   --bg-secondary: hsl(0, 0%, 100%);
   --bg-tertiary: hsl(150, 20%, 95%);
 
-  /* Sidebar Verde Escuro */
-  --sidebar-bg: hsl(158, 50%, 18%);
-  --sidebar-bg-dark: hsl(158, 55%, 14%);
-  --sidebar-text: hsl(150, 20%, 92%);
-  --sidebar-accent: hsl(158, 40%, 24%);
-  --sidebar-border: hsl(158, 35%, 24%);
+  /* Sidebar Emerald Escuro - Lovable Style */
+  --sidebar-bg: hsl(164, 45%, 10%);
+  --sidebar-bg-dark: hsl(164, 45%, 8%);
+  --sidebar-text: hsl(164, 15%, 85%);
+  --sidebar-accent: hsla(164, 45%, 18%, 1);
+  --sidebar-border: hsla(164, 45%, 15%, 1);
 
   /* Textos */
   --text-primary: hsl(160, 25%, 12%);
@@ -39,13 +39,13 @@
   --shadow-sm: 0 1px 2px 0 hsl(155, 30%, 20%, 0.03);
   --shadow: 0 0 0 1px hsl(150, 14%, 91%, 0.5),
     0 1px 2px 0 hsl(155, 30%, 20%, 0.03),
-    0 4px 16px -2px hsl(155, 30%, 20%, 0.06);
-  --shadow-lg: 0 0 0 1px hsl(155, 72%, 32%, 0.08),
-    0 4px 8px -2px hsl(155, 30%, 20%, 0.06),
-    0 16px 40px -6px hsl(155, 30%, 20%, 0.12);
-  --shadow-hover: 0 0 0 1px hsl(155, 72%, 32%, 0.15),
-    0 4px 8px -2px hsl(155, 30%, 20%, 0.06),
-    0 12px 32px -4px hsl(155, 30%, 20%, 0.1);
+    0 4px 12px -2px hsl(155, 30%, 20%, 0.04);
+  --shadow-lg: 0 0 0 1px hsl(155, 72%, 32%, 0.05),
+    0 10px 15px -3px hsl(155, 30%, 20%, 0.05),
+    0 4px 6px -2px hsl(155, 30%, 20%, 0.03);
+  --shadow-hover: 0 0 0 1px hsl(155, 72%, 32%, 0.1),
+    0 10px 25px -5px hsl(155, 30%, 20%, 0.08),
+    0 8px 10px -6px hsl(155, 30%, 20%, 0.05);
 
   /* Raios */
   --radius: 0.75rem;
@@ -113,6 +113,19 @@ h6 {
 .card:hover {
   box-shadow: var(--shadow-hover);
   transform: translateY(-1px);
+}
+
+.card-premium {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-premium:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
 }
 
 .card-flat {

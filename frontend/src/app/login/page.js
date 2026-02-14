@@ -142,6 +142,7 @@ export default function LoginPage() {
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
                     opacity: 0.5;
+                    pointer-events: none;
                 }
 
                 .brand-logo {

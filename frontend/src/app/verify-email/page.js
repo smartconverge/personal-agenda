@@ -67,6 +67,7 @@ export default function VerifyEmailPage() {
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
                     opacity: 0.5;
+                    pointer-events: none;
                 }
 
                 .status-icon {

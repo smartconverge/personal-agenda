@@ -131,6 +131,21 @@ export default function LoginPage() {
                         />
                     </div>
 
+                    <div style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: '500' }}>
+                            Senha
+                        </label>
+                        <input
+                            type="password"
+                            className="input"
+                            value={formData.senha}
+                            onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
+                            placeholder="••••••••"
+                            required
+                            disabled={loading}
+                        />
+                    </div>
+
                     <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
                             <input

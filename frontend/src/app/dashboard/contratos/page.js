@@ -159,137 +159,120 @@ export default function ContratosPage() {
                 </div>
             </div>
 
-            <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
+            {/* Contracts Grid */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: '1.5rem',
+                padding: '0.5rem'
+            }}>
                 {filteredContratos.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                    <div className="card-flat" style={{ textAlign: 'center', padding: '4rem 2rem', gridColumn: '1 / -1' }}>
                         <Icons.Contracts size={48} color="var(--text-muted)" style={{ opacity: 0.3, marginBottom: '1rem' }} />
                         <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Nenhum contrato encontrado</p>
                     </div>
                 ) : (
-                    <>
-                        {/* Desktop View Table */}
-                        <div className="desktop-only" style={{ overflowX: 'auto' }}>
-                            <table className="table" style={{ borderBottom: 'none', margin: '0' }}>
-                                <thead>
-                                    <tr>
-                                        <th style={{ paddingLeft: '1.5rem' }}>Aluno</th>
-                                        <th>Serviço</th>
-                                        <th>Período</th>
-                                        <th>Mensalidade</th>
-                                        <th>Status</th>
-                                        <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredContratos.map((contrato) => (
-                                        <tr key={contrato.id} className="table-row-hover">
-                                            <td style={{ paddingLeft: '1.5rem' }}>
-                                                <p style={{ fontWeight: '700', fontSize: '0.9375rem' }}>{contrato.aluno?.nome || 'N/A'}</p>
-                                            </td>
-                                            <td>
-                                                <span className="badge badge-secondary">{contrato.servico?.nome || 'N/A'}</span>
-                                            </td>
-                                            <td>
-                                                <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-                                                    <div>Início: {new Date(contrato.data_inicio).toLocaleDateString('pt-BR')}</div>
-                                                    <div>Venc.: {new Date(contrato.data_vencimento).toLocaleDateString('pt-BR')}</div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <p style={{ fontWeight: '800', color: 'var(--primary)', fontSize: '1rem' }}>
-                                                    R$ {parseFloat(contrato.valor_mensal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                                </p>
-                                            </td>
-                                            <td>
-                                                <span className={`badge ${getStatusBadge(contrato.status)}`}>
-                                                    {contrato.status.toUpperCase()}
-                                                </span>
-                                            </td>
-                                            <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
-                                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                                                    <button
-                                                        className="btn-icon btn-icon-secondary"
-                                                        onClick={() => openEditModal(contrato)}
-                                                        title="Editar"
-                                                    >
-                                                        <Icons.Edit size={16} />
-                                                    </button>
-                                                    <button
-                                                        className="btn-icon btn-icon-danger"
-                                                        onClick={() => {
-                                                            setSelectedContrato(contrato)
-                                                            setShowDeleteDialog(true)
-                                                        }}
-                                                        title="Cancelar/Excluir"
-                                                    >
-                                                        <Icons.Delete size={16} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Mobile View Cards */}
-                        <div className="mobile-only" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {filteredContratos.map((contrato) => (
-                                <div key={contrato.id} className="card-premium" style={{ padding: '1.25rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                        <div>
-                                            <h3 style={{ fontSize: '1.125rem', fontWeight: '800', marginBottom: '0.25rem' }}>{contrato.aluno?.nome || 'N/A'}</h3>
-                                            <span className="badge badge-secondary" style={{ fontSize: '0.625rem' }}>{contrato.servico?.nome || 'N/A'}</span>
-                                        </div>
-                                        <span className={`badge ${getStatusBadge(contrato.status)}`}>
-                                            {contrato.status}
-                                        </span>
-                                    </div>
-
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '1fr 1fr',
-                                        gap: '1rem',
-                                        padding: '1rem',
-                                        backgroundColor: 'var(--bg-primary)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        marginBottom: '1.25rem',
-                                        border: '1px solid var(--border)'
+                    filteredContratos.map((contrato) => (
+                        <div
+                            key={contrato.id}
+                            className="card-premium"
+                            style={{
+                                padding: '1.75rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                position: 'relative',
+                                background: 'white'
+                            }}
+                        >
+                            {/* Header: Student + Status */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                <div style={{ minWidth: 0 }}>
+                                    <h3 style={{
+                                        fontSize: '1.125rem',
+                                        fontWeight: '800',
+                                        color: 'black',
+                                        marginBottom: '0.25rem'
                                     }}>
-                                        <div>
-                                            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Vencimento</p>
-                                            <p style={{ fontSize: '0.875rem', fontWeight: '700' }}>{new Date(contrato.data_vencimento).toLocaleDateString('pt-BR')}</p>
-                                        </div>
-                                        <div>
-                                            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Valor</p>
-                                            <p style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--primary)' }}>R$ {parseFloat(contrato.valor_mensal).toFixed(2)}</p>
-                                        </div>
-                                    </div>
-
-                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                        <button
-                                            className="btn btn-secondary"
-                                            style={{ flex: 1, gap: '0.5rem' }}
-                                            onClick={() => openEditModal(contrato)}
-                                        >
-                                            <Icons.Edit size={16} />
-                                            <span>Editar</span>
-                                        </button>
-                                        <button
-                                            className="btn btn-danger"
-                                            style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                            onClick={() => {
-                                                setSelectedContrato(contrato)
-                                                setShowDeleteDialog(true)
-                                            }}
-                                        >
-                                            <Icons.Delete size={16} />
-                                        </button>
-                                    </div>
+                                        {contrato.aluno?.nome || 'N/A'}
+                                    </h3>
+                                    <span style={{
+                                        fontSize: '0.75rem',
+                                        color: 'var(--text-secondary)',
+                                        fontWeight: '600'
+                                    }}>
+                                        {contrato.servico?.nome || 'N/A'}
+                                    </span>
                                 </div>
-                            ))}
+                                <span className={`badge ${getStatusBadge(contrato.status)}`} style={{
+                                    fontSize: '0.625rem',
+                                    padding: '0.375rem 0.75rem'
+                                }}>
+                                    {contrato.status.toUpperCase()}
+                                </span>
+                            </div>
+
+                            {/* Billing Info Box */}
+                            <div style={{
+                                background: 'var(--bg-primary)',
+                                padding: '1.25rem',
+                                borderRadius: '0.875rem',
+                                marginBottom: '1.5rem',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                            }}>
+                                <div>
+                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '800', marginBottom: '0.125rem' }}>Valor Mensal</p>
+                                    <p style={{ fontSize: '1.25rem', fontWeight: '900', color: 'var(--primary)' }}>
+                                        R$ {parseFloat(contrato.valor_mensal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    </p>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '800', marginBottom: '0.125rem' }}>Prox. Venc.</p>
+                                    <p style={{ fontSize: '0.875rem', fontWeight: '700', color: 'black' }}>
+                                        {new Date(contrato.data_vencimento).toLocaleDateString('pt-BR')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Timeline/Dates */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '1.5rem',
+                                marginBottom: '1.75rem',
+                                fontSize: '0.75rem',
+                                color: 'var(--text-muted)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                    <Icons.Calendar size={14} />
+                                    <span>Início: {new Date(contrato.data_inicio).toLocaleDateString('pt-BR')}</span>
+                                </div>
+                            </div>
+
+                            {/* Actions Group */}
+                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => openEditModal(contrato)}
+                                    style={{ flex: 1, height: '2.5rem', fontSize: '0.8125rem' }}
+                                >
+                                    <Icons.Edit size={14} />
+                                    <span>Editar</span>
+                                </button>
+                                <button
+                                    className="btn btn-icon btn-icon-danger"
+                                    onClick={() => {
+                                        setSelectedContrato(contrato);
+                                        setShowDeleteDialog(true);
+                                    }}
+                                    style={{ width: '2.5rem', height: '2.5rem', flexShrink: 0 }}
+                                    title="Cancelar/Excluir"
+                                >
+                                    <Icons.Delete size={16} />
+                                </button>
+                            </div>
                         </div>
-                    </>
+                    ))
                 )}
             </div>
 

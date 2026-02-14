@@ -306,7 +306,7 @@ export default function DashboardLayout({ children }) {
                                 }}>
                                     {pathname === '/dashboard' ? 'Dashboard' :
                                         pathname.includes('/alunos') ? 'Alunos' :
-                                            pathname.includes('/servicos') ? 'Serviços' :
+                                            pathname.includes('servicos') ? 'Serviços' :
                                                 pathname.includes('/contratos') ? 'Contratos' :
                                                     pathname.includes('/agenda') ? 'Agenda' : 'Personal Agenda'}
                                 </h1>

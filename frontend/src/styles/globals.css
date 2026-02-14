@@ -129,6 +129,15 @@ h6 {
   border-color: hsla(155, 72%, 32%, 0.2) !important;
 }
 
+.card-premium:hover .delete-btn-hover {
+  opacity: 1 !important;
+}
+
+.delete-btn-hover:hover {
+  background-color: hsla(0, 72%, 55%, 0.1) !important;
+  transform: scale(1.1);
+}
+
 .card-highlight {
   background: var(--primary);
   border: none;

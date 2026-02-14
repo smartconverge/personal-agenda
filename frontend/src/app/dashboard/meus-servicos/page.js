@@ -136,128 +136,176 @@ export default function MeusServicosPage() {
                 </button>
             </div>
 
-            <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: '1.5rem',
+                padding: '0.5rem'
+            }}>
                 {servicos.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                    <div className="card-flat" style={{ textAlign: 'center', padding: '4rem 2rem', gridColumn: '1 / -1' }}>
                         <Icons.Services size={48} color="var(--text-muted)" style={{ opacity: 0.3, marginBottom: '1rem' }} />
                         <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Nenhum serviço cadastrado</p>
                     </div>
                 ) : (
-                    <>
-                        {/* Desktop View Table */}
-                        <div className="desktop-only" style={{ overflowX: 'auto' }}>
-                            <table className="table" style={{ borderBottom: 'none', margin: '0' }}>
-                                <thead style={{ background: 'var(--bg-tertiary)40' }}>
-                                    <tr>
-                                        <th style={{ paddingLeft: '1.5rem', fontSize: '0.6875rem', letterSpacing: '0.05em' }}>TIPO</th>
-                                        <th style={{ fontSize: '0.6875rem', letterSpacing: '0.05em' }}>NOME DO SERVIÇO</th>
-                                        <th style={{ fontSize: '0.6875rem', letterSpacing: '0.05em' }}>DURAÇÃO</th>
-                                        <th style={{ paddingRight: '1.5rem', textAlign: 'right', fontSize: '0.6875rem', letterSpacing: '0.05em' }}>AÇÕES</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {servicos.map((servico) => (
-                                        <tr key={servico.id} className="table-row-hover">
-                                            <td style={{ paddingLeft: '1.5rem' }}>
-                                                <span className={`badge ${getTipoBadge(servico.tipo)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                    {getTipoIcon(servico.tipo)}
-                                                    {servico.tipo.charAt(0).toUpperCase() + servico.tipo.slice(1)}
-                                                </span>
-                                            </td>
-                                            <td style={{ fontWeight: '700', fontSize: '1rem' }}>{servico.nome}</td>
-                                            <td style={{ color: 'var(--text-secondary)' }}>
-                                                {servico.tipo === 'ficha' ? (
-                                                    <span style={{ opacity: 0.5 }}>-</span>
-                                                ) : (
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                        <Icons.Calendar size={14} />
-                                                        <span>{servico.duracao_minutos} min</span>
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
-                                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                                                    <button
-                                                        className="btn-icon btn-icon-secondary"
-                                                        onClick={() => openEditModal(servico)}
-                                                        title="Editar"
-                                                    >
-                                                        <Icons.Edit size={16} />
-                                                    </button>
-                                                    <button
-                                                        className="btn-icon btn-icon-danger"
-                                                        onClick={() => {
-                                                            setSelectedServico(servico)
-                                                            setShowDeleteDialog(true)
-                                                        }}
-                                                        title="Excluir"
-                                                    >
-                                                        <Icons.Delete size={16} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                    servicos.map((servico) => (
+                        <div
+                            key={servico.id}
+                            className="card-premium"
+                            style={{
+                                padding: '1.75rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                position: 'relative',
+                                background: 'white',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                cursor: 'default'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-4px)'
+                                e.currentTarget.style.boxShadow = '0 12px 24px -10px rgba(0,0,0,0.1)'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)'
+                                e.currentTarget.style.boxShadow = 'var(--shadow)'
+                            }}
+                        >
+                            {/* Header Row */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                <div style={{
+                                    width: '3rem',
+                                    height: '3rem',
+                                    borderRadius: '0.875rem',
+                                    background: 'var(--bg-secondary)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--primary)',
+                                    border: '1px solid var(--border)'
+                                }}>
+                                    {getTipoIcon(servico.tipo)}
+                                </div>
+                                <span style={{
+                                    fontSize: '0.625rem',
+                                    fontWeight: '800',
+                                    padding: '0.375rem 0.75rem',
+                                    borderRadius: '2rem',
+                                    background: 'var(--bg-tertiary)40',
+                                    color: 'var(--text-secondary)',
+                                    letterSpacing: '0.05em',
+                                    textTransform: 'uppercase'
+                                }}>
+                                    ATIVO
+                                </span>
+                            </div>
 
-                        {/* Mobile View Cards */}
-                        <div className="mobile-only" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {servicos.map((servico) => (
-                                <div key={servico.id} className="card-premium" style={{ padding: '1.25rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                        <div>
-                                            <span className={`badge ${getTipoBadge(servico.tipo)}`} style={{ fontSize: '0.625rem', marginBottom: '0.5rem' }}>
-                                                {servico.tipo}
-                                            </span>
-                                            <h3 style={{ fontSize: '1.125rem', fontWeight: '800', color: 'var(--text-primary)' }}>{servico.nome}</h3>
-                                        </div>
-                                        <div style={{
-                                            width: '2.5rem',
-                                            height: '2.5rem',
-                                            borderRadius: '0.75rem',
-                                            backgroundColor: 'var(--bg-secondary)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'var(--primary)'
-                                        }}>
-                                            {getTipoIcon(servico.tipo)}
-                                        </div>
+                            {/* Content */}
+                            <div style={{ flex: 1 }}>
+                                <h3 style={{
+                                    fontSize: '1.25rem',
+                                    fontWeight: '800',
+                                    color: 'black',
+                                    marginBottom: '0.5rem',
+                                    letterSpacing: '-0.01em'
+                                }}>
+                                    {servico.nome}
+                                </h3>
+                                <p style={{
+                                    fontSize: '0.875rem',
+                                    color: 'var(--text-secondary)',
+                                    lineHeight: '1.5',
+                                    marginBottom: '1.25rem'
+                                }}>
+                                    {servico.tipo === 'presencial' ? 'Sessões presenciais personalizadas com foco em resultados reais.' :
+                                        servico.tipo === 'online' ? 'Consultoria remota completa com vídeos e acompanhamento semanal.' :
+                                            'Planejamento de treinos detalhado para execução independente.'}
+                                </p>
+
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '1rem',
+                                    fontSize: '0.8125rem',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: '2rem'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                        <Icons.Calendar size={14} />
+                                        <span>{servico.duracao_minutos > 0 ? `${servico.duracao_minutos} min` : 'Duração variável'}</span>
                                     </div>
-
-                                    {servico.tipo !== 'ficha' && (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                                            <Icons.Calendar size={14} />
-                                            <span>Duração: {servico.duracao_minutos} minutos</span>
-                                        </div>
-                                    )}
-
-                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                        <button
-                                            className="btn btn-secondary"
-                                            style={{ flex: 1, height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-                                            onClick={() => openEditModal(servico)}
-                                        >
-                                            <Icons.Edit size={16} />
-                                            <span>Editar</span>
-                                        </button>
-                                        <button
-                                            className="btn btn-danger"
-                                            style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                            onClick={() => {
-                                                setSelectedServico(servico)
-                                                setShowDeleteDialog(true)
-                                            }}
-                                        >
-                                            <Icons.Delete size={16} />
-                                        </button>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                        <Icons.Dashboard size={14} />
+                                        <span>{servico.tipo.charAt(0).toUpperCase() + servico.tipo.slice(1)}</span>
                                     </div>
                                 </div>
-                            ))}
+                            </div>
+
+                            {/* Footer Row */}
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingTop: '1.5rem',
+                                borderTop: '1px solid var(--border)'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+                                    <span style={{ fontSize: '1.25rem', fontWeight: '900', color: 'var(--primary)' }}>R$ ---</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>/mês</span>
+                                </div>
+                                <button
+                                    onClick={() => openEditModal(servico)}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'black',
+                                        fontSize: '0.8125rem',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.4rem',
+                                        padding: '0.5rem',
+                                        borderRadius: '0.5rem',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.color = 'black'}
+                                >
+                                    Detalhes
+                                    <Icons.RightArrow size={14} />
+                                </button>
+                            </div>
+
+                            {/* Delete Action (Optional - floating or in edit) */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedServico(servico);
+                                    setShowDeleteDialog(true);
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '0.75rem',
+                                    right: '0.75rem',
+                                    width: '2rem',
+                                    height: '2rem',
+                                    borderRadius: '50%',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--danger)',
+                                    opacity: 0,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                                className="delete-btn-hover"
+                            >
+                                <Icons.Delete size={16} />
+                            </button>
                         </div>
-                    </>
+                    ))
                 )}
             </div>
 

@@ -51,25 +51,61 @@ export default function DashboardLayout({ children }) {
     return (
         <ToastProvider>
             <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
-                {/* Sidebar - Desktop Only */}
-                <aside className="sidebar" style={{
-                    width: sidebarOpen ? '16rem' : '4,5rem',
-                    backgroundColor: 'var(--bg-secondary)',
-                    borderRight: '1px solid var(--border)',
+                {/* Sidebar Verde Escura - Desktop Only */}
+                <aside className="sidebar gradient-sidebar" style={{
+                    width: sidebarOpen ? '16rem' : '5rem',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     position: 'fixed',
                     height: '100vh',
                     overflowY: 'auto',
                     zIndex: 40,
-                    backdropFilter: 'blur(10px)'
+                    borderRight: '1px solid var(--sidebar-border)'
                 }}>
-                    <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <h2 style={{ fontSize: '1.1rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--primary)' }}>
-                            {sidebarOpen ? 'PERSONAL AGENDA' : 'PA'}
-                        </h2>
+                    {/* Logo/Header */}
+                    <div style={{
+                        padding: '1.5rem',
+                        borderBottom: '1px solid var(--sidebar-border)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem'
+                    }}>
+                        <div style={{
+                            width: '2.5rem',
+                            height: '2.5rem',
+                            borderRadius: '0.5rem',
+                            background: 'linear-gradient(135deg, var(--primary-light), var(--primary))',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.25rem',
+                            flexShrink: 0
+                        }}>
+                            💪
+                        </div>
+                        {sidebarOpen && (
+                            <div>
+                                <h2 style={{
+                                    fontSize: '1rem',
+                                    fontWeight: '800',
+                                    color: 'white',
+                                    lineHeight: 1,
+                                    marginBottom: '0.125rem'
+                                }}>
+                                    Personal Agenda
+                                </h2>
+                                <p style={{
+                                    fontSize: '0.7rem',
+                                    color: 'var(--sidebar-text)',
+                                    opacity: 0.7
+                                }}>
+                                    Gestão de Treinos
+                                </p>
+                            </div>
+                        )}
                     </div>
 
-                    <nav style={{ padding: '1rem' }}>
+                    {/* Navigation */}
+                    <nav style={{ padding: '1rem 0.75rem' }}>
                         {menuItems.map((item) => (
                             <Link
                                 key={item.href}
@@ -78,44 +114,96 @@ export default function DashboardLayout({ children }) {
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.875rem',
-                                    padding: '0.875rem',
-                                    borderRadius: '0.75rem',
-                                    marginBottom: '0.4rem',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '0.625rem',
+                                    marginBottom: '0.25rem',
                                     textDecoration: 'none',
-                                    color: pathname === item.href ? 'white' : 'var(--text-secondary)',
-                                    backgroundColor: pathname === item.href ? 'var(--primary)' : 'transparent',
+                                    color: pathname === item.href ? 'white' : 'var(--sidebar-text)',
+                                    backgroundColor: pathname === item.href ? 'var(--sidebar-accent)' : 'transparent',
                                     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                     cursor: 'pointer',
-                                    boxShadow: pathname === item.href ? '0 4px 12px rgba(99, 102, 241, 0.3)' : 'none'
+                                    fontWeight: pathname === item.href ? '700' : '500',
+                                    fontSize: '0.875rem'
                                 }}
                             >
-                                <span style={{ fontSize: '1.25rem' }}>{item.icon}</span>
-                                {sidebarOpen && <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{item.label}</span>}
+                                <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>{item.icon}</span>
+                                {sidebarOpen && <span>{item.label}</span>}
                             </Link>
                         ))}
                     </nav>
 
-                    <div style={{ position: 'absolute', bottom: '1.5rem', left: '1rem', right: '1rem' }}>
+                    {/* User Profile + Logout */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        padding: '1rem',
+                        borderTop: '1px solid var(--sidebar-border)',
+                        background: 'var(--sidebar-bg-dark)'
+                    }}>
+                        {sidebarOpen && (
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                marginBottom: '0.75rem',
+                                padding: '0.5rem',
+                                borderRadius: '0.5rem',
+                                background: 'rgba(255, 255, 255, 0.05)'
+                            }}>
+                                <div className="avatar avatar-sm">
+                                    {professor.nome.charAt(0)}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <p style={{
+                                        fontSize: '0.875rem',
+                                        fontWeight: '600',
+                                        color: 'white',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis'
+                                    }}>
+                                        {professor.nome}
+                                    </p>
+                                    <p style={{
+                                        fontSize: '0.7rem',
+                                        color: 'var(--sidebar-text)',
+                                        opacity: 0.7
+                                    }}>
+                                        Personal Trainer
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         <button
                             onClick={handleLogout}
-                            className="btn btn-secondary"
                             style={{
                                 width: '100%',
-                                justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                                color: '#ef4444',
-                                border: '1px solid rgba(239, 68, 68, 0.2)'
+                                padding: '0.625rem',
+                                background: 'rgba(239, 68, 68, 0.15)',
+                                color: '#ff6b6b',
+                                border: '1px solid rgba(239, 68, 68, 0.3)',
+                                borderRadius: '0.5rem',
+                                fontSize: '0.875rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem'
                             }}
                         >
                             <span>🚪</span>
-                            {sidebarOpen && <span style={{ fontWeight: '600' }}>Sair</span>}
+                            {sidebarOpen && <span>Sair</span>}
                         </button>
                     </div>
                 </aside>
 
                 {/* Main Content */}
                 <div className="main-content" style={{
-                    marginLeft: sidebarOpen ? '16rem' : '4.5rem',
+                    marginLeft: sidebarOpen ? '16rem' : '5rem',
                     flex: 1,
                     transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     minHeight: '100vh',
@@ -124,44 +212,50 @@ export default function DashboardLayout({ children }) {
                 }}>
                     {/* Header */}
                     <header style={{
-                        backgroundColor: 'rgba(10, 15, 29, 0.8)',
-                        backdropFilter: 'blur(12px)',
+                        backgroundColor: 'var(--bg-secondary)',
                         borderBottom: '1px solid var(--border)',
                         padding: '1rem 1.5rem',
                         position: 'sticky',
                         top: 0,
-                        zIndex: 30
+                        zIndex: 30,
+                        boxShadow: 'var(--shadow-sm)'
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                 <button
                                     onClick={() => setSidebarOpen(!sidebarOpen)}
                                     className="btn btn-secondary desktop-only"
-                                    style={{ padding: '0.5rem', width: '2.5rem', height: '2.5rem', justifyContent: 'center' }}
+                                    style={{
+                                        padding: '0.5rem',
+                                        width: '2.5rem',
+                                        height: '2.5rem'
+                                    }}
                                 >
                                     ☰
                                 </button>
-                                <h1 className="mobile-only" style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--primary)', margin: 0 }}>
-                                    PERSONAL AGENDA
+                                <h1 className="mobile-only" style={{
+                                    fontSize: '1.25rem',
+                                    fontWeight: '800',
+                                    margin: 0,
+                                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text'
+                                }}>
+                                    Personal Agenda
                                 </h1>
                             </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <div style={{ textAlign: 'right' }}>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '-2px' }}>Bem-vindo,</p>
-                                    <p style={{ fontSize: '0.85rem', fontWeight: '700' }}>{professor.nome}</p>
+                                <div style={{ textAlign: 'right' }} className="desktop-only">
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0' }}>
+                                        Bem-vindo,
+                                    </p>
+                                    <p style={{ fontSize: '0.875rem', fontWeight: '700', marginTop: '-2px' }}>
+                                        {professor.nome}
+                                    </p>
                                 </div>
-                                <div style={{
-                                    width: '2.5rem',
-                                    height: '2.5rem',
-                                    borderRadius: '50%',
-                                    background: 'var(--primary)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontWeight: 'bold',
-                                    fontSize: '1rem'
-                                }}>
+                                <div className="avatar">
                                     {professor.nome.charAt(0)}
                                 </div>
                             </div>
@@ -169,10 +263,8 @@ export default function DashboardLayout({ children }) {
                     </header>
 
                     {/* Page Content */}
-                    <main style={{ padding: '1.5rem', flex: 1 }}>
-                        <div className="container">
-                            {children}
-                        </div>
+                    <main style={{ padding: '1.5rem', flex: 1 }} className="page-enter">
+                        {children}
                     </main>
                 </div>
 

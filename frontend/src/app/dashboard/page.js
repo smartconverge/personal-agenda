@@ -41,8 +41,15 @@ export default function DashboardPage() {
             const sessoesHoje = sessoesHojeRes.data?.data || []
             const sessoesMes = sessoesMesRes.data?.data || []
 
-            const professorData = localStorage.getItem('professor')
-            const nomeProfessor = professorData ? JSON.parse(professorData).nome.split(' ')[0] : 'João'
+            let nomeProfessor = 'João'
+            try {
+                const professorData = localStorage.getItem('professor')
+                if (professorData) {
+                    nomeProfessor = JSON.parse(professorData).nome.split(' ')[0]
+                }
+            } catch (e) {
+                console.error('Erro ao ler nome do professor:', e)
+            }
 
             setStats({
                 totalAlunos: alunosAtivos.length,

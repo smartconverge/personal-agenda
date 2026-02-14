@@ -22,7 +22,12 @@ export default function DashboardLayout({ children }) {
         }
 
         if (professorData) {
-            setProfessor(JSON.parse(professorData))
+            try {
+                setProfessor(JSON.parse(professorData))
+            } catch (error) {
+                console.error('Erro ao ler dados do professor:', error)
+                router.push('/login')
+            }
         }
     }, [router])
 
@@ -305,7 +310,7 @@ export default function DashboardLayout({ children }) {
                                                 pathname.includes('/contratos') ? 'Contratos' :
                                                     pathname.includes('/agenda') ? 'Agenda' : 'Personal Agenda'}
                                 </h1>
-                                {pathname === '/dashboard' && (
+                                {pathname === '/dashboard' && professor?.nome && (
                                     <p style={{
                                         fontSize: '0.75rem',
                                         color: 'var(--text-muted)',

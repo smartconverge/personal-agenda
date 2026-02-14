@@ -61,9 +61,10 @@ export default function RegisterPage() {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '1rem',
-            backgroundColor: '#f3f4f6'
+            background: 'var(--bg-secondary)',
+            backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%)'
         }}>
-            <div className="card" style={{ maxWidth: '450px', width: '100%', padding: '2rem' }}>
+            <div className="card-premium" style={{ maxWidth: '450px', width: '100%', padding: '2.5rem', background: 'white' }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <h1 style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: '#111827' }}>
                         Crie sua conta

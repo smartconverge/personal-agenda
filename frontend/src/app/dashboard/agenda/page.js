@@ -202,49 +202,49 @@ export default function AgendaPage() {
                 </button>
             </div>
 
-            {/* View Controls */}
-            <div className="card-flat" style={{ marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-                    <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '0.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                        {[
-                            { id: 'dia', label: 'Dia' },
-                            { id: 'semana', label: 'Semana' },
-                            { id: 'mes', label: 'Mês' },
-                        ].map((v) => (
-                            <button
-                                key={v.id}
-                                className={`btn ${viewMode === v.id ? 'btn-primary' : ''}`}
-                                style={{
-                                    padding: '0.5rem 1.25rem',
-                                    fontSize: '0.8125rem',
-                                    height: 'auto',
-                                    background: viewMode === v.id ? 'var(--primary)' : 'transparent',
-                                    color: viewMode === v.id ? 'white' : 'var(--text-secondary)',
-                                    boxShadow: 'none'
-                                }}
-                                onClick={() => setViewMode(v.id)}
-                            >
-                                {v.label}
+            {/* View Controls & Navigation */}
+            <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ display: 'flex', gap: '0.25rem' }}>
+                            <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(-1)} style={{ width: '2.5rem', height: '2.5rem' }}>
+                                <Icons.Menu size={18} style={{ transform: 'rotate(90deg)' }} />
                             </button>
-                        ))}
+                            <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(1)} style={{ width: '2.5rem', height: '2.5rem' }}>
+                                <Icons.Menu size={18} style={{ transform: 'rotate(-90deg)' }} />
+                            </button>
+                        </div>
+                        <h2 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0, color: 'var(--text-primary)' }}>
+                            {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
+                        </h2>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(-1)}><Icons.Menu size={16} style={{ transform: 'rotate(90deg)' }} /></button>
-                        <div style={{ textAlign: 'center', minWidth: '180px' }}>
-                            <p style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--text-primary)' }}>
-                                {viewMode === 'dia' ? currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' }) :
-                                    viewMode === 'semana' ? 'Esta Semana' :
-                                        currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-                            </p>
-                            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                {currentDate.getFullYear()}
-                            </p>
+                        <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '0.2rem', borderRadius: '0.6rem', border: '1px solid var(--border)' }}>
+                            {['dia', 'semana', 'mes'].map((v) => (
+                                <button
+                                    key={v}
+                                    onClick={() => setViewMode(v)}
+                                    style={{
+                                        padding: '0.4rem 1rem',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '700',
+                                        borderRadius: '0.4rem',
+                                        border: 'none',
+                                        background: viewMode === v ? 'white' : 'transparent',
+                                        color: viewMode === v ? 'var(--primary)' : 'var(--text-muted)',
+                                        boxShadow: viewMode === v ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                                </button>
+                            ))}
                         </div>
-                        <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(1)}><Icons.Menu size={16} style={{ transform: 'rotate(-90deg)' }} /></button>
                         <button
                             className="btn btn-secondary"
-                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto', marginLeft: '0.5rem' }}
+                            style={{ height: '2.5rem', padding: '0 1rem', fontSize: '0.8125rem' }}
                             onClick={() => setCurrentDate(new Date())}
                         >
                             Hoje
@@ -253,90 +253,242 @@ export default function AgendaPage() {
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
-                {loading ? (
-                    <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="spinner" /></div>
-                ) : filteredSessoes.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '5rem 2rem' }}>
-                        <div style={{ width: '4rem', height: '4rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-                            <Icons.Calendar size={32} color="var(--text-muted)" />
-                        </div>
-                        <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>Tudo limpo por aqui!</h3>
-                        <p style={{ color: 'var(--text-muted)' }}>Você não possui sessões agendadas para este período.</p>
-                    </div>
-                ) : (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table className="table" style={{ margin: 0 }}>
-                            <thead>
-                                <tr>
-                                    <th style={{ paddingLeft: '1.5rem' }}>Horário</th>
-                                    <th>Aluno</th>
-                                    <th>Serviço</th>
-                                    <th>Status</th>
-                                    <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredSessoes.map((sessao) => (
-                                    <tr key={sessao.id} className="table-row-hover">
-                                        <td style={{ paddingLeft: '1.5rem' }}>
-                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                <span style={{ fontWeight: '800', color: 'var(--text-primary)', fontSize: '1rem' }}>
-                                                    {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                </span>
-                                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                                                    {new Date(sessao.data_hora_inicio).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                <div className="avatar avatar-sm" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--primary)', fontSize: '0.75rem' }}>
-                                                    {sessao.aluno?.nome?.substring(0, 2).toUpperCase()}
+            {/* Weekly Calendar Content */}
+            {loading ? (
+                <div className="card-flat" style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
+                    <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
+                </div>
+            ) : viewMode === 'semana' ? (
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(7, 1fr)',
+                    gap: '1px',
+                    backgroundColor: 'var(--border)',
+                    borderRadius: 'var(--radius)',
+                    overflow: 'hidden',
+                    border: '1px solid var(--border)',
+                    boxShadow: 'var(--shadow-sm)'
+                }}>
+                    {/* Day Headers */}
+                    {(() => {
+                        const days = []
+                        const startOfWeek = new Date(currentDate)
+                        const day = startOfWeek.getDay()
+                        const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1) // Start at Monday
+                        startOfWeek.setDate(diff)
+
+                        for (let i = 0; i < 7; i++) {
+                            const date = new Date(startOfWeek)
+                            date.setDate(startOfWeek.getDate() + i)
+                            const isToday = date.toDateString() === new Date().toDateString()
+
+                            days.push(
+                                <div key={i} style={{
+                                    backgroundColor: 'var(--bg-secondary)',
+                                    padding: '1.25rem 0.5rem',
+                                    textAlign: 'center',
+                                    borderBottom: '1px solid var(--border)'
+                                }}>
+                                    <p style={{
+                                        fontSize: '0.7rem',
+                                        fontWeight: '700',
+                                        color: 'var(--text-muted)',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        marginBottom: '0.5rem'
+                                    }}>
+                                        {date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '').toUpperCase()}
+                                    </p>
+                                    <div style={{
+                                        width: '2.25rem',
+                                        height: '2.25rem',
+                                        margin: '0 auto',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '50%',
+                                        backgroundColor: isToday ? 'var(--primary)' : 'transparent',
+                                        color: isToday ? 'white' : 'var(--text-primary)',
+                                        fontSize: '1rem',
+                                        fontWeight: '800'
+                                    }}>
+                                        {date.getDate()}
+                                    </div>
+                                </div>
+                            )
+                        }
+                        return days
+                    })()}
+
+                    {/* Grid Columns */}
+                    {(() => {
+                        const columns = []
+                        const startOfWeek = new Date(currentDate)
+                        const day = startOfWeek.getDay()
+                        const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1)
+                        startOfWeek.setDate(diff)
+
+                        for (let i = 0; i < 7; i++) {
+                            const date = new Date(startOfWeek)
+                            date.setDate(startOfWeek.getDate() + i)
+                            const dateStr = date.toISOString().split('T')[0]
+
+                            const daySessoes = filteredSessoes.filter(s =>
+                                s.data_hora_inicio.startsWith(dateStr)
+                            )
+
+                            columns.push(
+                                <div key={i} style={{
+                                    backgroundColor: 'white',
+                                    minHeight: '600px',
+                                    padding: '0.75rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '0.75rem'
+                                }}>
+                                    {daySessoes.length === 0 ? (
+                                        <div style={{
+                                            height: '100%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            opacity: 0.1
+                                        }}>
+                                            <Icons.Calendar size={32} color="var(--text-muted)" />
+                                        </div>
+                                    ) : (
+                                        daySessoes.map(sessao => (
+                                            <div
+                                                key={sessao.id}
+                                                className="card-premium"
+                                                onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
+                                                style={{
+                                                    padding: '0.875rem',
+                                                    cursor: 'pointer',
+                                                    borderLeft: `3px solid ${sessao.status === 'concluida' ? 'var(--success)' : sessao.status === 'agendada' ? 'var(--primary)' : 'var(--warning)'}`,
+                                                    borderRadius: '0.5rem',
+                                                    background: 'white',
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                                                    <div style={{
+                                                        width: '6px',
+                                                        height: '6px',
+                                                        borderRadius: '50%',
+                                                        backgroundColor: sessao.status === 'concluida' ? 'var(--success)' : 'var(--primary)'
+                                                    }} />
+                                                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-primary)' }}>
+                                                        {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
                                                 </div>
-                                                <button
-                                                    onClick={() => router.push(`/dashboard/alunos/${sessao.aluno_id}`)}
-                                                    className="text-link"
-                                                    style={{ fontWeight: '700', fontSize: '0.9375rem' }}
-                                                >
-                                                    {sessao.aluno?.nome || 'N/A'}
-                                                </button>
+
+                                                <h4 style={{
+                                                    fontSize: '0.8125rem',
+                                                    fontWeight: '700',
+                                                    color: 'black',
+                                                    marginBottom: '0.2rem',
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>
+                                                    {sessao.aluno?.nome}
+                                                </h4>
+
+                                                <p style={{
+                                                    fontSize: '0.7rem',
+                                                    color: 'var(--text-muted)',
+                                                    marginBottom: '0.6rem',
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>
+                                                    {sessao.servico?.nome}
+                                                </p>
+
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '600' }}>
+                                                        {sessao.servico?.duracao_minutos} min
+                                                    </span>
+                                                    <span style={{
+                                                        fontSize: '0.6rem',
+                                                        fontWeight: '800',
+                                                        color: sessao.status === 'concluida' ? 'var(--success)' : 'var(--primary)',
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '0.02em'
+                                                    }}>
+                                                        {sessao.status === 'agendada' ? 'CONFIRMADA' : sessao.status.toUpperCase()}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </td>
-                                        <td>
-                                            <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{sessao.servico?.nome || 'N/A'}</span>
-                                        </td>
-                                        <td>
-                                            <span className={`badge ${getStatusBadge(sessao.status)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                {getStatusIcon(sessao.status)}
-                                                {sessao.status.charAt(0).toUpperCase() + sessao.status.slice(1)}
-                                            </span>
-                                        </td>
-                                        <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                                                <button className="btn-icon btn-icon-secondary" onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }} title="Ver detalhes">
+                                        ))
+                                    )}
+                                </div>
+                            )
+                        }
+                        return columns
+                    })()}
+                </div>
+            ) : (
+                /* Fallback simple list for Dia/Mes or mobile if we want to expand later */
+                <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
+                    {filteredSessoes.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '5rem 2rem' }}>
+                            <div style={{ width: '4rem', height: '4rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                                <Icons.Calendar size={32} color="var(--text-muted)" />
+                            </div>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>Tudo limpo!</h3>
+                            <p style={{ color: 'var(--text-muted)' }}>Sem sessões para este período.</p>
+                        </div>
+                    ) : (
+                        <div style={{ overflowX: 'auto' }}>
+                            <table className="table" style={{ margin: 0 }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ paddingLeft: '1.5rem' }}>Horário</th>
+                                        <th>Aluno</th>
+                                        <th>Serviço</th>
+                                        <th>Status</th>
+                                        <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredSessoes.map((sessao) => (
+                                        <tr key={sessao.id} className="table-row-hover">
+                                            <td style={{ paddingLeft: '1.5rem' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                    <span style={{ fontWeight: '800', color: 'var(--text-primary)', fontSize: '1rem' }}>
+                                                        {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                                        {new Date(sessao.data_hora_inicio).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>{sessao.aluno?.nome || 'N/A'}</span>
+                                            </td>
+                                            <td>
+                                                <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{sessao.servico?.nome || 'N/A'}</span>
+                                            </td>
+                                            <td>
+                                                <span className={`badge ${getStatusBadge(sessao.status)}`}>
+                                                    {sessao.status.charAt(0).toUpperCase() + sessao.status.slice(1)}
+                                                </span>
+                                            </td>
+                                            <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
+                                                <button className="btn-icon btn-icon-secondary" onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}>
                                                     <Icons.Info size={16} />
                                                 </button>
-                                                {sessao.status === 'agendada' && (
-                                                    <button className="btn-icon btn-icon-primary" onClick={() => { setSelectedSessao(sessao); setShowConcluirDialog(true); }} title="Concluir">
-                                                        <Icons.CheckCircle size={16} />
-                                                    </button>
-                                                )}
-                                                {sessao.status === 'concluida' && (
-                                                    <button className="btn-icon btn-icon-secondary" onClick={() => handleReabrir(sessao)} title="Desfazer conclusão">
-                                                        <Icons.Logout size={16} style={{ transform: 'rotate(180deg)' }} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Modals similar to existing but with premium styling */}
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Agendar Sessões" size="lg">

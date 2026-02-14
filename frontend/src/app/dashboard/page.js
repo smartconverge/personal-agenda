@@ -231,20 +231,19 @@ export default function DashboardPage() {
             </div>
 
             {/* Today's Sessions */}
-            <div className="card-flat">
+            <div style={{ marginTop: '2rem' }}>
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '1.5rem',
-                    paddingBottom: '1rem',
-                    borderBottom: '1px solid var(--border)'
+                    marginBottom: '1.5rem'
                 }}>
                     <div>
                         <h2 style={{
                             fontSize: '1.25rem',
-                            fontWeight: '700',
-                            marginBottom: '0.25rem'
+                            fontWeight: '800',
+                            marginBottom: '0.25rem',
+                            color: 'var(--text-primary)'
                         }}>
                             Sessões de Hoje
                         </h2>
@@ -252,110 +251,123 @@ export default function DashboardPage() {
                             fontSize: '0.875rem',
                             color: 'var(--text-secondary)'
                         }}>
-                            {sessoes.length} {sessoes.length === 1 ? 'sessão agendada' : 'sessões agendadas'}
+                            {sessoes.length} {sessoes.length === 1 ? 'sessão agendada' : 'sessões agendadas'} para hoje
                         </p>
                     </div>
-                    <Link href="/dashboard/agenda" className="btn btn-primary" style={{ fontSize: '0.875rem' }}>
+                    <Link href="/dashboard/agenda" className="btn btn-secondary" style={{ fontSize: '0.875rem', height: '2.5rem' }}>
                         Ver Agenda Completa
                     </Link>
                 </div>
 
                 {sessoes.length === 0 ? (
-                    <div style={{
+                    <div className="card-flat" style={{
                         textAlign: 'center',
-                        padding: '3rem 1rem',
+                        padding: '4rem 2rem',
                         color: 'var(--text-muted)'
                     }}>
-                        <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5 }}>📅</div>
-                        <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-                            Nenhuma sessão agendada para hoje
-                        </p>
+                        <div style={{
+                            width: '4rem',
+                            height: '4rem',
+                            backgroundColor: 'var(--bg-secondary)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 1.5rem'
+                        }}>
+                            <Icons.Calendar size={32} color="var(--text-muted)" />
+                        </div>
+                        <h3 style={{ fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>
+                            Dia livre!
+                        </h3>
                         <p style={{ fontSize: '0.875rem' }}>
-                            Aproveite para planejar suas próximas aulas
+                            Nenhuma sessão agendada para hoje. Aproveite para descansar ou planejar.
                         </p>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
                         {sessoes.map((sessao, index) => (
                             <div
                                 key={sessao.id}
+                                className="card-premium"
                                 style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '1rem',
-                                    padding: '1rem',
-                                    background: 'var(--bg-primary)',
-                                    border: '1px solid var(--border)',
-                                    borderRadius: 'var(--radius-sm)',
-                                    transition: 'all 0.2s',
-                                    cursor: 'pointer'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.borderColor = 'var(--primary)'
-                                    e.currentTarget.style.boxShadow = 'var(--shadow)'
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.borderColor = 'var(--border)'
-                                    e.currentTarget.style.boxShadow = 'none'
-                                }}
-                            >
-                                {/* Avatar */}
-                                <div
-                                    className="avatar"
-                                    style={{
-                                        background: getAvatarColor(index),
-                                        flexShrink: 0
-                                    }}
-                                >
-                                    {getInitials(sessao.aluno?.nome)}
-                                </div>
-
-                                {/* Info */}
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <p style={{
-                                        fontWeight: '700',
-                                        fontSize: '0.9375rem',
-                                        marginBottom: '0.25rem',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
-                                    }}>
-                                        {sessao.aluno?.nome || 'Aluno não identificado'}
-                                    </p>
-                                    <p style={{
-                                        fontSize: '0.8125rem',
-                                        color: 'var(--text-secondary)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.5rem'
-                                    }}>
-                                        <span>{sessao.servico?.nome || 'Serviço'}</span>
-                                        <span>•</span>
-                                        <span>{sessao.servico?.duracao_minutos || 0} min</span>
-                                    </p>
-                                </div>
-
-                                {/* Time + Status */}
-                                <div style={{
+                                    padding: '1.5rem',
+                                    position: 'relative',
+                                    background: 'white',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    alignItems: 'flex-end',
-                                    gap: '0.5rem',
-                                    flexShrink: 0
-                                }}>
-                                    <p style={{
-                                        fontWeight: '800',
-                                        fontSize: '1rem',
-                                        fontFamily: 'Plus Jakarta Sans, sans-serif'
+                                    justifyContent: 'space-between',
+                                    minHeight: '180px'
+                                }}
+                            >
+                                {/* Header: Time & Status */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        background: 'var(--bg-primary)',
+                                        padding: '0.375rem 0.75rem',
+                                        borderRadius: '0.5rem'
                                     }}>
-                                        {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', {
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </p>
+                                        <Icons.Clock size={14} color="var(--primary)" />
+                                        <span style={{ fontWeight: '800', fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
+                                            {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    </div>
                                     <span className={`badge ${getStatusBadge(sessao.status)}`}>
                                         {getStatusText(sessao.status)}
                                     </span>
+                                </div>
+
+                                {/* Student Info */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                                        <div
+                                            className="avatar avatar-sm"
+                                            style={{
+                                                background: getAvatarColor(index),
+                                                color: 'white',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '800'
+                                            }}
+                                        >
+                                            {getInitials(sessao.aluno?.nome)}
+                                        </div>
+                                        <h3 style={{
+                                            fontWeight: '800',
+                                            fontSize: '1.125rem',
+                                            color: 'var(--text-primary)',
+                                            margin: 0,
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
+                                            {sessao.aluno?.nome || 'Aluno não identificado'}
+                                        </h3>
+                                    </div>
+                                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', paddingLeft: '3rem' }}>
+                                        {sessao.servico?.nome || 'Serviço'} • {sessao.servico?.duracao_minutos || 0} min
+                                    </p>
+                                </div>
+
+                                {/* Footer Action */}
+                                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: 'auto' }}>
+                                    <Link
+                                        href={`/dashboard/alunos/${sessao.aluno_id}`}
+                                        style={{
+                                            fontSize: '0.8125rem',
+                                            fontWeight: '600',
+                                            color: 'var(--primary)',
+                                            textDecoration: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem',
+                                            width: 'fit-content'
+                                        }}
+                                    >
+                                        Ver Detalhes <Icons.ArrowRight size={14} />
+                                    </Link>
                                 </div>
                             </div>
                         ))}

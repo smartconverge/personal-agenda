@@ -70,24 +70,7 @@ export default function NotificacoesPage() {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '2rem' }}>
-                <h1 style={{
-                    fontSize: '2rem',
-                    fontWeight: '800',
-                    marginBottom: '0.5rem',
-                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                }}>
-                    Notificações
-                </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                    Acompanhe as mensagens enviadas para seus alunos
-                </p>
-            </div>
-
-            <div className="card-flat" style={{ padding: '0' }}>
+            <div className="card-premium" style={{ padding: '0', overflow: 'hidden', background: 'white' }}>
                 <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h2 style={{ fontSize: '1.25rem', fontWeight: '700' }}>

@@ -292,11 +292,12 @@ export default function DashboardLayout({ children }) {
 
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <h1 style={{
-                                    fontSize: '1.125rem',
-                                    fontWeight: '700',
-                                    color: 'var(--text-primary)',
+                                    fontSize: '1.25rem',
+                                    fontWeight: '800',
+                                    color: 'var(--primary)',
                                     margin: 0,
-                                    lineHeight: 1.2
+                                    lineHeight: 1.2,
+                                    letterSpacing: '-0.02em'
                                 }}>
                                     {pathname === '/dashboard' ? 'Dashboard' :
                                         pathname.includes('/alunos') ? 'Alunos' :

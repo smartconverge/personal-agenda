@@ -132,13 +132,14 @@ export default function DashboardPage() {
             value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.faturamentoMensal || 0),
             change: '+12% vs mês anterior',
             iconComponent: Icons.Money,
-            color: 'var(--primary)'
+            color: 'var(--primary)',
+            highlight: true
         },
         {
             label: 'Contratos Ativos',
             value: stats?.contratosAtivos || 0,
             change: '2 a vencer em breve',
-            iconComponent: Icons.TrendingUp,
+            iconComponent: Icons.Contracts,
             color: 'var(--primary)'
         },
     ]
@@ -159,18 +160,24 @@ export default function DashboardPage() {
                     return (
                         <div
                             key={index}
-                            className="card-premium"
+                            className={stat.highlight ? "" : "card-premium"}
                             style={{
                                 padding: '1.25rem',
                                 position: 'relative',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: '0.5rem'
+                                gap: '0.5rem',
+                                background: stat.highlight ? 'var(--primary)' : 'var(--bg-secondary)',
+                                borderRadius: 'var(--radius)',
+                                border: stat.highlight ? 'none' : '1px solid var(--border)',
+                                boxShadow: stat.highlight ? '0 10px 25px -5px hsl(155, 72%, 32%, 0.25)' : 'var(--shadow)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transform: stat.highlight ? 'translateY(-2px)' : 'none'
                             }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <p className="stat-label" style={{
-                                    color: 'var(--text-secondary)',
+                                    color: stat.highlight ? 'rgba(255, 255, 255, 0.85)' : 'var(--text-secondary)',
                                     fontSize: '0.8125rem',
                                     fontWeight: '600'
                                 }}>
@@ -180,11 +187,11 @@ export default function DashboardPage() {
                                     width: '2.5rem',
                                     height: '2.5rem',
                                     borderRadius: '0.75rem',
-                                    background: 'var(--primary-light)10',
+                                    background: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'var(--primary-light)10',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    color: 'var(--primary)'
+                                    color: stat.highlight ? 'white' : 'var(--primary)'
                                 }}>
                                     <IconComponent size={20} />
                                 </div>
@@ -193,7 +200,7 @@ export default function DashboardPage() {
                             <p className="stat-value" style={{
                                 fontSize: '1.75rem',
                                 fontWeight: '800',
-                                color: 'var(--text-primary)',
+                                color: stat.highlight ? 'white' : 'var(--text-primary)',
                                 margin: '0.25rem 0'
                             }}>
                                 {stat.value}
@@ -203,12 +210,12 @@ export default function DashboardPage() {
                                 <div style={{
                                     fontSize: '0.75rem',
                                     fontWeight: '600',
-                                    color: 'var(--success)',
+                                    color: stat.highlight ? 'white' : 'var(--success)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.25rem',
                                     padding: '0.125rem 0.5rem',
-                                    backgroundColor: 'var(--success)10',
+                                    backgroundColor: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'var(--success)10',
                                     borderRadius: '0.5rem'
                                 }}>
                                     <Icons.TrendingUp size={12} />

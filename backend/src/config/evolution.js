@@ -11,13 +11,18 @@ if (!EVOLUTION_API_URL || !EVOLUTION_API_TOKEN || !EVOLUTION_INSTANCE_NAME) {
 /**
  * Envia mensagem via Evolution API
  */
-async function enviarMensagem(destinatario, mensagem) {
+async function enviarMensagem(destinatario, mensagem, instancia = null) {
+    const targetInstance = instancia || EVOLUTION_INSTANCE_NAME;
     try {
         const response = await axios.post(
-            `${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE_NAME}`,
+            `${EVOLUTION_API_URL}/message/sendText/${targetInstance}`,
             {
-                number: destinatario,
-                text: mensagem
+                number: destinatario.replace(/\D/g, ''),
+                text: mensagem,
+                options: {
+                    delay: 1200,
+                    presence: 'composing'
+                }
             },
             {
                 headers: {

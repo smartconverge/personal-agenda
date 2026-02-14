@@ -14,34 +14,58 @@ export default function DashboardPage() {
 
     const loadDashboard = async () => {
         try {
-            const now = new Date();
-            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
-            const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+            const now = new Date()
+            const startOfDay = new Date(new Date(now).setHours(0, 0, 0, 0)).toISOString()
+            const endOfDay = new Date(new Date(now).setHours(23, 59, 59, 999)).toISOString()
 
-            // Carregar estatísticas básicas
-            const [alunosRes, servicosRes, contratosRes, sessoesRes] = await Promise.all([
+            // Datas para métricas semanais
+            const startLastWeek = new Date(now)
+            startLastWeek.setDate(now.getDate() - 7)
+            const endNextWeek = new Date(now)
+            endNextWeek.setDate(now.getDate() + 7)
+
+            // 1. Carrega dados básicos e métricas
+            const results = await Promise.allSettled([
                 api.get('/alunos'),
                 api.get('/servicos'),
-                api.get('/contratos', { params: { status: 'ativo' } }),
-                api.get('/sessoes', {
-                    params: {
-                        data_inicio: startOfDay,
-                        data_fim: endOfDay,
-                        status: 'agendada'
-                    }
-                })
+                api.get('/contratos'),
+                api.get('/sessoes', { params: { data_inicio: startOfDay, data_fim: endOfDay, status: 'agendada' } }),
+                api.get('/sessoes', { params: { data_inicio: startLastWeek.toISOString(), data_fim: now.toISOString(), status: 'concluida' } }),
+                api.get('/sessoes', { params: { data_inicio: now.toISOString(), data_fim: endNextWeek.toISOString(), status: 'agendada' } }),
+                api.get('/sessoes', { params: { status: 'concluida' } }) // Todas as concluídas para o acumulado
             ])
 
+            const alunosRes = results[0].status === 'fulfilled' ? results[0].value : { data: { data: [] } }
+            const servicosRes = results[1].status === 'fulfilled' ? results[1].value : { data: { data: [] } }
+            const contratosRes = results[2].status === 'fulfilled' ? results[2].value : { data: { data: [] } }
+            const sessoesHojeRes = results[3].status === 'fulfilled' ? results[3].value : { data: { data: [] } }
+            const sessoesPassadasRes = results[4].status === 'fulfilled' ? results[4].value : { data: { data: [] } }
+            const sessoesFuturasRes = results[5].status === 'fulfilled' ? results[5].value : { data: { data: [] } }
+            const sessoesTotalRes = results[6].status === 'fulfilled' ? results[6].value : { data: { data: [] } }
+
+            const contratosAtivosData = contratosRes.data?.data?.filter(c => c.status === 'ativo' && !c.deleted_at) || []
+            const faturamentoTotal = contratosAtivosData.reduce((acc, curr) => acc + (parseFloat(curr.valor_mensal) || 0), 0)
+
+            // Cálculo de horas acumuladas
+            const sessoesConcluidas = sessoesTotalRes.data?.data || []
+            const totalMinutos = sessoesConcluidas.reduce((acc, sessao) => acc + (sessao.servico?.duracao_minutos || 0), 0)
+
             setStats({
-                totalAlunos: alunosRes.data.data.length,
-                totalServicos: servicosRes.data.data.length,
-                contratosAtivos: contratosRes.data.data.length,
-                sessoesHoje: sessoesRes.data.data.length
+                totalAlunos: alunosRes.data?.data?.length || 0,
+                totalServicos: servicosRes.data?.data?.length || 0,
+                contratosAtivos: contratosAtivosData.length,
+                faturamentoMensal: faturamentoTotal,
+                sessoesHoje: sessoesHojeRes.data?.data?.length || 0,
+                aulasEntreguesSemana: sessoesPassadasRes.data?.data?.length || 0,
+                aulasAgendadasProxima: sessoesFuturasRes.data?.data?.length || 0,
+                totalSessoesAcumuladas: sessoesConcluidas.length,
+                totalMinutosTrabalhados: totalMinutos
             })
 
-            setSessoes(sessoesRes.data.data.slice(0, 5))
+            setSessoes(sessoesHojeRes.data?.data?.slice(0, 5) || [])
+
         } catch (error) {
-            console.error('Erro ao carregar dashboard:', error)
+            console.error('Erro geral ao carregar dashboard:', error)
         } finally {
             setLoading(false)
         }
@@ -109,6 +133,19 @@ export default function DashboardPage() {
                         <div style={{ fontSize: '2.5rem' }}>📝</div>
                     </div>
                 </div>
+                <div className="card" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                            <p style={{ fontSize: '0.875rem', marginBottom: '0.5rem', opacity: 0.9 }}>
+                                Faturamento Mensal
+                            </p>
+                            <p style={{ fontSize: '2rem', fontWeight: '800' }}>
+                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.faturamentoMensal || 0)}
+                            </p>
+                        </div>
+                        <div style={{ fontSize: '2.5rem', opacity: 0.8 }}>💰</div>
+                    </div>
+                </div>
 
                 <div className="card">
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -121,6 +158,64 @@ export default function DashboardPage() {
                             </p>
                         </div>
                         <div style={{ fontSize: '2.5rem' }}>📅</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Weekly Performance Section */}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.25rem', marginTop: '1rem' }}>
+                Performance Semanal (Personal)
+            </h2>
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '1rem',
+                marginBottom: '2rem'
+            }}>
+                <div className="card" style={{ borderLeft: '4px solid var(--success)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                            <p className="text-muted" style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                                Aulas Entregues (7 dias)
+                            </p>
+                            <p style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--success)' }}>
+                                {stats?.aulasEntreguesSemana || 0}
+                            </p>
+                            <p style={{ fontSize: '0.75rem', color: '#666' }}>Semanas passadas</p>
+                        </div>
+                        <div style={{ fontSize: '2.5rem' }}>🏆</div>
+                    </div>
+                </div>
+
+                <div className="card" style={{ borderLeft: '4px solid var(--primary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                            <p className="text-muted" style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                                Agendadas (Próx. 7 dias)
+                            </p>
+                            <p style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--primary)' }}>
+                                {stats?.aulasAgendadasProxima || 0}
+                            </p>
+                            <p style={{ fontSize: '0.75rem', color: '#666' }}>Próxima semana</p>
+                        </div>
+                        <div style={{ fontSize: '2.5rem' }}>📈</div>
+                    </div>
+                </div>
+
+                <div className="card" style={{ borderLeft: '4px solid #6366f1' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                            <p className="text-muted" style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                                Trabalho Acumulado
+                            </p>
+                            <p style={{ fontSize: '2rem', fontWeight: '700', color: '#6366f1' }}>
+                                {stats?.totalSessoesAcumuladas || 0} <span style={{ fontSize: '1rem', fontWeight: '400' }}>aulas</span>
+                            </p>
+                            <p style={{ fontSize: '0.875rem', fontWeight: '500', marginTop: '0.25rem' }}>
+                                ⏱️ {Math.floor((stats?.totalMinutosTrabalhados || 0) / 60)}h {(stats?.totalMinutosTrabalhados || 0) % 60}min
+                            </p>
+                        </div>
+                        <div style={{ fontSize: '2.5rem' }}>🔥</div>
                     </div>
                 </div>
             </div>

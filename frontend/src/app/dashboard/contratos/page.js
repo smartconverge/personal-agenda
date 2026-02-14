@@ -62,13 +62,14 @@ export default function ContratosPage() {
         }
     }
 
-    const handleDelete = async () => {
+    const handleDelete = async (excluir = false) => {
         try {
-            await api.delete(`/contratos/${selectedContrato.id}`)
-            showToast('Contrato cancelado com sucesso!', 'success')
+            await api.delete(`/contratos/${selectedContrato.id}${excluir ? '?excluir=true' : ''}`)
+            showToast(excluir ? 'Contrato excluído!' : 'Contrato cancelado!', 'success')
+            setShowDeleteDialog(false)
             loadData()
         } catch (error) {
-            showToast('Erro ao cancelar contrato', 'error')
+            showToast('Erro ao processar contrato', 'error')
         }
     }
 
@@ -288,15 +289,49 @@ export default function ContratosPage() {
                 </form>
             </Modal>
 
-            <ConfirmDialog
+            {/* Modal de Cancelamento/Exclusão */}
+            <Modal
                 isOpen={showDeleteDialog}
                 onClose={() => setShowDeleteDialog(false)}
-                onConfirm={handleDelete}
-                title="Cancelar Contrato"
-                message={`Tem certeza que deseja cancelar o contrato de ${selectedContrato?.aluno?.nome}?`}
-                confirmText="Cancelar Contrato"
-                danger
-            />
+                title="Gerenciar Cancelamento"
+            >
+                <div>
+                    <p style={{ marginBottom: '1rem' }}>
+                        O que deseja fazer com o contrato de <strong>{selectedContrato?.aluno?.nome}</strong>?
+                    </p>
+                    <div style={{ background: '#fff3cd', color: '#856404', padding: '0.75rem', borderRadius: '0.25rem', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                        ⚠️ Em ambos os casos, todas as <strong>sessões agendadas futuras</strong> deste aluno para este serviço serão <strong>canceladas automaticamente</strong>.
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <button
+                            className="btn btn-warning"
+                            onClick={() => handleDelete(false)}
+                            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+                        >
+                            🛑 Apenas Cancelar Contrato
+                            <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>(Mantém histórico)</span>
+                        </button>
+
+                        <button
+                            className="btn btn-danger"
+                            onClick={() => handleDelete(true)}
+                            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+                        >
+                            🗑️ Excluir Definitivamente
+                            <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>(Remove tudo)</span>
+                        </button>
+
+                        <button
+                            className="btn btn-secondary"
+                            onClick={() => setShowDeleteDialog(false)}
+                            style={{ marginTop: '0.5rem' }}
+                        >
+                            Voltar
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     )
 }

@@ -50,21 +50,22 @@ export default function DashboardLayout({ children }) {
 
     return (
         <ToastProvider>
-            <div style={{ display: 'flex', minHeight: '100vh' }}>
-                {/* Sidebar */}
-                <aside style={{
-                    width: sidebarOpen ? '16rem' : '4rem',
+            <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
+                {/* Sidebar - Desktop Only */}
+                <aside className="sidebar" style={{
+                    width: sidebarOpen ? '16rem' : '4,5rem',
                     backgroundColor: 'var(--bg-secondary)',
                     borderRight: '1px solid var(--border)',
-                    transition: 'width 0.3s',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     position: 'fixed',
                     height: '100vh',
                     overflowY: 'auto',
-                    zIndex: 40
+                    zIndex: 40,
+                    backdropFilter: 'blur(10px)'
                 }}>
-                    <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
-                        <h2 style={{ fontSize: '1.25rem', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden' }}>
-                            {sidebarOpen ? 'Personal Agenda' : 'PA'}
+                    <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <h2 style={{ fontSize: '1.1rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--primary)' }}>
+                            {sidebarOpen ? 'PERSONAL AGENDA' : 'PA'}
                         </h2>
                     </div>
 
@@ -76,43 +77,55 @@ export default function DashboardLayout({ children }) {
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '0.75rem',
-                                    padding: '0.75rem',
-                                    borderRadius: '0.375rem',
-                                    marginBottom: '0.5rem',
+                                    gap: '0.875rem',
+                                    padding: '0.875rem',
+                                    borderRadius: '0.75rem',
+                                    marginBottom: '0.4rem',
                                     textDecoration: 'none',
-                                    color: pathname === item.href ? 'var(--primary)' : 'var(--text-secondary)',
-                                    backgroundColor: pathname === item.href ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-                                    transition: 'all 0.2s',
-                                    cursor: 'pointer'
+                                    color: pathname === item.href ? 'white' : 'var(--text-secondary)',
+                                    backgroundColor: pathname === item.href ? 'var(--primary)' : 'transparent',
+                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    cursor: 'pointer',
+                                    boxShadow: pathname === item.href ? '0 4px 12px rgba(99, 102, 241, 0.3)' : 'none'
                                 }}
                             >
                                 <span style={{ fontSize: '1.25rem' }}>{item.icon}</span>
-                                {sidebarOpen && <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>{item.label}</span>}
+                                {sidebarOpen && <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{item.label}</span>}
                             </Link>
                         ))}
                     </nav>
 
-                    <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem' }}>
+                    <div style={{ position: 'absolute', bottom: '1.5rem', left: '1rem', right: '1rem' }}>
                         <button
                             onClick={handleLogout}
-                            className="btn btn-danger"
-                            style={{ width: '100%', justifyContent: 'center' }}
+                            className="btn btn-secondary"
+                            style={{
+                                width: '100%',
+                                justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                color: '#ef4444',
+                                border: '1px solid rgba(239, 68, 68, 0.2)'
+                            }}
                         >
-                            {sidebarOpen ? '🚪 Sair' : '🚪'}
+                            <span>🚪</span>
+                            {sidebarOpen && <span style={{ fontWeight: '600' }}>Sair</span>}
                         </button>
                     </div>
                 </aside>
 
                 {/* Main Content */}
-                <div style={{
-                    marginLeft: sidebarOpen ? '16rem' : '4rem',
+                <div className="main-content" style={{
+                    marginLeft: sidebarOpen ? '16rem' : '4.5rem',
                     flex: 1,
-                    transition: 'margin-left 0.3s'
+                    transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     {/* Header */}
                     <header style={{
-                        backgroundColor: 'var(--bg-secondary)',
+                        backgroundColor: 'rgba(10, 15, 29, 0.8)',
+                        backdropFilter: 'blur(12px)',
                         borderBottom: '1px solid var(--border)',
                         padding: '1rem 1.5rem',
                         position: 'sticky',
@@ -120,26 +133,62 @@ export default function DashboardLayout({ children }) {
                         zIndex: 30
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <button
-                                onClick={() => setSidebarOpen(!sidebarOpen)}
-                                className="btn btn-secondary"
-                            >
-                                ☰
-                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <button
+                                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                                    className="btn btn-secondary desktop-only"
+                                    style={{ padding: '0.5rem', width: '2.5rem', height: '2.5rem', justifyContent: 'center' }}
+                                >
+                                    ☰
+                                </button>
+                                <h1 className="mobile-only" style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--primary)', margin: 0 }}>
+                                    PERSONAL AGENDA
+                                </h1>
+                            </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <span className="text-sm text-muted">
-                                    Olá, <strong>{professor.nome}</strong>
-                                </span>
+                                <div style={{ textAlign: 'right' }}>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '-2px' }}>Bem-vindo,</p>
+                                    <p style={{ fontSize: '0.85rem', fontWeight: '700' }}>{professor.nome}</p>
+                                </div>
+                                <div style={{
+                                    width: '2.5rem',
+                                    height: '2.5rem',
+                                    borderRadius: '50%',
+                                    background: 'var(--primary)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontWeight: 'bold',
+                                    fontSize: '1rem'
+                                }}>
+                                    {professor.nome.charAt(0)}
+                                </div>
                             </div>
                         </div>
                     </header>
 
                     {/* Page Content */}
-                    <main style={{ padding: '1.5rem' }}>
-                        {children}
+                    <main style={{ padding: '1.5rem', flex: 1 }}>
+                        <div className="container">
+                            {children}
+                        </div>
                     </main>
                 </div>
+
+                {/* Bottom Navigation - Mobile Only */}
+                <nav className="bottom-nav">
+                    {menuItems.slice(0, 5).map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`bottom-nav-item ${pathname === item.href ? 'active' : ''}`}
+                        >
+                            <span className="bottom-nav-icon">{item.icon}</span>
+                            <span>{item.label}</span>
+                        </Link>
+                    ))}
+                </nav>
             </div>
         </ToastProvider>
     )

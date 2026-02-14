@@ -17,155 +17,160 @@ async function processarComando(professorId, comando) {
     const fimSemana = new Date(hoje);
     fimSemana.setDate(fimSemana.getDate() + 7);
 
-    switch (comandoUpper) {
-        case 'HOJE':
-            const { data: sessoesHoje } = await supabaseAdmin
-                .from('sessoes')
-                .select(`
-          data_hora_inicio,
-          aluno:alunos(nome),
-          servico:servicos(nome)
-        `)
-                .eq('professor_id', professorId)
-                .eq('status', 'agendada')
-                .gte('data_hora_inicio', hoje.toISOString())
-                .lt('data_hora_inicio', amanha.toISOString())
-                .order('data_hora_inicio');
+    // Lógica de Sinônimos
+    const isHoje = comandoUpper === 'HOJE' || comandoUpper === 'HJ' || comandoUpper.includes('AGENDA HOJE') || comandoUpper === 'AGENDA';
+    const isAmanha = comandoUpper === 'AMANHA' || comandoUpper === 'AMANHÃ' || comandoUpper === 'AMNH' || comandoUpper.includes('AGENDA AMANHA');
+    const isSemana = comandoUpper === 'SEMANA' || comandoUpper.includes('AGENDA SEMANA') || comandoUpper.includes('PROXIMA SEMANA');
+    const isVencimentos = comandoUpper === 'VENCIMENTOS' || comandoUpper === 'VENCIMENTO' || comandoUpper === 'VENCE' || comandoUpper === 'PAGAMENTOS' || comandoUpper === 'FINANCEIRO';
 
-            if (!sessoesHoje || sessoesHoje.length === 0) {
-                return 'Você não tem sessões agendadas para hoje.';
-            }
+    if (isHoje) {
+        // ... existente bloco HOJE ...
+        const { data: sessoesHoje } = await supabaseAdmin
+            .from('sessoes')
+            .select(`
+                data_hora_inicio,
+                aluno:alunos(nome),
+                servico:servicos(nome)
+            `)
+            .eq('professor_id', professorId)
+            .eq('status', 'agendada')
+            .gte('data_hora_inicio', hoje.toISOString())
+            .lt('data_hora_inicio', amanha.toISOString())
+            .order('data_hora_inicio');
 
-            let mensagemHoje = 'Suas sessões de hoje:\n\n';
-            sessoesHoje.forEach(s => {
-                const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: 'America/Sao_Paulo'
-                });
-                mensagemHoje += `- ${hora} - ${s.aluno.nome} (${s.servico.nome})\n`;
+        if (!sessoesHoje || sessoesHoje.length === 0) {
+            return '☕ *Você não tem sessões agendadas para hoje.* Aproveite o descanso ou foque no planejamento! 🔥';
+        }
+
+        let mensagemHoje = '📅 *Sua agenda de hoje:*\n\n';
+        sessoesHoje.forEach(s => {
+            const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'America/Sao_Paulo'
             });
-            mensagemHoje += `\nTotal: ${sessoesHoje.length} sessões`;
-            return mensagemHoje;
-
-        case 'AMANHÃ':
-        case 'AMANHA':
-            const fimAmanha = new Date(amanha);
-            fimAmanha.setDate(fimAmanha.getDate() + 1);
-
-            const { data: sessoesAmanha } = await supabaseAdmin
-                .from('sessoes')
-                .select(`
-          data_hora_inicio,
-          aluno:alunos(nome),
-          servico:servicos(nome)
-        `)
-                .eq('professor_id', professorId)
-                .eq('status', 'agendada')
-                .gte('data_hora_inicio', amanha.toISOString())
-                .lt('data_hora_inicio', fimAmanha.toISOString())
-                .order('data_hora_inicio');
-
-            if (!sessoesAmanha || sessoesAmanha.length === 0) {
-                return 'Você não tem sessões agendadas para amanhã.';
-            }
-
-            let mensagemAmanha = 'Suas sessões de amanhã:\n\n';
-            sessoesAmanha.forEach(s => {
-                const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: 'America/Sao_Paulo'
-                });
-                mensagemAmanha += `- ${hora} - ${s.aluno.nome} (${s.servico.nome})\n`;
-            });
-            mensagemAmanha += `\nTotal: ${sessoesAmanha.length} sessões`;
-            return mensagemAmanha;
-
-        case 'SEMANA':
-            const { data: sessoesSemana } = await supabaseAdmin
-                .from('sessoes')
-                .select(`
-          data_hora_inicio,
-          aluno:alunos(nome),
-          servico:servicos(nome)
-        `)
-                .eq('professor_id', professorId)
-                .eq('status', 'agendada')
-                .gte('data_hora_inicio', hoje.toISOString())
-                .lt('data_hora_inicio', fimSemana.toISOString())
-                .order('data_hora_inicio');
-
-            if (!sessoesSemana || sessoesSemana.length === 0) {
-                return 'Você não tem sessões agendadas para esta semana.';
-            }
-
-            // Agrupar por dia
-            const sessoesPorDia = {};
-            sessoesSemana.forEach(s => {
-                const data = new Date(s.data_hora_inicio);
-                const dataStr = data.toLocaleDateString('pt-BR', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: '2-digit',
-                    timeZone: 'America/Sao_Paulo'
-                });
-                if (!sessoesPorDia[dataStr]) {
-                    sessoesPorDia[dataStr] = [];
-                }
-                sessoesPorDia[dataStr].push(s);
-            });
-
-            let mensagemSemana = 'Suas sessões desta semana:\n\n';
-            Object.keys(sessoesPorDia).forEach(dia => {
-                mensagemSemana += `${dia}:\n`;
-                sessoesPorDia[dia].forEach(s => {
-                    const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        timeZone: 'America/Sao_Paulo'
-                    });
-                    mensagemSemana += `- ${hora} - ${s.aluno.nome}\n`;
-                });
-                mensagemSemana += '\n';
-            });
-            mensagemSemana += `Total: ${sessoesSemana.length} sessões`;
-            return mensagemSemana;
-
-        case 'VENCIMENTOS':
-            const { data: contratosVencendo } = await supabaseAdmin
-                .from('contratos')
-                .select(`
-          data_vencimento,
-          valor_mensal,
-          aluno:alunos(nome),
-          servico:servicos(nome)
-        `)
-                .eq('professor_id', professorId)
-                .eq('status', 'ativo')
-                .gte('data_vencimento', hoje.toISOString().split('T')[0])
-                .lte('data_vencimento', fimSemana.toISOString().split('T')[0])
-                .order('data_vencimento');
-
-            if (!contratosVencendo || contratosVencendo.length === 0) {
-                return 'Você não tem contratos vencendo nos próximos 7 dias.';
-            }
-
-            let mensagemVencimentos = 'Contratos vencendo nos próximos 7 dias:\n\n';
-            contratosVencendo.forEach(c => {
-                const dataVenc = new Date(c.data_vencimento).toLocaleDateString('pt-BR', {
-                    timeZone: 'America/Sao_Paulo'
-                });
-                const diasRestantes = Math.ceil((new Date(c.data_vencimento) - hoje) / (1000 * 60 * 60 * 24));
-                mensagemVencimentos += `- ${c.aluno.nome} (${c.servico.nome})\n`;
-                mensagemVencimentos += `  Vence em: ${dataVenc} (${diasRestantes} dias)\n`;
-                mensagemVencimentos += `  Valor: R$ ${parseFloat(c.valor_mensal).toFixed(2)}\n\n`;
-            });
-            return mensagemVencimentos;
-
-        default:
-            return 'Comando não reconhecido. Comandos disponíveis:\n- HOJE\n- AMANHÃ\n- SEMANA\n- VENCIMENTOS';
+            mensagemHoje += `• ${hora} - *${s.aluno.nome}* (${s.servico.nome})\n`;
+        });
+        mensagemHoje += `\n🎯 Total: ${sessoesHoje.length} sessões`;
+        return mensagemHoje;
     }
+
+    if (isAmanha) {
+        const fimAmanha = new Date(amanha);
+        fimAmanha.setDate(fimAmanha.getDate() + 1);
+
+        const { data: sessoesAmanha } = await supabaseAdmin
+            .from('sessoes')
+            .select(`
+                data_hora_inicio,
+                aluno:alunos(nome),
+                servico:servicos(nome)
+            `)
+            .eq('professor_id', professorId)
+            .eq('status', 'agendada')
+            .gte('data_hora_inicio', amanha.toISOString())
+            .lt('data_hora_inicio', fimAmanha.toISOString())
+            .order('data_hora_inicio');
+
+        if (!sessoesAmanha || sessoesAmanha.length === 0) {
+            return '✨ *Nenhum agendamento para amanhã ainda.*';
+        }
+
+        let mensagemAmanha = '🌅 *Sessões de amanhã:*\n\n';
+        sessoesAmanha.forEach(s => {
+            const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'America/Sao_Paulo'
+            });
+            mensagemAmanha += `• ${hora} - *${s.aluno.nome}* (${s.servico.nome})\n`;
+        });
+        mensagemAmanha += `\n🎯 Total: ${sessoesAmanha.length} sessões`;
+        return mensagemAmanha;
+    }
+
+    if (isSemana) {
+        const { data: sessoesSemana } = await supabaseAdmin
+            .from('sessoes')
+            .select(`
+                data_hora_inicio,
+                aluno:alunos(nome),
+                servico:servicos(nome)
+            `)
+            .eq('professor_id', professorId)
+            .eq('status', 'agendada')
+            .gte('data_hora_inicio', hoje.toISOString())
+            .lt('data_hora_inicio', fimSemana.toISOString())
+            .order('data_hora_inicio');
+
+        if (!sessoesSemana || sessoesSemana.length === 0) {
+            return '🗓️ *Sua agenda está vazia para os próximos 7 dias.*';
+        }
+
+        const sessoPorDia = {};
+        sessoesSemana.forEach(s => {
+            const data = new Date(s.data_hora_inicio);
+            const dataStr = data.toLocaleDateString('pt-BR', {
+                weekday: 'long',
+                day: '2-digit',
+                month: '2-digit',
+                timeZone: 'America/Sao_Paulo'
+            });
+            if (!sessoPorDia[dataStr]) sessoPorDia[dataStr] = [];
+            sessoPorDia[dataStr].push(s);
+        });
+
+        let mensagemSemana = '🗓️ *Resumo da sua semana:*\n\n';
+        Object.keys(sessoPorDia).forEach(dia => {
+            const diaCapitalizado = dia.charAt(0).toUpperCase() + dia.slice(1);
+            mensagemSemana += `*${diaCapitalizado}:*\n`;
+            sessoPorDia[dia].forEach(s => {
+                const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'America/Sao_Paulo'
+                });
+                mensagemSemana += `  • ${hora} - ${s.aluno.nome} (${s.servico.nome})\n`;
+            });
+            mensagemSemana += '\n';
+        });
+        mensagemSemana += `✅ Total: ${sessoesSemana.length} aulas na semana`;
+        return mensagemSemana;
+    }
+
+    if (isVencimentos) {
+        const { data: contratosVencendo } = await supabaseAdmin
+            .from('contratos')
+            .select(`
+                data_vencimento,
+                valor_mensal,
+                aluno:alunos(nome),
+                servico:servicos(nome)
+            `)
+            .eq('professor_id', professorId)
+            .eq('status', 'ativo')
+            .gte('data_vencimento', hoje.toISOString().split('T')[0])
+            .lte('data_vencimento', fimSemana.toISOString().split('T')[0])
+            .order('data_vencimento');
+
+        if (!contratosVencendo || contratosVencendo.length === 0) {
+            return '💰 *Ótimas notícias! Nenhum contrato vencendo nos próximos 7 dias.*';
+        }
+
+        let mensagemVencimentos = '💸 *Contratos vencendo (7 dias):*\n\n';
+        contratosVencendo.forEach(c => {
+            const dataVenc = new Date(c.data_vencimento).toLocaleDateString('pt-BR', {
+                timeZone: 'America/Sao_Paulo'
+            });
+            const diasRestantes = Math.ceil((new Date(c.data_vencimento) - hoje) / (1000 * 60 * 60 * 24));
+            mensagemVencimentos += `• *${c.aluno.nome}* (${c.servico.nome})\n`;
+            mensagemVencimentos += `  📅 Vence em: ${dataVenc} (${diasRestantes === 0 ? 'HOJE!' : diasRestantes + ' dias'})\n`;
+            mensagemVencimentos += `  💰 Valor: R$ ${parseFloat(c.valor_mensal).toFixed(2)}\n\n`;
+        });
+        return mensagemVencimentos;
+    }
+
+    return '🤔 *Não entendi esse comando.* Tente:\n- hoje / hj\n- amanhã / amnh\n- semana\n- vencimentos / financeiro';
 }
 
 /**
@@ -215,7 +220,7 @@ router.post('/whatsapp', async (req, res) => {
         // Identificar professor pelo telefone
         const { data: professor } = await supabaseAdmin
             .from('professores')
-            .select('id, nome')
+            .select('id, nome, whatsapp_instance')
             .eq('telefone_whatsapp', from)
             .single();
 
@@ -227,8 +232,9 @@ router.post('/whatsapp', async (req, res) => {
         // Processar comando
         const resposta = await processarComando(professor.id, messageText);
 
-        // Enviar resposta
-        await enviarMensagem(from, resposta);
+        // Enviar resposta pela instância do professor (se cadastrada)
+        const { enviarMensagem } = require('../config/evolution');
+        await enviarMensagem(from, resposta, professor.whatsapp_instance);
 
         // Registrar log
         await supabaseAdmin

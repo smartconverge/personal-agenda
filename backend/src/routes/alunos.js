@@ -48,12 +48,50 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 /**
+ * GET /alunos/:id
+ * Obter detalhes de um aluno
+ */
+router.get('/:id', authenticate, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { data, error } = await supabaseAdmin
+            .from('alunos')
+            .select('*')
+            .eq('id', id)
+            .eq('professor_id', req.professorId)
+            .is('deleted_at', null)
+            .single();
+
+        if (error) throw error;
+
+        if (!data) {
+            return res.status(404).json({
+                success: false,
+                error: 'Aluno não encontrado'
+            });
+        }
+
+        res.json({
+            success: true,
+            data
+        });
+    } catch (error) {
+        console.error('Erro ao buscar aluno:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao buscar aluno'
+        });
+    }
+});
+
+/**
  * POST /alunos
  * Criar novo aluno
  */
 router.post('/', authenticate, async (req, res) => {
     try {
-        const { nome, telefone_whatsapp, notificacoes_ativas } = req.body;
+        const { nome, email, telefone_whatsapp, notificacoes_ativas } = req.body;
 
         if (!nome || !telefone_whatsapp) {
             return res.status(400).json({
@@ -81,7 +119,11 @@ router.post('/', authenticate, async (req, res) => {
                     error: 'Aluno com este telefone já existe'
                 });
             }
-            throw error;
+            console.error('Erro DB ao criar aluno:', error);
+            return res.status(400).json({
+                success: false,
+                error: `Erro no banco: ${error.message}`
+            });
         }
 
         res.status(201).json({
@@ -89,10 +131,10 @@ router.post('/', authenticate, async (req, res) => {
             data
         });
     } catch (error) {
-        console.error('Erro ao criar aluno:', error);
+        console.error('Erro interno ao criar aluno:', error);
         res.status(500).json({
             success: false,
-            error: 'Erro ao criar aluno'
+            error: `Erro interno: ${error.message}`
         });
     }
 });

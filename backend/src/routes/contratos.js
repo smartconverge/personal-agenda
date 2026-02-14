@@ -129,10 +129,11 @@ router.post('/', authenticate, async (req, res) => {
 router.put('/:id', authenticate, async (req, res) => {
     try {
         const { id } = req.params;
-        const { valor_mensal, data_vencimento, status } = req.body;
+        const { valor_mensal, data_inicio, data_vencimento, status } = req.body;
 
         const updateData = {};
         if (valor_mensal !== undefined) updateData.valor_mensal = parseFloat(valor_mensal);
+        if (data_inicio !== undefined) updateData.data_inicio = data_inicio;
         if (data_vencimento !== undefined) updateData.data_vencimento = data_vencimento;
         if (status !== undefined) updateData.status = status;
 
@@ -173,33 +174,65 @@ router.put('/:id', authenticate, async (req, res) => {
 
 /**
  * DELETE /contratos/:id
- * Cancelar contrato
+ * Cancelar ou excluir contrato
  */
 router.delete('/:id', authenticate, async (req, res) => {
     try {
         const { id } = req.params;
+        const { excluir } = req.query; // ?excluir=true para remover do banco
 
-        const { data, error } = await supabaseAdmin
+        // 1. Buscar o contrato para saber aluno e serviço
+        const { data: contrato, error: erroBusca } = await supabaseAdmin
             .from('contratos')
-            .update({ status: 'cancelado' })
+            .select('*')
             .eq('id', id)
             .eq('professor_id', req.professorId)
-            .is('deleted_at', null)
-            .select()
             .single();
 
-        if (error) throw error;
-
-        if (!data) {
+        if (erroBusca || !contrato) {
             return res.status(404).json({
                 success: false,
                 error: 'Contrato não encontrado'
             });
         }
 
+        // 2. Cancelar TODAS as sessões futuras agendadas deste aluno
+        // Mudança: Cancelar de todos os serviços para garantir que a agenda fique livre
+        const agora = new Date().toISOString();
+        const { data: sessoesCanceladas, error: erroCancelamento } = await supabaseAdmin
+            .from('sessoes')
+            .update({ status: 'cancelada', observacoes: 'Cancelada automaticamente pelo encerramento do contrato.' })
+            .eq('aluno_id', contrato.aluno_id)
+            .eq('status', 'agendada')
+            .gte('data_hora_inicio', agora)
+            .select();
+
+        let mensagem = `Contrato cancelado e ${sessoesCanceladas?.length || 0} sessões futuras do aluno foram canceladas.`;
+
+        // 3. Excluir ou Cancelar o Contrato
+        if (excluir === 'true') {
+            const { error: erroExclusao } = await supabaseAdmin
+                .from('contratos')
+                .delete()
+                .eq('id', id);
+
+            if (erroExclusao) throw erroExclusao;
+            mensagem = `Contrato excluído e ${sessoesCanceladas?.length || 0} sessões futuras canceladas.`;
+        } else {
+            const { error: erroUpdate } = await supabaseAdmin
+                .from('contratos')
+                .update({ status: 'cancelado' })
+                .eq('id', id);
+
+            if (erroUpdate) throw erroUpdate;
+        }
+
         res.json({
             success: true,
-            data: { message: 'Contrato cancelado com sucesso' }
+            data: {
+                message: mensagem,
+                sessoes_canceladas: sessoesCanceladas?.length || 0
+            }
         });
     } catch (error) {
         console.error('Erro ao cancelar contrato:', error);

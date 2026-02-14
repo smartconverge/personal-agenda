@@ -141,6 +141,13 @@ router.post('/', authenticate, async (req, res) => {
             });
         }
 
+        // 1. Buscar dados do professor (instância do WhatsApp)
+        const { data: professor } = await supabaseAdmin
+            .from('professores')
+            .select('whatsapp_instance')
+            .eq('id', req.professorId)
+            .single();
+
         // Validar que aluno e serviço pertencem ao professor
         const { data: aluno } = await supabaseAdmin
             .from('alunos')
@@ -160,6 +167,23 @@ router.post('/', authenticate, async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Aluno ou serviço não encontrado'
+            });
+        }
+
+        // 2. Verificar se o aluno possui contrato ATIVO para este serviço
+        const { data: contratoAtivo } = await supabaseAdmin
+            .from('contratos')
+            .select('id')
+            .eq('aluno_id', aluno_id)
+            .eq('servico_id', servico_id)
+            .eq('status', 'ativo')
+            .is('deleted_at', null)
+            .limit(1);
+
+        if (!contratoAtivo || contratoAtivo.length === 0) {
+            return res.status(403).json({
+                success: false,
+                error: 'Não é possível agendar: Aluno não possui contrato ativo para este serviço.'
             });
         }
 
@@ -229,6 +253,14 @@ router.post('/', authenticate, async (req, res) => {
             sessoesCriadas = [data];
         }
 
+        // NOTIFICAÇÃO WHATSAPP (AGRUPADA)
+        const alunoInfo = sessoesCriadas[0]?.aluno;
+        if (alunoInfo && alunoInfo.telefone_whatsapp) {
+            const notificationService = require('../services/notificationService');
+            // Enviamos em background para não atrasar a resposta
+            notificationService.notifyMultipleSchedule(alunoInfo, sessoesCriadas, professor?.whatsapp_instance).catch(err => console.error('Erro notificação:', err));
+        }
+
         res.status(201).json({
             success: true,
             data: sessoesCriadas
@@ -277,7 +309,6 @@ router.put('/:id/cancelar', authenticate, async (req, res) => {
                 .eq('recorrencia', 'semanal')
                 .gte('data_hora_inicio', sessaoOriginal.data_hora_inicio)
                 .select();
-
             if (error) throw error;
 
             res.json({
@@ -286,9 +317,22 @@ router.put('/:id/cancelar', authenticate, async (req, res) => {
             });
         } else {
             // Cancelar apenas esta sessão
+            const { status, observacoes } = req.body;
+            const updateData = {};
+
+            if (status) {
+                updateData.status = status;
+            } else {
+                updateData.status = 'cancelada';
+            }
+
+            if (observacoes) {
+                updateData.observacoes = observacoes;
+            }
+
             const { data, error } = await supabaseAdmin
                 .from('sessoes')
-                .update({ status: 'cancelada' })
+                .update(updateData)
                 .eq('id', id)
                 .eq('professor_id', req.professorId)
                 .select()
@@ -324,7 +368,7 @@ router.put('/:id/cancelar', authenticate, async (req, res) => {
 router.put('/:id/remarcar', authenticate, async (req, res) => {
     try {
         const { id } = req.params;
-        const { nova_data_hora_inicio } = req.body;
+        const { nova_data_hora_inicio, observacoes } = req.body;
 
         if (!nova_data_hora_inicio) {
             return res.status(400).json({
@@ -345,6 +389,23 @@ router.put('/:id/remarcar', authenticate, async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Sessão não encontrada'
+            });
+        }
+
+        // 2. Verificar contrato ATIVO antes de permitir remarcar
+        const { data: contratoAtivo } = await supabaseAdmin
+            .from('contratos')
+            .select('id')
+            .eq('aluno_id', sessaoOriginal.aluno_id)
+            .eq('servico_id', sessaoOriginal.servico_id)
+            .eq('status', 'ativo')
+            .is('deleted_at', null)
+            .limit(1);
+
+        if (!contratoAtivo || contratoAtivo.length === 0) {
+            return res.status(403).json({
+                success: false,
+                error: 'Não é possível remarcar: Aluno não possui contrato ativo para este serviço.'
             });
         }
 
@@ -390,10 +451,13 @@ router.put('/:id/remarcar', authenticate, async (req, res) => {
 
         if (errorNova) throw errorNova;
 
-        // Marcar sessão original como remarcada
+        // Marcar sessão original como remarcada e adicionar observação
+        const updateOriginal = { status: 'remarcada' };
+        if (observacoes) updateOriginal.observacoes = observacoes;
+
         await supabaseAdmin
             .from('sessoes')
-            .update({ status: 'remarcada' })
+            .update(updateOriginal)
             .eq('id', id);
 
         res.json({
@@ -417,23 +481,48 @@ router.put('/:id/concluir', authenticate, async (req, res) => {
     try {
         const { id } = req.params;
 
+        // 1. Buscar a sessão para saber aluno e serviço
+        const { data: sessao, error: erroSessao } = await supabaseAdmin
+            .from('sessoes')
+            .select('aluno_id, servico_id, status')
+            .eq('id', id)
+            .eq('professor_id', req.professorId)
+            .single();
+
+        if (erroSessao || !sessao) {
+            return res.status(404).json({ success: false, error: 'Sessão não encontrada' });
+        }
+
+        if (sessao.status !== 'agendada') {
+            return res.status(400).json({ success: false, error: 'Apenas sessões agendadas podem ser concluídas' });
+        }
+
+        // 2. Verificar se existe contrato ATIVO para este aluno e serviço
+        const { data: contratoAtivo } = await supabaseAdmin
+            .from('contratos')
+            .select('id')
+            .eq('aluno_id', sessao.aluno_id)
+            .eq('servico_id', sessao.servico_id)
+            .eq('status', 'ativo')
+            .is('deleted_at', null)
+            .limit(1);
+
+        if (!contratoAtivo || contratoAtivo.length === 0) {
+            return res.status(403).json({
+                success: false,
+                error: 'Não é possível concluir: Aluno não possui contrato ativo para este serviço.'
+            });
+        }
+
+        // 3. Proceder com a conclusão
         const { data, error } = await supabaseAdmin
             .from('sessoes')
             .update({ status: 'concluida' })
             .eq('id', id)
-            .eq('professor_id', req.professorId)
-            .eq('status', 'agendada')
             .select()
             .single();
 
         if (error) throw error;
-
-        if (!data) {
-            return res.status(404).json({
-                success: false,
-                error: 'Sessão não encontrada ou não está agendada'
-            });
-        }
 
         res.json({
             success: true,
@@ -444,6 +533,54 @@ router.put('/:id/concluir', authenticate, async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Erro ao concluir sessão'
+        });
+    }
+});
+
+/**
+ * PUT /sessoes/:id
+ * Atualizar dados da sessão (genérico)
+ */
+router.put('/:id', authenticate, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { servico_id, observacoes, status } = req.body;
+
+        const updateData = {};
+        if (servico_id) updateData.servico_id = servico_id;
+        if (observacoes !== undefined) updateData.observacoes = observacoes;
+        if (status) updateData.status = status;
+
+        const { data, error } = await supabaseAdmin
+            .from('sessoes')
+            .update(updateData)
+            .eq('id', id)
+            .eq('professor_id', req.professorId)
+            .select(`
+                *,
+                aluno:alunos(id, nome, telefone_whatsapp),
+                servico:servicos(id, nome, tipo, duracao_minutos)
+            `)
+            .single();
+
+        if (error) throw error;
+
+        if (!data) {
+            return res.status(404).json({
+                success: false,
+                error: 'Sessão não encontrada'
+            });
+        }
+
+        res.json({
+            success: true,
+            data
+        });
+    } catch (error) {
+        console.error('Erro ao atualizar sessão:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao atualizar sessão'
         });
     }
 });

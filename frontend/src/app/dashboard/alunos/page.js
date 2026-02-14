@@ -1,9 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
+import { useToast } from '@/components/Toast'
 
 export default function AlunosPage() {
+    const router = useRouter()
+    const { showToast } = useToast()
     const [alunos, setAlunos] = useState([])
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
@@ -22,9 +26,11 @@ export default function AlunosPage() {
     const loadAlunos = async () => {
         try {
             const response = await api.get('/alunos')
-            setAlunos(response.data.data)
+            setAlunos(response.data.data || [])
         } catch (error) {
-            alert('Erro ao carregar alunos')
+            console.error(error)
+            showToast('Erro ao carregar alunos', 'error')
+            setAlunos([])
         } finally {
             setLoading(false)
         }
@@ -44,8 +50,9 @@ export default function AlunosPage() {
             setEditingAluno(null)
             setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true })
             loadAlunos()
+            showToast(editingAluno ? 'Aluno atualizado!' : 'Aluno criado!', 'success')
         } catch (error) {
-            alert(error.response?.data?.error || 'Erro ao salvar aluno')
+            showToast(error.response?.data?.error || 'Erro ao salvar aluno', 'error')
         }
     }
 
@@ -65,9 +72,10 @@ export default function AlunosPage() {
 
         try {
             await api.delete(`/alunos/${id}`)
+            showToast('Aluno excluído!', 'success')
             loadAlunos()
         } catch (error) {
-            alert('Erro ao excluir aluno')
+            showToast('Erro ao excluir aluno', 'error')
         }
     }
 
@@ -97,55 +105,105 @@ export default function AlunosPage() {
                 </button>
             </div>
 
-            <div className="card">
+            <div className="card" style={{ padding: '0' }}>
                 {alunos.length === 0 ? (
-                    <p className="text-muted">Nenhum aluno cadastrado</p>
+                    <p className="text-muted" style={{ padding: '1.5rem' }}>Nenhum aluno cadastrado</p>
                 ) : (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>WhatsApp</th>
-                                    <th>Email</th>
-                                    <th>Notificações</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {alunos.map((aluno) => (
-                                    <tr key={aluno.id}>
-                                        <td style={{ fontWeight: '500' }}>{aluno.nome}</td>
-                                        <td>{aluno.telefone_whatsapp}</td>
-                                        <td className="text-muted">{aluno.email || '-'}</td>
-                                        <td>
-                                            <span className={`badge ${aluno.notificacoes_ativas ? 'badge-success' : 'badge-danger'}`}>
-                                                {aluno.notificacoes_ativas ? 'Ativas' : 'Inativas'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                <button
-                                                    onClick={() => handleEdit(aluno)}
-                                                    className="btn btn-secondary"
-                                                    style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}
-                                                >
-                                                    ✏️ Editar
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(aluno.id)}
-                                                    className="btn btn-danger"
-                                                    style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}
-                                                >
-                                                    🗑️ Excluir
-                                                </button>
-                                            </div>
-                                        </td>
+                    <>
+                        {/* Desktop View */}
+                        <div className="desktop-only" style={{ overflowX: 'auto' }}>
+                            <table className="table" style={{ borderBottom: 'none' }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ paddingLeft: '1.5rem' }}>Nome</th>
+                                        <th>WhatsApp</th>
+                                        <th>Email</th>
+                                        <th>Notificações</th>
+                                        <th style={{ paddingRight: '1.5rem' }}>Ações</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {alunos.map((aluno) => (
+                                        <tr key={aluno.id}>
+                                            <td style={{ paddingLeft: '1.5rem', fontWeight: '500' }}>{aluno.nome}</td>
+                                            <td>{aluno.telefone_whatsapp}</td>
+                                            <td className="text-muted">{aluno.email || '-'}</td>
+                                            <td>
+                                                <span className={`badge ${aluno.notificacoes_ativas ? 'badge-success' : 'badge-danger'}`}>
+                                                    {aluno.notificacoes_ativas ? 'Ativas' : 'Inativas'}
+                                                </span>
+                                            </td>
+                                            <td style={{ paddingRight: '1.5rem' }}>
+                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                    <button
+                                                        onClick={() => router.push(`/dashboard/alunos/${aluno.id}`)}
+                                                        className="btn btn-primary"
+                                                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
+                                                    >
+                                                        📅 Agenda
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleEdit(aluno)}
+                                                        className="btn btn-secondary"
+                                                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
+                                                    >
+                                                        ✏️
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(aluno.id)}
+                                                        className="btn btn-danger"
+                                                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
+                                                    >
+                                                        🗑️
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="mobile-only" style={{ padding: '1rem' }}>
+                            {alunos.map((aluno) => (
+                                <div key={aluno.id} className="mobile-card">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                                        <div>
+                                            <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '0.1rem' }}>{aluno.nome}</h3>
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>📱 {aluno.telefone_whatsapp}</p>
+                                        </div>
+                                        <span className={`badge ${aluno.notificacoes_ativas ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '0.65rem' }}>
+                                            {aluno.notificacoes_ativas ? 'On' : 'Off'}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                                        <button
+                                            onClick={() => router.push(`/dashboard/alunos/${aluno.id}`)}
+                                            className="btn btn-primary"
+                                            style={{ flex: 2, justifyContent: 'center', fontSize: '0.8rem' }}
+                                        >
+                                            📅 Agenda
+                                        </button>
+                                        <button
+                                            onClick={() => handleEdit(aluno)}
+                                            className="btn btn-secondary"
+                                            style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}
+                                        >
+                                            ✏️
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(aluno.id)}
+                                            className="btn btn-danger"
+                                            style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 )}
             </div>
 

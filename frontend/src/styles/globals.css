@@ -7,19 +7,23 @@
   --warning: #f59e0b;
   --info: #3b82f6;
   
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
+  --bg-primary: #0a0f1d;
+  --bg-secondary: #161e31;
+  --bg-tertiary: #232d42;
   
-  --text-primary: #f1f5f9;
+  --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+  --text-muted: #64748b;
   
-  --border: #334155;
-  --border-light: #475569;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.15);
   
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --glass: rgba(22, 30, 49, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  
+  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+  --radius: 1rem;
 }
 
 * {
@@ -143,10 +147,96 @@ code {
 /* Cards */
 .card {
   background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
   padding: 1.5rem;
   box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Mobile List Cards */
+.mobile-card {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 0.75rem;
+  border-left: 4px solid var(--primary);
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4.5rem;
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 100;
+  display: none; /* Hidden on desktop */
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.bottom-nav-item.active {
+  color: var(--primary);
+}
+
+.bottom-nav-icon {
+  font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none !important;
+  }
+  .main-content {
+    margin-left: 0 !important;
+    padding-bottom: 5rem !important; /* Space for bottom nav */
+  }
+  .bottom-nav {
+    display: flex;
+  }
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+  .table-container {
+    display: none;
+  }
+  .card-list {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+  .card-list {
+    display: none;
+  }
 }
 
 /* Table */

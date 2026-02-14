@@ -47,10 +47,10 @@ router.post('/', authenticate, async (req, res) => {
     try {
         const { tipo, nome, duracao_minutos } = req.body;
 
-        if (!tipo || !nome || !duracao_minutos) {
+        if (!tipo || !nome || (tipo !== 'ficha' && !duracao_minutos)) {
             return res.status(400).json({
                 success: false,
-                error: 'Tipo, nome e duração são obrigatórios'
+                error: 'Tipo e nome são obrigatórios. Duração é obrigatória para serviços presenciais/online.'
             });
         }
 
@@ -67,22 +67,28 @@ router.post('/', authenticate, async (req, res) => {
                 professor_id: req.professorId,
                 tipo,
                 nome: nome.trim(),
-                duracao_minutos: parseInt(duracao_minutos)
+                duracao_minutos: tipo === 'ficha' ? 1 : (parseInt(duracao_minutos) || 15)
             })
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error('Erro DB ao criar serviço:', error);
+            return res.status(400).json({
+                success: false,
+                error: `Erro no banco: ${error.message}`
+            });
+        }
 
         res.status(201).json({
             success: true,
             data
         });
     } catch (error) {
-        console.error('Erro ao criar serviço:', error);
+        console.error('Erro interno ao criar serviço:', error);
         res.status(500).json({
             success: false,
-            error: 'Erro ao criar serviço'
+            error: `Erro interno: ${error.message}`
         });
     }
 });

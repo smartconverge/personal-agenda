@@ -73,9 +73,10 @@ router.post('/testar', authenticate, async (req, res) => {
             });
         }
 
-        // Enviar via Evolution
-        const { enviarMensagem } = require('../config/evolution');
-        const resultado = await enviarMensagem(aluno.telefone_whatsapp, mensagem);
+        // Enviar via NotificationService consolidado
+        const notificationService = require('../services/notificationService');
+        await notificationService.sendMessage(aluno.telefone_whatsapp, mensagem);
+        const resultado = { success: true }; // Se não estourar catch, consideramos que tentou enviar
 
         // Registrar log
         await supabaseAdmin

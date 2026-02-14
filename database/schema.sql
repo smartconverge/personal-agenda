@@ -18,6 +18,7 @@ CREATE TABLE professores (
     email TEXT UNIQUE NOT NULL,
     nome TEXT NOT NULL,
     telefone_whatsapp TEXT NOT NULL,
+    whatsapp_instance TEXT, -- Nome da instância na Evolution API
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );

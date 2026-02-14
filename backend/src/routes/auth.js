@@ -117,13 +117,38 @@ router.post('/login', async (req, res) => {
         }
 
         // Buscar dados do professor
-        const { data: professor, error: professorError } = await supabase
+        let { data: professor, error: professorError } = await supabaseAdmin
             .from('professores')
             .select('id, nome, email, telefone_whatsapp')
             .eq('id', data.user.id)
-            .single();
+            .maybeSingle(); // Usa maybeSingle para não estourar erro se não achar
 
-        if (professorError) {
+        // Se o professor não existe na tabela (comum após reset de banco), criamos agora!
+        if (!professor && !professorError) {
+            console.log('👷 Perfil não encontrado. Criando perfil automático para:', data.user.email);
+
+            const { data: newProfessor, error: createError } = await supabaseAdmin
+                .from('professores')
+                .insert([{
+                    id: data.user.id,
+                    nome: data.user.user_metadata?.nome || 'Professor',
+                    email: data.user.email,
+                    telefone_whatsapp: '', // Inicializa vazio
+                    created_at: new Date()
+                }])
+                .select()
+                .single();
+
+            if (createError) {
+                console.error('Erro ao criar perfil automático:', createError);
+                return res.status(500).json({
+                    success: false,
+                    error: 'Erro ao criar seu perfil de professor.'
+                });
+            }
+            professor = newProfessor;
+        } else if (professorError) {
+            console.error('Erro ao buscar professor:', professorError);
             return res.status(500).json({
                 success: false,
                 error: 'Erro ao buscar dados do professor'

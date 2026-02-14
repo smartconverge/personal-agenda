@@ -73,33 +73,36 @@ export default function DashboardLayout({ children }) {
                         <div style={{
                             width: '2.5rem',
                             height: '2.5rem',
-                            borderRadius: '0.5rem',
-                            background: 'linear-gradient(135deg, var(--primary-light), var(--primary))',
+                            borderRadius: '0.625rem',
+                            background: 'rgba(255, 255, 255, 0.08)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '1.25rem',
-                            flexShrink: 0
+                            flexShrink: 0,
+                            border: '1px solid rgba(255, 255, 255, 0.1)'
                         }}>
-                            💪
+                            <Icons.Fitness size={20} color="white" />
                         </div>
                         {sidebarOpen && (
-                            <div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <h2 style={{
                                     fontSize: '1rem',
                                     fontWeight: '800',
                                     color: 'white',
-                                    lineHeight: 1,
-                                    marginBottom: '0.125rem'
+                                    lineHeight: 1.2,
+                                    letterSpacing: '-0.02em'
                                 }}>
                                     Personal Agenda
                                 </h2>
                                 <p style={{
-                                    fontSize: '0.7rem',
+                                    fontSize: '0.6875rem',
                                     color: 'var(--sidebar-text)',
-                                    opacity: 0.7
+                                    opacity: 0.6,
+                                    fontWeight: '500',
+                                    letterSpacing: '0.01em',
+                                    marginTop: '0.125rem'
                                 }}>
-                                    Gestão de Treinos
+                                    Trainer Management
                                 </p>
                             </div>
                         )}

@@ -90,8 +90,14 @@ export const Icons = {
     ),
 
     Fitness: ({ size = 20, color = "currentColor" }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29l-1.43-1.43z" fill={color} />
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.5 6.5l11 11" />
+            <path d="M21 21l-1-1" />
+            <path d="M3 3l1-1" />
+            <path d="M18 22l4-4" />
+            <path d="M2 6l4-4" />
+            <path d="M3 10l7-7" />
+            <path d="M14 21l7-7" />
         </svg>
     ),
 

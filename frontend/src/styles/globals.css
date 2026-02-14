@@ -124,9 +124,9 @@ h6 {
 }
 
 .card-premium:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-4px);
-  border-color: hsla(155, 72%, 32%, 0.15);
+  box-shadow: var(--shadow-hover) !important;
+  transform: translateY(-4px) !important;
+  border-color: hsla(155, 72%, 32%, 0.2) !important;
 }
 
 .card-highlight {
@@ -136,12 +136,13 @@ h6 {
   box-shadow: 0 10px 25px -5px hsla(155, 72%, 32%, 0.25);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: white;
+  cursor: pointer;
 }
 
 .card-highlight:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 30px -5px hsla(155, 72%, 32%, 0.35);
-  filter: brightness(1.05);
+  transform: translateY(-4px) !important;
+  box-shadow: 0 15px 30px -5px hsla(155, 72%, 32%, 0.45) !important;
+  filter: brightness(1.08) !important;
 }
 
 .card-flat {
@@ -149,6 +150,13 @@ h6 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-flat:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+  border-color: hsla(155, 72%, 32%, 0.1);
 }
 
 /* Stat Cards */

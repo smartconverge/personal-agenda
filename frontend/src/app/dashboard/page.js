@@ -175,6 +175,7 @@ export default function DashboardPage() {
                                 flexDirection: 'column',
                                 gap: '0.5rem',
                                 border: stat.highlight ? 'none' : '1px solid var(--border)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                             }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

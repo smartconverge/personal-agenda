@@ -23,77 +23,137 @@ export default function VerifyEmailPage() {
     }, [router])
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1rem',
-            background: 'var(--bg-secondary)',
-            backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%)'
-        }}>
-            <div className="card-premium" style={{ maxWidth: '450px', width: '100%', padding: '3rem', textAlign: 'center', background: 'white' }}>
+        <div className="login-container">
+            <style>{`
+                .login-container {
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1.5rem;
+                    background-color: #0f172a;
+                    background-image: 
+                        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 30%),
+                        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 30%);
+                    position: relative;
+                    overflow: hidden;
+                    font-family: 'Plus Jakarta Sans', sans-serif;
+                }
 
-                {status === 'verifying' && (
-                    <>
-                        <div className="spinner" style={{ width: '3rem', height: '3rem', margin: '0 auto 1.5rem', borderTopColor: 'var(--primary)' }} />
-                        <h1 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '1rem' }}>Verificando seu email...</h1>
-                        <p style={{ color: 'var(--text-secondary)' }}>Estamos confirmando seu acesso ao sistema. Aguarde um instante.</p>
-                    </>
-                )}
+                .login-card {
+                    width: 100%;
+                    max-width: 440px;
+                    background: rgba(15, 23, 42, 0.8);
+                    backdrop-filter: blur(12px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 2rem;
+                    padding: 3rem;
+                    position: relative;
+                    z-index: 10;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                    text-align: center;
+                }
 
-                {status === 'success' && (
-                    <>
-                        <div style={{
-                            width: '4rem',
-                            height: '4rem',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 1.5rem'
-                        }}>
-                            <Icons.CheckCircle size={40} color="var(--success)" />
-                        </div>
-                        <h1 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '1rem', color: 'var(--success)' }}>Email Confirmado!</h1>
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-                            Sua conta foi verificada com sucesso. Você já pode acessar todas as funcionalidades do Personal Agenda.
-                        </p>
-                        <Link href="/dashboard" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                            Ir para o Dashboard
-                        </Link>
-                    </>
-                )}
+                .login-card::before {
+                    content: '';
+                    position: absolute;
+                    inset: -1px;
+                    border-radius: 2rem;
+                    padding: 1px;
+                    background: linear-gradient(45deg, #ec4899, #8b5cf6, #3b82f6, #10b981);
+                    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                    -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+                    opacity: 0.5;
+                }
 
-                {status === 'error' && (
-                    <>
-                        <div style={{
-                            width: '4rem',
-                            height: '4rem',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 1.5rem'
-                        }}>
-                            <Icons.Error size={40} color="var(--danger)" />
-                        </div>
-                        <h1 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '1rem', color: 'var(--danger)' }}>Link Expirado ou Inválido</h1>
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-                            O link de verificação que você utilizou expirou ou já foi processado. Por favor, tente fazer login ou solicite um novo link.
-                        </p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            <Link href="/login" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                                Voltar para o Login
+                .status-icon {
+                    width: 5rem;
+                    height: 5rem;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 2rem;
+                }
+
+                .brand-logo h1 {
+                    font-size: 1.75rem;
+                    font-weight: 800;
+                    margin-bottom: 1rem;
+                    color: white;
+                }
+
+                .brand-logo p {
+                    color: #94a3b8;
+                    margin-bottom: 2rem;
+                    line-height: 1.6;
+                    font-size: 0.9375rem;
+                }
+
+                .action-btn {
+                    width: 100%;
+                    padding: 1rem;
+                    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+                    border: none;
+                    border-radius: 1rem;
+                    color: white;
+                    font-size: 1rem;
+                    font-weight: 800;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.75rem;
+                    transition: all 0.3s;
+                    box-shadow: 0 8px 12px -3px rgba(16, 185, 129, 0.3);
+                    text-decoration: none;
+                }
+
+                .action-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 15px 20px -5px rgba(16, 185, 129, 0.4);
+                }
+            `}</style>
+
+            <div className="login-card">
+                <div className="brand-logo">
+                    {status === 'verifying' && (
+                        <>
+                            <div className="spinner" style={{ width: '3.5rem', height: '3.5rem', borderTopColor: '#10b981', margin: '0 auto 2rem' }} />
+                            <h1>Verificando Email</h1>
+                            <p>Estamos confirmando seu acesso ao sistema. Um momento...</p>
+                        </>
+                    )}
+
+                    {status === 'success' && (
+                        <>
+                            <div className="status-icon" style={{ background: 'rgba(16, 185, 129, 0.1)' }}>
+                                <Icons.CheckCircle size={48} color="#10b981" />
+                            </div>
+                            <h1>Email Confirmado!</h1>
+                            <p>Sua conta foi verificada com sucesso. Você já pode acessar o painel.</p>
+                            <Link href="/dashboard" className="action-btn">
+                                Acessar Painel <Icons.TrendingUp size={18} />
                             </Link>
-                            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '1rem' }}>
-                                Dica: Links de segurança expiram por proteção. Tente realizar o processo novamente.
-                            </p>
-                        </div>
-                    </>
-                )}
+                        </>
+                    )}
+
+                    {status === 'error' && (
+                        <>
+                            <div className="status-icon" style={{ background: 'rgba(239, 68, 68, 0.1)' }}>
+                                <Icons.Error size={48} color="#f87171" />
+                            </div>
+                            <h1>Link Inválido</h1>
+                            <p>O link de verificação expirou ou já foi utilizado. Tente entrar novamente.</p>
+                            <Link href="/login" className="action-btn">
+                                Voltar para Login
+                            </Link>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     )

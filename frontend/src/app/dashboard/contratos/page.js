@@ -121,36 +121,12 @@ export default function ContratosPage() {
     }
 
     return (
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            {/* Header */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '2rem',
-                gap: '1rem',
-                flexWrap: 'wrap'
-            }}>
-                <div>
-                    <h1 style={{
-                        fontSize: '2rem',
-                        fontWeight: '800',
-                        marginBottom: '0.25rem',
-                        background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text'
-                    }}>
-                        Contratos
-                    </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                        Gerencie os planos e pagamentos dos seus alunos
-                    </p>
-                </div>
+        <div className="page-enter">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
                 <button
                     className="btn btn-primary"
                     onClick={openNewModal}
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem' }}
+                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
                 >
                     <Icons.Plus size={18} />
                     <span>Novo Contrato</span>

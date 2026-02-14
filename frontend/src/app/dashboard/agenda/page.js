@@ -205,28 +205,76 @@ export default function AgendaPage() {
             {/* View Controls & Navigation */}
             <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ display: 'flex', gap: '0.25rem' }}>
-                            <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(-1)} style={{ width: '2.5rem', height: '2.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => navigateDate(-1)}
+                                style={{ width: '2.5rem', height: '2.5rem', padding: 0 }}
+                                title="Anterior"
+                            >
                                 <Icons.ChevronLeft size={20} />
                             </button>
-                            <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(1)} style={{ width: '2.5rem', height: '2.5rem' }}>
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => navigateDate(1)}
+                                style={{ width: '2.5rem', height: '2.5rem', padding: 0 }}
+                                title="Próximo"
+                            >
                                 <Icons.ChevronRight size={20} />
                             </button>
                         </div>
-                        <h2 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0, color: 'var(--text-primary)' }}>
-                            {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
-                        </h2>
+
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                            <input
+                                type="date"
+                                id="agenda-datepicker"
+                                value={currentDate.toISOString().split('T')[0]}
+                                onChange={(e) => {
+                                    if (e.target.value) {
+                                        const [y, m, d] = e.target.value.split('-').map(Number);
+                                        setCurrentDate(new Date(y, m - 1, d));
+                                    }
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    opacity: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    cursor: 'pointer',
+                                    zIndex: 10
+                                }}
+                            />
+                            <h2 style={{
+                                fontSize: '1.25rem',
+                                fontWeight: '800',
+                                margin: 0,
+                                color: 'var(--text-primary)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                cursor: 'pointer',
+                                padding: '0.4rem 0.8rem',
+                                borderRadius: '0.5rem',
+                                transition: 'background 0.2s'
+                            }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-primary)'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                                {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
+                                <Icons.ChevronDown size={16} color="var(--text-muted)" />
+                            </h2>
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '0.2rem', borderRadius: '0.6rem', border: '1px solid var(--border)' }}>
-                            {['dia', 'semana', 'mes'].map((v) => (
+                            {['semana', 'mes'].map((v) => (
                                 <button
                                     key={v}
                                     onClick={() => setViewMode(v)}
                                     style={{
-                                        padding: '0.4rem 1rem',
+                                        padding: '0.4rem 1.25rem',
                                         fontSize: '0.75rem',
                                         fontWeight: '700',
                                         borderRadius: '0.4rem',
@@ -238,16 +286,16 @@ export default function AgendaPage() {
                                         transition: 'all 0.2s'
                                     }}
                                 >
-                                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                                    {v === 'semana' ? 'Semana' : 'Mês'}
                                 </button>
                             ))}
                         </div>
                         <button
                             className="btn btn-secondary"
-                            style={{ height: '2.5rem', padding: '0 1rem', fontSize: '0.8125rem' }}
+                            style={{ height: '2.5rem', padding: '0 1.25rem', fontSize: '0.8125rem', fontWeight: '800' }}
                             onClick={() => setCurrentDate(new Date())}
                         >
-                            Hoje
+                            Ir para Hoje
                         </button>
                     </div>
                 </div>

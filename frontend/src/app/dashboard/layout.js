@@ -11,6 +11,7 @@ export default function DashboardLayout({ children }) {
     const pathname = usePathname()
     const [professor, setProfessor] = useState(null)
     const [sidebarOpen, setSidebarOpen] = useState(true)
+    const [hoveredPath, setHoveredPath] = useState(null)
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -137,6 +138,8 @@ export default function DashboardLayout({ children }) {
                                 <Link
                                     key={item.href}
                                     href={item.href}
+                                    onMouseEnter={() => setHoveredPath(item.href)}
+                                    onMouseLeave={() => setHoveredPath(null)}
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
@@ -145,8 +148,8 @@ export default function DashboardLayout({ children }) {
                                         borderRadius: '0.625rem',
                                         marginBottom: '0.25rem',
                                         textDecoration: 'none',
-                                        color: isActive ? 'white' : 'var(--sidebar-text)',
-                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : 'transparent',
+                                        color: (isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)',
+                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : (hoveredPath === item.href ? 'rgba(255, 255, 255, 0.05)' : 'transparent'),
                                         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                         cursor: 'pointer',
                                         fontWeight: isActive ? '700' : '500',
@@ -154,7 +157,7 @@ export default function DashboardLayout({ children }) {
                                     }}
                                 >
                                     <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                                        <IconComponent size={20} color={isActive ? 'white' : 'var(--sidebar-text)'} />
+                                        <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
                                     </span>
                                     {sidebarOpen && <span>{item.label}</span>}
                                 </Link>
@@ -394,6 +397,6 @@ export default function DashboardLayout({ children }) {
                     })}
                 </nav>
             </div>
-        </ToastProvider>
+        </ToastProvider >
     )
 }

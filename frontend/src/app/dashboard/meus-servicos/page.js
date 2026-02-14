@@ -5,6 +5,7 @@ import api from '@/lib/api'
 import Modal from '@/components/Modal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useToast } from '@/components/Toast'
+import { Icons } from '@/components/Icons'
 
 export default function MeusServicosPage() {
     const { showToast } = useToast()
@@ -39,10 +40,10 @@ export default function MeusServicosPage() {
         try {
             if (selectedServico) {
                 await api.put(`/servicos/${selectedServico.id}`, formData)
-                showToast('Serviço atualizado com sucesso!', 'success')
+                showToast('Serviço atualizado!', 'success')
             } else {
                 await api.post('/servicos', formData)
-                showToast('Serviço criado com sucesso!', 'success')
+                showToast('Serviço criado!', 'success')
             }
             setShowModal(false)
             resetForm()
@@ -55,10 +56,12 @@ export default function MeusServicosPage() {
     const handleDelete = async () => {
         try {
             await api.delete(`/servicos/${selectedServico.id}`)
-            showToast('Serviço excluído com sucesso!', 'success')
+            showToast('Serviço excluído!', 'success')
             loadServicos()
         } catch (error) {
             showToast('Erro ao excluir serviço', 'error')
+        } finally {
+            setShowDeleteDialog(false)
         }
     }
 
@@ -88,10 +91,10 @@ export default function MeusServicosPage() {
 
     const getTipoIcon = (tipo) => {
         switch (tipo) {
-            case 'presencial': return '🏋️'
-            case 'online': return '💻'
-            case 'ficha': return '📋'
-            default: return '📝'
+            case 'presencial': return <Icons.Fitness size={18} />
+            case 'online': return <Icons.Dashboard size={18} />
+            case 'ficha': return <Icons.Contracts size={18} />
+            default: return <Icons.Services size={18} />
         }
     }
 
@@ -113,60 +116,99 @@ export default function MeusServicosPage() {
     }
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h1 style={{ fontSize: '1.875rem', fontWeight: '700', margin: 0 }}>
-                    Meus Serviços
-                </h1>
-                <button className="btn btn-primary" onClick={openNewModal}>
-                    + Novo Serviço
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            {/* Header */}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '2rem',
+                gap: '1rem',
+                flexWrap: 'wrap'
+            }}>
+                <div>
+                    <h1 style={{
+                        fontSize: '2rem',
+                        fontWeight: '800',
+                        marginBottom: '0.25rem',
+                        background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text'
+                    }}>
+                        Meus Serviços
+                    </h1>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                        Configure as modalidades e durações das suas aulas
+                    </p>
+                </div>
+                <button
+                    className="btn btn-primary"
+                    onClick={openNewModal}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem' }}
+                >
+                    <Icons.Plus size={18} />
+                    <span>Novo Serviço</span>
                 </button>
             </div>
 
-            <div className="card" style={{ padding: '0' }}>
+            <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
                 {servicos.length === 0 ? (
-                    <p className="text-muted" style={{ padding: '1.5rem' }}>Nenhum serviço cadastrado</p>
+                    <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                        <Icons.Services size={48} color="var(--text-muted)" style={{ opacity: 0.3, marginBottom: '1rem' }} />
+                        <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Nenhum serviço cadastrado</p>
+                    </div>
                 ) : (
                     <>
-                        {/* Desktop View */}
+                        {/* Desktop View Table */}
                         <div className="desktop-only" style={{ overflowX: 'auto' }}>
-                            <table className="table" style={{ borderBottom: 'none' }}>
+                            <table className="table" style={{ borderBottom: 'none', margin: '0' }}>
                                 <thead>
                                     <tr>
                                         <th style={{ paddingLeft: '1.5rem' }}>Tipo</th>
-                                        <th>Nome</th>
+                                        <th>Nome do Serviço</th>
                                         <th>Duração</th>
-                                        <th style={{ paddingRight: '1.5rem' }}>Ações</th>
+                                        <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {servicos.map((servico) => (
-                                        <tr key={servico.id}>
+                                        <tr key={servico.id} className="table-row-hover">
                                             <td style={{ paddingLeft: '1.5rem' }}>
-                                                <span className={`badge ${getTipoBadge(servico.tipo)}`}>
-                                                    {getTipoIcon(servico.tipo)} {servico.tipo}
+                                                <span className={`badge ${getTipoBadge(servico.tipo)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                                    {getTipoIcon(servico.tipo)}
+                                                    {servico.tipo.charAt(0).toUpperCase() + servico.tipo.slice(1)}
                                                 </span>
                                             </td>
-                                            <td style={{ fontWeight: '500' }}>{servico.nome}</td>
-                                            <td>{servico.tipo === 'ficha' ? '-' : `${servico.duracao_minutos} min`}</td>
-                                            <td style={{ paddingRight: '1.5rem' }}>
-                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <td style={{ fontWeight: '700', fontSize: '1rem' }}>{servico.nome}</td>
+                                            <td style={{ color: 'var(--text-secondary)' }}>
+                                                {servico.tipo === 'ficha' ? (
+                                                    <span style={{ opacity: 0.5 }}>-</span>
+                                                ) : (
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                                        <Icons.Calendar size={14} />
+                                                        <span>{servico.duracao_minutos} min</span>
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                                                     <button
-                                                        className="btn btn-secondary"
-                                                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
+                                                        className="btn-icon btn-icon-secondary"
                                                         onClick={() => openEditModal(servico)}
+                                                        title="Editar"
                                                     >
-                                                        ✏️
+                                                        <Icons.Edit size={16} />
                                                     </button>
                                                     <button
-                                                        className="btn btn-danger"
-                                                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
+                                                        className="btn-icon btn-icon-danger"
                                                         onClick={() => {
                                                             setSelectedServico(servico)
                                                             setShowDeleteDialog(true)
                                                         }}
+                                                        title="Excluir"
                                                     >
-                                                        🗑️
+                                                        <Icons.Delete size={16} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -176,38 +218,56 @@ export default function MeusServicosPage() {
                             </table>
                         </div>
 
-                        {/* Mobile View */}
-                        <div className="mobile-only" style={{ padding: '1rem' }}>
+                        {/* Mobile View Cards */}
+                        <div className="mobile-only" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {servicos.map((servico) => (
-                                <div key={servico.id} className="mobile-card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                                <div key={servico.id} className="card-premium" style={{ padding: '1.25rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                                         <div>
-                                            <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: '800', color: 'var(--primary)', marginBottom: '0.2rem' }}>
-                                                {getTipoIcon(servico.tipo)} {servico.tipo}
-                                            </p>
-                                            <h3 style={{ fontSize: '1rem', fontWeight: '700' }}>{servico.nome}</h3>
-                                            {servico.tipo !== 'ficha' && (
-                                                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>⏱️ {servico.duracao_minutos} min</p>
-                                            )}
+                                            <span className={`badge ${getTipoBadge(servico.tipo)}`} style={{ fontSize: '0.625rem', marginBottom: '0.5rem' }}>
+                                                {servico.tipo}
+                                            </span>
+                                            <h3 style={{ fontSize: '1.125rem', fontWeight: '800', color: 'var(--text-primary)' }}>{servico.nome}</h3>
+                                        </div>
+                                        <div style={{
+                                            width: '2.5rem',
+                                            height: '2.5rem',
+                                            borderRadius: '0.75rem',
+                                            backgroundColor: 'var(--bg-secondary)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'var(--primary)'
+                                        }}>
+                                            {getTipoIcon(servico.tipo)}
                                         </div>
                                     </div>
-                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+
+                                    {servico.tipo !== 'ficha' && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                                            <Icons.Calendar size={14} />
+                                            <span>Duração: {servico.duracao_minutos} minutos</span>
+                                        </div>
+                                    )}
+
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
                                         <button
                                             className="btn btn-secondary"
-                                            style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}
+                                            style={{ flex: 1, height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                                             onClick={() => openEditModal(servico)}
                                         >
-                                            ✏️ Editar
+                                            <Icons.Edit size={16} />
+                                            <span>Editar</span>
                                         </button>
                                         <button
                                             className="btn btn-danger"
-                                            style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}
+                                            style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                             onClick={() => {
                                                 setSelectedServico(servico)
                                                 setShowDeleteDialog(true)
                                             }}
                                         >
-                                            🗑️ Excluir
+                                            <Icons.Delete size={16} />
                                         </button>
                                     </div>
                                 </div>
@@ -223,37 +283,40 @@ export default function MeusServicosPage() {
                 title={selectedServico ? 'Editar Serviço' : 'Novo Serviço'}
             >
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label className="label">Tipo de Serviço</label>
-                        <select
-                            className="input"
-                            value={formData.tipo}
-                            onChange={(e) => {
-                                const newTipo = e.target.value;
-                                setFormData({
-                                    ...formData,
-                                    tipo: newTipo,
-                                    // Zera a duração se for ficha
-                                    duracao_minutos: newTipo === 'ficha' ? 0 : (formData.duracao_minutos || 60)
-                                });
-                            }}
-                            required
-                        >
-                            <option value="presencial">🏋️ Presencial</option>
-                            <option value="online">💻 Online</option>
-                            <option value="ficha">📋 Ficha</option>
-                        </select>
-                        <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                            {formData.tipo === 'ficha' ? 'Ficha não bloqueia agenda' : 'Bloqueia agenda'}
-                        </p>
+                    <div style={{ marginBottom: '1.25rem' }}>
+                        <label className="label">Modalidade</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                            {['presencial', 'online', 'ficha'].map((t) => (
+                                <button
+                                    key={t}
+                                    type="button"
+                                    className={`btn ${formData.tipo === t ? 'btn-primary' : 'btn-secondary'}`}
+                                    style={{
+                                        padding: '0.75rem 0.5rem',
+                                        fontSize: '0.75rem',
+                                        flexDirection: 'column',
+                                        gap: '0.4rem',
+                                        height: 'auto'
+                                    }}
+                                    onClick={() => setFormData({
+                                        ...formData,
+                                        tipo: t,
+                                        duracao_minutos: t === 'ficha' ? 0 : (formData.duracao_minutos || 60)
+                                    })}
+                                >
+                                    {getTipoIcon(t)}
+                                    <span style={{ textTransform: 'capitalize' }}>{t}</span>
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ marginBottom: '1.25rem' }}>
                         <label className="label">Nome do Serviço</label>
                         <input
                             type="text"
                             className="input"
-                            placeholder="Ex: Consultoria Online Mensal"
+                            placeholder="Ex: Treino Personalizado"
                             value={formData.nome}
                             onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                             required
@@ -263,24 +326,37 @@ export default function MeusServicosPage() {
                     {formData.tipo !== 'ficha' && (
                         <div style={{ marginBottom: '1.5rem' }}>
                             <label className="label">Duração (minutos)</label>
-                            <input
-                                type="number"
-                                className="input"
-                                min="15"
-                                step="15"
-                                value={formData.duracao_minutos}
-                                onChange={(e) => setFormData({ ...formData, duracao_minutos: parseInt(e.target.value) })}
-                                required
-                            />
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                {[30, 45, 60, 90].map((m) => (
+                                    <button
+                                        key={m}
+                                        type="button"
+                                        className={`btn ${formData.duracao_minutos === m ? 'btn-primary' : 'btn-secondary'}`}
+                                        style={{ padding: '0.5rem 1rem', fontSize: '0.8125rem', height: 'auto' }}
+                                        onClick={() => setFormData({ ...formData, duracao_minutos: m })}
+                                    >
+                                        {m} min
+                                    </button>
+                                ))}
+                                <input
+                                    type="number"
+                                    className="input"
+                                    style={{ width: '80px', height: '2.5rem' }}
+                                    placeholder="Outro"
+                                    value={formData.duracao_minutos}
+                                    onChange={(e) => setFormData({ ...formData, duracao_minutos: parseInt(e.target.value) || 0 })}
+                                    required
+                                />
+                            </div>
                         </div>
                     )}
 
-                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
+                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} style={{ padding: '0.625rem 1.25rem' }}>
                             Cancelar
                         </button>
-                        <button type="submit" className="btn btn-primary">
-                            {selectedServico ? 'Atualizar' : 'Criar'}
+                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>
+                            {selectedServico ? 'Salvar' : 'Criar Serviço'}
                         </button>
                     </div>
                 </form>

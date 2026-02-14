@@ -6,6 +6,7 @@ import api from '@/lib/api'
 import Modal from '@/components/Modal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useToast } from '@/components/Toast'
+import { Icons } from '@/components/Icons'
 
 export default function AgendaPage() {
     const router = useRouter()
@@ -47,7 +48,7 @@ export default function AgendaPage() {
         end.setHours(23, 59, 59, 999)
 
         if (viewMode === 'dia') {
-            // today
+            return { start: start.toISOString(), end: end.toISOString() }
         } else if (viewMode === 'semana') {
             const day = start.getDay()
             const diff = start.getDate() - day
@@ -63,25 +64,15 @@ export default function AgendaPage() {
             const endMonth = new Date(year, month + 1, 0, 23, 59, 59, 999)
             return { start: startMonth.toISOString(), end: endMonth.toISOString() }
         }
-        return { start: start.toISOString(), end: end.toISOString() }
     }
 
     const loadData = async () => {
         try {
             setLoading(true)
-            let start, end
-            try {
-                const range = getDateRange()
-                start = range.start
-                end = range.end
-            } catch (e) {
-                const now = new Date()
-                start = new Date(now.setHours(0, 0, 0, 0)).toISOString()
-                end = new Date(now.setHours(23, 59, 59, 999)).toISOString()
-            }
+            const range = getDateRange()
 
             const results = await Promise.allSettled([
-                api.get('/sessoes', { params: { data_inicio: start, data_fim: end } }),
+                api.get('/sessoes', { params: { data_inicio: range.start, data_fim: range.end } }),
                 api.get('/alunos'),
                 api.get('/servicos')
             ])
@@ -97,7 +88,6 @@ export default function AgendaPage() {
         }
     }
 
-    // Create Session Logic
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
@@ -113,7 +103,7 @@ export default function AgendaPage() {
                 return api.post('/sessoes', payload)
             })
             await Promise.all(promises)
-            showToast('Sessões criadas com sucesso!', 'success')
+            showToast('Sessões agendadas!', 'success')
             setShowModal(false)
             resetForm()
             loadData()
@@ -122,7 +112,6 @@ export default function AgendaPage() {
         }
     }
 
-    // Form Helpers
     const resetForm = () => {
         setFormData({
             aluno_id: '',
@@ -132,6 +121,7 @@ export default function AgendaPage() {
             horarios: [{ dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
         })
     }
+
     const addHorario = () => setFormData({ ...formData, horarios: [...formData.horarios, { dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }] })
     const removeHorario = (i) => {
         if (formData.horarios.length === 1) return
@@ -145,11 +135,10 @@ export default function AgendaPage() {
         setFormData({ ...formData, horarios: newHorarios })
     }
 
-    // Actions
     const handleConcluir = async () => {
         try {
             await api.put(`/sessoes/${selectedSessao.id}/concluir`)
-            showToast('Sessão concluída com sucesso!', 'success')
+            showToast('Sessão concluída!', 'success')
             setShowConcluirDialog(false)
             loadData()
         } catch (error) {
@@ -160,7 +149,7 @@ export default function AgendaPage() {
     const handleReabrir = async (sessao) => {
         try {
             await api.put(`/sessoes/${sessao.id}`, { status: 'agendada' })
-            showToast('Sessão reaberta com sucesso!', 'success')
+            showToast('Sessão reaberta!', 'success')
             loadData()
         } catch (error) {
             showToast('Erro ao reabrir sessão', 'error')
@@ -187,102 +176,181 @@ export default function AgendaPage() {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'agendada': return '📅'
-            case 'concluida': return '✅'
-            case 'cancelada': return '❌'
-            case 'remarcada': return '🔄'
-            default: return '📝'
+            case 'agendada': return <Icons.Calendar size={14} />
+            case 'concluida': return <Icons.CheckCircle size={14} />
+            case 'cancelada': return <Icons.Error size={14} />
+            case 'remarcada': return <Icons.Info size={14} />
+            default: return <Icons.Edit size={14} />
         }
     }
 
     const filteredSessoes = sessoes.filter(sessao => {
-        // Filtro de Status: Não mostrar canceladas ou remarcadas na agenda geral para não poluir
         if (['cancelada', 'remarcada'].includes(sessao.status)) return false
-
-        const sessaoDate = new Date(sessao.data_hora_inicio)
-        const current = new Date(currentDate)
-        if (viewMode === 'dia') return sessaoDate.toDateString() === current.toDateString()
-        else if (viewMode === 'semana') {
-            const weekStart = new Date(current)
-            weekStart.setDate(current.getDate() - current.getDay())
-            const weekEnd = new Date(weekStart)
-            weekEnd.setDate(weekStart.getDate() + 7)
-            return sessaoDate >= weekStart && sessaoDate < weekEnd
-        } else {
-            return sessaoDate.getMonth() === current.getMonth() && sessaoDate.getFullYear() === current.getFullYear()
-        }
+        return true
     }).sort((a, b) => new Date(a.data_hora_inicio) - new Date(b.data_hora_inicio))
 
-    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}><div className="spinner" style={{ width: '3rem', height: '3rem' }} /></div>
-
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h1 style={{ fontSize: '1.875rem', fontWeight: '700', margin: 0 }}>Agenda Geral</h1>
-                <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true); }}>+ Nova Sessão</button>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            {/* Header */}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '2rem',
+                gap: '1rem',
+                flexWrap: 'wrap'
+            }}>
+                <div>
+                    <h1 style={{
+                        fontSize: '2rem',
+                        fontWeight: '800',
+                        marginBottom: '0.25rem',
+                        background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text'
+                    }}>
+                        Agenda Geral
+                    </h1>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                        Visualize e gerencie todos os seus horários
+                    </p>
+                </div>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => { resetForm(); setShowModal(true); }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.25rem' }}
+                >
+                    <Icons.Plus size={18} />
+                    <span>Nova Sessão</span>
+                </button>
             </div>
 
             {/* View Controls */}
-            <div className="card" style={{ marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button className={`btn ${viewMode === 'dia' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setViewMode('dia')}>Dia</button>
-                        <button className={`btn ${viewMode === 'semana' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setViewMode('semana')}>Semana</button>
-                        <button className={`btn ${viewMode === 'mes' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setViewMode('mes')}>Mês</button>
+            <div className="card-flat" style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '0.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                        {[
+                            { id: 'dia', label: 'Dia' },
+                            { id: 'semana', label: 'Semana' },
+                            { id: 'mes', label: 'Mês' },
+                        ].map((v) => (
+                            <button
+                                key={v.id}
+                                className={`btn ${viewMode === v.id ? 'btn-primary' : ''}`}
+                                style={{
+                                    padding: '0.5rem 1.25rem',
+                                    fontSize: '0.8125rem',
+                                    height: 'auto',
+                                    background: viewMode === v.id ? 'var(--primary)' : 'transparent',
+                                    color: viewMode === v.id ? 'white' : 'var(--text-secondary)',
+                                    boxShadow: 'none'
+                                }}
+                                onClick={() => setViewMode(v.id)}
+                            >
+                                {v.label}
+                            </button>
+                        ))}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <button className="btn btn-secondary" onClick={() => navigateDate(-1)}>◀</button>
-                        <span style={{ fontWeight: '600', minWidth: '200px', textAlign: 'center' }}>
-                            {currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
-                        </span>
-                        <button className="btn btn-secondary" onClick={() => navigateDate(1)}>▶</button>
-                        <button className="btn btn-secondary" onClick={() => setCurrentDate(new Date())}>Hoje</button>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(-1)}><Icons.Menu size={16} style={{ transform: 'rotate(90deg)' }} /></button>
+                        <div style={{ textAlign: 'center', minWidth: '180px' }}>
+                            <p style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                                {viewMode === 'dia' ? currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' }) :
+                                    viewMode === 'semana' ? 'Esta Semana' :
+                                        currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                            </p>
+                            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                {currentDate.getFullYear()}
+                            </p>
+                        </div>
+                        <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(1)}><Icons.Menu size={16} style={{ transform: 'rotate(-90deg)' }} /></button>
+                        <button
+                            className="btn btn-secondary"
+                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto', marginLeft: '0.5rem' }}
+                            onClick={() => setCurrentDate(new Date())}
+                        >
+                            Hoje
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {/* Sessoes Table */}
-            <div className="card">
-                {filteredSessoes.length === 0 ? (
-                    <p className="text-muted">Nenhuma sessão agendada para este período</p>
+            {/* Content */}
+            <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
+                {loading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="spinner" /></div>
+                ) : filteredSessoes.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '5rem 2rem' }}>
+                        <div style={{ width: '4rem', height: '4rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                            <Icons.Calendar size={32} color="var(--text-muted)" />
+                        </div>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>Tudo limpo por aqui!</h3>
+                        <p style={{ color: 'var(--text-muted)' }}>Você não possui sessões agendadas para este período.</p>
+                    </div>
                 ) : (
                     <div style={{ overflowX: 'auto' }}>
-                        <table className="table">
+                        <table className="table" style={{ margin: 0 }}>
                             <thead>
                                 <tr>
-                                    <th>Data/Hora</th>
+                                    <th style={{ paddingLeft: '1.5rem' }}>Horário</th>
                                     <th>Aluno</th>
                                     <th>Serviço</th>
                                     <th>Status</th>
-                                    <th>Ações</th>
+                                    <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredSessoes.map((sessao) => (
-                                    <tr key={sessao.id}>
-                                        <td style={{ fontWeight: '500' }}>
-                                            {new Date(sessao.data_hora_inicio).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                    <tr key={sessao.id} className="table-row-hover">
+                                        <td style={{ paddingLeft: '1.5rem' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                <span style={{ fontWeight: '800', color: 'var(--text-primary)', fontSize: '1rem' }}>
+                                                    {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                                    {new Date(sessao.data_hora_inicio).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                                                </span>
+                                            </div>
                                         </td>
                                         <td>
-                                            <button
-                                                onClick={() => router.push(`/dashboard/alunos/${sessao.aluno_id}`)}
-                                                style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: '500', padding: 0, textDecoration: 'underline' }}
-                                            >
-                                                {sessao.aluno?.nome || 'N/A'}
-                                            </button>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <div className="avatar avatar-sm" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--primary)', fontSize: '0.75rem' }}>
+                                                    {sessao.aluno?.nome?.substring(0, 2).toUpperCase()}
+                                                </div>
+                                                <button
+                                                    onClick={() => router.push(`/dashboard/alunos/${sessao.aluno_id}`)}
+                                                    className="text-link"
+                                                    style={{ fontWeight: '700', fontSize: '0.9375rem' }}
+                                                >
+                                                    {sessao.aluno?.nome || 'N/A'}
+                                                </button>
+                                            </div>
                                         </td>
-                                        <td>{sessao.servico?.nome || 'N/A'}</td>
-                                        <td><span className={`badge ${getStatusBadge(sessao.status)}`}>{getStatusIcon(sessao.status)} {sessao.status}</span></td>
                                         <td>
-                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                <button className="btn btn-sm btn-secondary" onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}>👁️ Ver</button>
-
+                                            <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{sessao.servico?.nome || 'N/A'}</span>
+                                        </td>
+                                        <td>
+                                            <span className={`badge ${getStatusBadge(sessao.status)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                                {getStatusIcon(sessao.status)}
+                                                {sessao.status.charAt(0).toUpperCase() + sessao.status.slice(1)}
+                                            </span>
+                                        </td>
+                                        <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                                <button className="btn-icon btn-icon-secondary" onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }} title="Ver detalhes">
+                                                    <Icons.Info size={16} />
+                                                </button>
                                                 {sessao.status === 'agendada' && (
-                                                    <button className="btn btn-sm btn-success" onClick={() => { setSelectedSessao(sessao); setShowConcluirDialog(true); }}>✅ Concluir</button>
+                                                    <button className="btn-icon btn-icon-primary" onClick={() => { setSelectedSessao(sessao); setShowConcluirDialog(true); }} title="Concluir">
+                                                        <Icons.CheckCircle size={16} />
+                                                    </button>
                                                 )}
-
                                                 {sessao.status === 'concluida' && (
-                                                    <button className="btn btn-sm btn-secondary" onClick={() => handleReabrir(sessao)} title="Desfazer conclusão">↩️ Desfazer</button>
+                                                    <button className="btn-icon btn-icon-secondary" onClick={() => handleReabrir(sessao)} title="Desfazer conclusão">
+                                                        <Icons.Logout size={16} style={{ transform: 'rotate(180deg)' }} />
+                                                    </button>
                                                 )}
                                             </div>
                                         </td>
@@ -294,10 +362,10 @@ export default function AgendaPage() {
                 )}
             </div>
 
-            {/* Modal Nova Sessão */}
-            <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Nova(s) Sessão(ões)" size="lg">
+            {/* Modals similar to existing but with premium styling */}
+            <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Agendar Sessões" size="lg">
                 <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
                         <div>
                             <label className="label">Aluno</label>
                             <select className="input" value={formData.aluno_id} onChange={(e) => setFormData({ ...formData, aluno_id: e.target.value })} required>
@@ -306,7 +374,7 @@ export default function AgendaPage() {
                             </select>
                         </div>
                         <div>
-                            <label className="label">Serviço</label>
+                            <label className="label">Serviço/Modalidade</label>
                             <select className="input" value={formData.servico_id} onChange={(e) => setFormData({ ...formData, servico_id: e.target.value })} required>
                                 <option value="">Selecione um serviço</option>
                                 {servicos.map(servico => <option key={servico.id} value={servico.id}>{servico.nome} ({servico.duracao_minutos} min)</option>)}
@@ -314,67 +382,127 @@ export default function AgendaPage() {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem', border: '1px solid #eee', padding: '1rem', borderRadius: '0.5rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                            <h3 style={{ fontSize: '1rem', margin: 0 }}>Horários</h3>
-                            <button type="button" className="btn btn-sm btn-secondary" onClick={addHorario}>+ Adicionar Horário</button>
+                    <div style={{ marginBottom: '2rem', padding: '1.25rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '800', margin: 0 }}>Horários da Sessão</h3>
+                            <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto' }} onClick={addHorario}>+ Add Horário</button>
                         </div>
                         {formData.horarios.map((horario, index) => (
-                            <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px dashed #eee' }}>
+                            <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: index < formData.horarios.length - 1 ? '1px dashed var(--border)' : 'none' }}>
                                 <div style={{ flex: 1 }}>
-                                    <label className="label">Data de Início</label>
+                                    <label className="label" style={{ fontSize: '0.7rem' }}>Data</label>
                                     <input type="date" className="input" value={horario.data_inicio} onChange={(e) => updateHorario(index, 'data_inicio', e.target.value)} required />
                                 </div>
                                 <div style={{ width: '120px' }}>
-                                    <label className="label">Hora</label>
+                                    <label className="label" style={{ fontSize: '0.7rem' }}>Hora</label>
                                     <input type="time" className="input" value={horario.hora} onChange={(e) => updateHorario(index, 'hora', e.target.value)} required />
                                 </div>
-                                {formData.horarios.length > 1 && <button type="button" className="btn btn-danger" style={{ height: '42px' }} onClick={() => removeHorario(index)}>🗑️</button>}
+                                {formData.horarios.length > 1 && (
+                                    <button type="button" className="btn-icon btn-icon-danger" onClick={() => removeHorario(index)}>
+                                        <Icons.Delete size={16} />
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
 
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                            <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} />
-                            <span>Repetir semanalmente esses horários?</span>
+                    <div style={{ padding: '1.25rem', backgroundColor: 'var(--sidebar-bg)', color: 'white', borderRadius: 'var(--radius-md)', marginBottom: '2rem' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }}>
+                            <div style={{
+                                width: '2.5rem',
+                                height: '2.5rem',
+                                borderRadius: '50%',
+                                backgroundColor: formData.recorrente ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}>
+                                <Icons.TrendingUp size={18} color="white" />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <p style={{ fontWeight: '700', fontSize: '0.9375rem', marginBottom: '0.1rem' }}>Recorrência Semanal</p>
+                                <p style={{ fontSize: '0.75rem', opacity: 0.7 }}>Agendar automaticamente para as próximas semanas</p>
+                            </div>
+                            <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
                         </label>
+
+                        {formData.recorrente && (
+                            <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <span style={{ fontSize: '0.875rem' }}>Repetir por:</span>
+                                <input
+                                    type="number"
+                                    className="input"
+                                    style={{ width: '80px', background: 'rgba(0,0,0,0.2)', border: 'none', color: 'white' }}
+                                    min="1" max="12"
+                                    value={formData.meses_recorrencia}
+                                    onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })}
+                                />
+                                <span style={{ fontSize: '0.875rem' }}>meses</span>
+                            </div>
+                        )}
                     </div>
-                    {formData.recorrente && (
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label className="label">Por quantos meses?</label>
-                            <input type="number" className="input" min="1" max="12" value={formData.meses_recorrencia} onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })} />
-                        </div>
-                    )}
+
                     <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                        <button type="submit" className="btn btn-primary">Agendar Sessões</button>
+                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} style={{ padding: '0.625rem 1.5rem' }}>Cancelar</button>
+                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2.5rem' }}>Agendar Sessões</button>
                     </div>
                 </form>
             </Modal>
 
-            {/* Modal Detalhes Simples */}
+            {/* Modal Detalhes */}
             <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="Detalhes da Sessão">
                 {selectedSessao && (
                     <div>
-                        <div style={{ marginBottom: '0.5rem' }}><strong>Aluno:</strong> {selectedSessao.aluno?.nome}</div>
-                        <div style={{ marginBottom: '0.5rem' }}><strong>Serviço:</strong> {selectedSessao.servico?.nome}</div>
-                        <div style={{ marginBottom: '0.5rem' }}><strong>Data:</strong> {new Date(selectedSessao.data_hora_inicio).toLocaleString('pt-BR')}</div>
-                        <div style={{ marginBottom: '1rem' }}><strong>Status:</strong> {selectedSessao.status}</div>
-
-                        <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #eee' }}>
-                            <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => router.push(`/dashboard/alunos/${selectedSessao.aluno_id}`)}>
-                                👤 Ir para Agenda do Aluno
-                            </button>
-                            <div style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.875rem', color: '#666' }}>
-                                Para editar ou remarcar, acesse a agenda do aluno.
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div className="avatar" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--primary)' }}>
+                                    {selectedSessao.aluno?.nome?.substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 style={{ fontSize: '1.125rem', fontWeight: '800' }}>{selectedSessao.aluno?.nome}</h3>
+                                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Status: <span className={`badge ${getStatusBadge(selectedSessao.status)}`}>{selectedSessao.status}</span></p>
+                                </div>
                             </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="card-flat" style={{ padding: '0.75rem' }}>
+                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Serviço</p>
+                                    <p style={{ fontSize: '0.9375rem', fontWeight: '700' }}>{selectedSessao.servico?.nome}</p>
+                                </div>
+                                <div className="card-flat" style={{ padding: '0.75rem' }}>
+                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Duração</p>
+                                    <p style={{ fontSize: '0.9375rem', fontWeight: '700' }}>{selectedSessao.servico?.duracao_minutos} min</p>
+                                </div>
+                                <div className="card-flat" style={{ padding: '0.75rem', gridColumn: 'span 2' }}>
+                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Data e Horário</p>
+                                    <p style={{ fontSize: '0.9375rem', fontWeight: '700' }}>
+                                        {new Date(selectedSessao.data_hora_inicio).toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' })}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                className="btn btn-primary"
+                                style={{ width: '100%', height: '3rem', marginTop: '1rem' }}
+                                onClick={() => router.push(`/dashboard/alunos/${selectedSessao.aluno_id}`)}
+                            >
+                                <Icons.Students size={18} style={{ marginRight: '0.5rem' }} />
+                                Ver Perfil do Aluno
+                            </button>
                         </div>
                     </div>
                 )}
             </Modal>
 
-            <ConfirmDialog isOpen={showConcluirDialog} onClose={() => setShowConcluirDialog(false)} onConfirm={handleConcluir} title="Concluir Sessão" message={`Marcar a sessão de ${selectedSessao?.aluno?.nome} como concluída?`} confirmText="Sim, Concluir" />
+            <ConfirmDialog
+                isOpen={showConcluirDialog}
+                onClose={() => setShowConcluirDialog(false)}
+                onConfirm={handleConcluir}
+                title="Concluir Sessão"
+                message={`Deseja marcar a aula de ${selectedSessao?.aluno?.nome} como concluída? Isso enviará uma notificação de confirmação.`}
+                confirmText="Sim, Concluir"
+            />
         </div>
     )
 }

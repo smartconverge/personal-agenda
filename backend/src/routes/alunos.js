@@ -91,7 +91,7 @@ router.get('/:id', authenticate, async (req, res) => {
  */
 router.post('/', authenticate, async (req, res) => {
     try {
-        const { nome, email, telefone_whatsapp, notificacoes_ativas } = req.body;
+        const { nome, email, telefone_whatsapp, notificacoes_ativas, objetivo, plano } = req.body;
 
         if (!nome || !telefone_whatsapp) {
             return res.status(400).json({
@@ -107,7 +107,9 @@ router.post('/', authenticate, async (req, res) => {
                 nome: nome.trim(),
                 email: email ? email.trim() : null,
                 telefone_whatsapp: telefone_whatsapp.trim(),
-                notificacoes_ativas: notificacoes_ativas || false
+                notificacoes_ativas: notificacoes_ativas || false,
+                objetivo: objetivo ? objetivo.trim() : null,
+                plano: plano || 'Basic'
             })
             .select()
             .single();
@@ -146,13 +148,15 @@ router.post('/', authenticate, async (req, res) => {
 router.put('/:id', authenticate, async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, email, telefone_whatsapp, notificacoes_ativas } = req.body;
+        const { nome, email, telefone_whatsapp, notificacoes_ativas, objetivo, plano } = req.body;
 
         const updateData = {};
         if (nome !== undefined) updateData.nome = nome.trim();
         if (email !== undefined) updateData.email = email ? email.trim() : null;
         if (telefone_whatsapp !== undefined) updateData.telefone_whatsapp = telefone_whatsapp.trim();
         if (notificacoes_ativas !== undefined) updateData.notificacoes_ativas = notificacoes_ativas;
+        if (objetivo !== undefined) updateData.objetivo = objetivo ? objetivo.trim() : null;
+        if (plano !== undefined) updateData.plano = plano;
 
         const { data, error } = await supabaseAdmin
             .from('alunos')

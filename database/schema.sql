@@ -40,6 +40,8 @@ CREATE TABLE alunos (
     nome TEXT NOT NULL,
     telefone_whatsapp TEXT NOT NULL,
     notificacoes_ativas BOOLEAN DEFAULT FALSE,
+    objetivo TEXT,
+    plano TEXT DEFAULT 'Basic',
     deleted_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import api from '@/lib/api'
+import { Icons } from '@/components/Icons'
 
 export default function DashboardPage() {
     const [stats, setStats] = useState(null)
@@ -112,21 +113,21 @@ export default function DashboardPage() {
             label: 'Alunos Ativos',
             value: stats?.totalAlunos || 0,
             change: '+2 este mês',
-            icon: '👥',
+            iconComponent: Icons.Students,
             color: 'var(--primary)'
         },
         {
             label: 'Sessões Hoje',
             value: stats?.sessoesHoje || 0,
             change: '+3 confirmadas',
-            icon: '📅',
+            iconComponent: Icons.Calendar,
             color: 'var(--info)'
         },
         {
             label: 'Receita Mensal',
             value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.faturamentoMensal || 0),
             change: '+12% vs mês anterior',
-            icon: '💰',
+            iconComponent: Icons.Money,
             color: 'var(--success)',
             highlight: true
         },
@@ -134,7 +135,7 @@ export default function DashboardPage() {
             label: 'Contratos Ativos',
             value: stats?.contratosAtivos || 0,
             change: '+2 em aprovação',
-            icon: '📝',
+            iconComponent: Icons.Contracts,
             color: 'var(--warning)'
         },
     ]
@@ -166,43 +167,50 @@ export default function DashboardPage() {
                 gap: '1.25rem',
                 marginBottom: '2rem'
             }}>
-                {statCards.map((stat, index) => (
-                    <div
-                        key={index}
-                        className="stat-card"
-                        style={{
-                            background: stat.highlight ? 'linear-gradient(135deg, var(--primary), var(--primary-light))' : 'var(--bg-secondary)',
-                            color: stat.highlight ? 'white' : 'var(--text-primary)'
-                        }}
-                    >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                            <div className="stat-icon" style={{
-                                background: stat.highlight
-                                    ? 'rgba(255, 255, 255, 0.2)'
-                                    : `linear-gradient(135deg, ${stat.color}15, ${stat.color}25)`
-                            }}>
-                                <span style={{ fontSize: '1.5rem' }}>{stat.icon}</span>
+                {statCards.map((stat, index) => {
+                    const IconComponent = stat.iconComponent
+
+                    return (
+                        <div
+                            key={index}
+                            className="stat-card"
+                            style={{
+                                background: stat.highlight ? 'linear-gradient(135deg, var(--primary), var(--primary-light))' : 'var(--bg-secondary)',
+                                color: stat.highlight ? 'white' : 'var(--text-primary)'
+                            }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                                <div className="stat-icon" style={{
+                                    background: stat.highlight
+                                        ? 'rgba(255, 255, 255, 0.2)'
+                                        : `linear-gradient(135deg, ${stat.color}15, ${stat.color}25)`
+                                }}>
+                                    <IconComponent
+                                        size={24}
+                                        color={stat.highlight ? 'white' : stat.color}
+                                    />
+                                </div>
+                                <span className="stat-change positive" style={{
+                                    color: stat.highlight ? 'rgba(255, 255, 255, 0.9)' : 'var(--success)',
+                                    fontSize: '0.7rem'
+                                }}>
+                                    {stat.change}
+                                </span>
                             </div>
-                            <span className="stat-change positive" style={{
-                                color: stat.highlight ? 'rgba(255, 255, 255, 0.9)' : 'var(--success)',
-                                fontSize: '0.7rem'
+                            <p className="stat-label" style={{
+                                color: stat.highlight ? 'rgba(255, 255, 255, 0.85)' : 'var(--text-secondary)',
+                                marginBottom: '0.5rem'
                             }}>
-                                {stat.change}
-                            </span>
+                                {stat.label}
+                            </p>
+                            <p className="stat-value" style={{
+                                color: stat.highlight ? 'white' : 'var(--text-primary)'
+                            }}>
+                                {stat.value}
+                            </p>
                         </div>
-                        <p className="stat-label" style={{
-                            color: stat.highlight ? 'rgba(255, 255, 255, 0.85)' : 'var(--text-secondary)',
-                            marginBottom: '0.5rem'
-                        }}>
-                            {stat.label}
-                        </p>
-                        <p className="stat-value" style={{
-                            color: stat.highlight ? 'white' : 'var(--text-primary)'
-                        }}>
-                            {stat.value}
-                        </p>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
 
             {/* Today's Sessions */}

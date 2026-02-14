@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ToastProvider } from '@/components/Toast'
+import { Icons } from '@/components/Icons'
 
 export default function DashboardLayout({ children }) {
     const router = useRouter()
@@ -32,12 +33,12 @@ export default function DashboardLayout({ children }) {
     }
 
     const menuItems = [
-        { href: '/dashboard', label: 'Dashboard', icon: '📊' },
-        { href: '/dashboard/alunos', label: 'Alunos', icon: '👥' },
-        { href: '/dashboard/meus-servicos', label: 'Serviços', icon: '💪' },
-        { href: '/dashboard/contratos', label: 'Contratos', icon: '📝' },
-        { href: '/dashboard/agenda', label: 'Agenda', icon: '📅' },
-        { href: '/dashboard/notificacoes', label: 'Notificações', icon: '🔔' },
+        { href: '/dashboard', label: 'Dashboard', icon: 'Dashboard' },
+        { href: '/dashboard/alunos', label: 'Alunos', icon: 'Students' },
+        { href: '/dashboard/meus-servicos', label: 'Serviços', icon: 'Services' },
+        { href: '/dashboard/contratos', label: 'Contratos', icon: 'Contracts' },
+        { href: '/dashboard/agenda', label: 'Agenda', icon: 'Calendar' },
+        { href: '/dashboard/notificacoes', label: 'Notificações', icon: 'Notifications' },
     ]
 
     if (!professor) {
@@ -106,30 +107,37 @@ export default function DashboardLayout({ children }) {
 
                     {/* Navigation */}
                     <nav style={{ padding: '1rem 0.75rem' }}>
-                        {menuItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.875rem',
-                                    padding: '0.75rem 1rem',
-                                    borderRadius: '0.625rem',
-                                    marginBottom: '0.25rem',
-                                    textDecoration: 'none',
-                                    color: pathname === item.href ? 'white' : 'var(--sidebar-text)',
-                                    backgroundColor: pathname === item.href ? 'var(--sidebar-accent)' : 'transparent',
-                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    cursor: 'pointer',
-                                    fontWeight: pathname === item.href ? '700' : '500',
-                                    fontSize: '0.875rem'
-                                }}
-                            >
-                                <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>{item.icon}</span>
-                                {sidebarOpen && <span>{item.label}</span>}
-                            </Link>
-                        ))}
+                        {menuItems.map((item) => {
+                            const IconComponent = Icons[item.icon]
+                            const isActive = pathname === item.href
+
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.875rem',
+                                        padding: '0.75rem 1rem',
+                                        borderRadius: '0.625rem',
+                                        marginBottom: '0.25rem',
+                                        textDecoration: 'none',
+                                        color: isActive ? 'white' : 'var(--sidebar-text)',
+                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : 'transparent',
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        cursor: 'pointer',
+                                        fontWeight: isActive ? '700' : '500',
+                                        fontSize: '0.875rem'
+                                    }}
+                                >
+                                    <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                                        <IconComponent size={20} color={isActive ? 'white' : 'var(--sidebar-text)'} />
+                                    </span>
+                                    {sidebarOpen && <span>{item.label}</span>}
+                                </Link>
+                            )
+                        })}
                     </nav>
 
                     {/* User Profile + Logout */}
@@ -195,7 +203,7 @@ export default function DashboardLayout({ children }) {
                                 gap: '0.5rem'
                             }}
                         >
-                            <span>🚪</span>
+                            <Icons.Logout size={18} color="#ff6b6b" />
                             {sidebarOpen && <span>Sair</span>}
                         </button>
                     </div>
@@ -228,10 +236,13 @@ export default function DashboardLayout({ children }) {
                                     style={{
                                         padding: '0.5rem',
                                         width: '2.5rem',
-                                        height: '2.5rem'
+                                        height: '2.5rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 >
-                                    ☰
+                                    <Icons.Menu size={20} />
                                 </button>
                                 <h1 className="mobile-only" style={{
                                     fontSize: '1.25rem',
@@ -270,16 +281,23 @@ export default function DashboardLayout({ children }) {
 
                 {/* Bottom Navigation - Mobile Only */}
                 <nav className="bottom-nav">
-                    {menuItems.slice(0, 5).map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={`bottom-nav-item ${pathname === item.href ? 'active' : ''}`}
-                        >
-                            <span className="bottom-nav-icon">{item.icon}</span>
-                            <span>{item.label}</span>
-                        </Link>
-                    ))}
+                    {menuItems.slice(0, 5).map((item) => {
+                        const IconComponent = Icons[item.icon]
+                        const isActive = pathname === item.href
+
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`bottom-nav-item ${isActive ? 'active' : ''}`}
+                            >
+                                <span className="bottom-nav-icon">
+                                    <IconComponent size={22} color={isActive ? 'var(--primary)' : 'var(--text-muted)'} />
+                                </span>
+                                <span>{item.label}</span>
+                            </Link>
+                        )
+                    })}
                 </nav>
             </div>
         </ToastProvider>

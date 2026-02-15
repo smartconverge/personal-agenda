@@ -57,8 +57,8 @@ export default function AlunosPage() {
             })
             if (response.data.success) {
                 setAlunos(response.data.data || [])
-                setTotalPages(response.data.meta.totalPages)
-                setTotalItems(response.data.meta.total)
+                setTotalPages(response.data.meta?.totalPages || 1)
+                setTotalItems(response.data.meta?.total || 0)
             }
         } catch (error) {
             console.error(error)

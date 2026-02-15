@@ -6,16 +6,22 @@ const { supabase } = require('../config/supabase');
  */
 async function authenticate(req, res, next) {
     try {
-        const authHeader = req.headers.authorization;
+        let token = req.cookies.token;
 
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        // Fallback para header Authorization (para manter compatibilidade ou mobile apps)
+        if (!token) {
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                token = authHeader.substring(7);
+            }
+        }
+
+        if (!token) {
             return res.status(401).json({
                 success: false,
                 error: 'Token de autenticação não fornecido'
             });
         }
-
-        const token = authHeader.substring(7);
 
         // Validar token com Supabase
         const { data: { user }, error } = await supabase.auth.getUser(token);

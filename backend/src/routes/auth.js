@@ -177,10 +177,17 @@ router.post('/login', async (req, res) => {
             });
         }
 
+        res.cookie('token', data.session.access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // true em produção (HTTPS)
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' para cross-site/subdomain
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
+        });
+
         res.json({
             success: true,
             data: {
-                token: data.session.access_token,
+                // token: data.session.access_token, // Opcional: não enviar token no body se for puramente cookie
                 professor
             }
         });
@@ -207,6 +214,8 @@ router.post('/logout', async (req, res) => {
                 error: 'Erro ao realizar logout'
             });
         }
+
+        res.clearCookie('token');
 
         res.json({
             success: true,

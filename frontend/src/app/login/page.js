@@ -31,11 +31,10 @@ export default function LoginPage() {
 
             // Tentativa resiliente de pegar o token
             // Pode estar em response.data.token (se backend mudou) ou response.data.data.token (padrão atual)
-            const token = response.data?.token || response.data?.data?.token;
             const professor = response.data?.professor || response.data?.data?.professor;
 
-            if (token) {
-                console.log('Login realizado com sucesso! Token encontrado.');
+            if (response.data.success) {
+                console.log('Login realizado com sucesso! Cookie HttpOnly definido.');
 
                 if (lembrar) {
                     localStorage.setItem('remember_email', formData.email)
@@ -43,7 +42,9 @@ export default function LoginPage() {
                     localStorage.removeItem('remember_email')
                 }
 
-                localStorage.setItem('token', token)
+                // Token agora é HttpOnly Cookie, não salvamos no localStorage
+                localStorage.removeItem('token'); // Limpar qualquer token antigo
+
                 if (professor) {
                     localStorage.setItem('professor', JSON.stringify(professor))
                 }
@@ -51,8 +52,8 @@ export default function LoginPage() {
                 console.log('Redirecionando para /dashboard...');
                 router.push('/dashboard')
             } else {
-                console.error('NÃO FOI POSSÍVEL ENCONTRAR O TOKEN NA RESPOSTA');
-                setError('Erro inesperado: token de acesso não recebido.');
+                console.error('Login falhou sem erro explícito');
+                setError('Erro inesperado ao realizar login.');
             }
         } catch (err) {
             console.error('Erro detalhado no login:', err.response || err);

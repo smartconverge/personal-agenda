@@ -17,29 +17,26 @@ export default function DashboardLayout({ children }) {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
         const professorData = localStorage.getItem('professor')
 
         // Carregar tema salvo
         const savedTheme = localStorage.getItem('theme') || 'light'
         document.documentElement.setAttribute('data-theme', savedTheme)
 
-        if (!token) {
-            router.push('/login')
-            return
-        }
-
+        // Se tiver dados em cache, exibe instantaneamente (Optimistic UI)
         if (professorData) {
             try {
                 const parsed = JSON.parse(professorData)
                 setProfessor(parsed)
-                loadProfile() // Carrega dados atualizados (plano/trial)
-                loadNotificacoesCount()
             } catch (error) {
                 console.error('Erro ao ler dados do professor:', error)
-                router.push('/login')
             }
         }
+
+        // Sempre busca dados atualizados e verifica sessão (Cookie)
+        // Se falhar com 401, o api.js redireciona para login
+        loadProfile()
+        loadNotificacoesCount()
 
         // Se estiver na página de notificações, marca como lidas
         if (pathname === '/dashboard/notificacoes') {
@@ -92,10 +89,16 @@ export default function DashboardLayout({ children }) {
         }
     }
 
-    const handleLogout = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('professor')
-        router.push('/login')
+    const handleLogout = async () => {
+        try {
+            await api.post('/auth/logout')
+        } catch (error) {
+            console.error('Erro ao fazer logout na API', error)
+        } finally {
+            localStorage.removeItem('token') // Limpeza redundante
+            localStorage.removeItem('professor')
+            router.push('/login')
+        }
     }
 
     const menuItems = [

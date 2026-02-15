@@ -5,19 +5,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.smartconverge.co
 
 const api = axios.create({
     baseURL: API_URL,
+    withCredentials: true, // Importante para enviar cookies
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Interceptor para adicionar token
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+// Interceptor para adicionar token (Removido - agora usa Cookies HttpOnly)
+// api.interceptors.request.use((config) => { ... });
 
 // Interceptor para tratar erros
 api.interceptors.response.use(

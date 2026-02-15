@@ -36,10 +36,14 @@ const { initCronJobs } = require('./jobs/cron');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
+app.set('trust proxy', 1); // Confia no proxy (necessário para cookies seguros e rate limit atrás de LB)
 const PORT = process.env.PORT || 3000;
+
+const cookieParser = require('cookie-parser');
 
 // Middleware
 app.use(helmet());
+app.use(cookieParser());
 
 // CORS restrito às origens permitidas
 const allowedOrigins = [

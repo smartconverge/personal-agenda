@@ -333,6 +333,38 @@ h6 {
   background-color: var(--primary-dark);
 }
 
+.btn-icon {
+  padding: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.btn-icon-danger {
+  background-color: hsla(0, 72%, 55%, 0.1);
+  color: var(--danger);
+  border: 1px solid transparent;
+}
+
+.btn-icon-danger:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-icon-primary {
+  background-color: hsla(155, 72%, 32%, 0.1);
+  color: var(--primary);
+}
+
+.btn-icon-primary:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
 /* Inputs Premium */
 .input {
   width: 100%;

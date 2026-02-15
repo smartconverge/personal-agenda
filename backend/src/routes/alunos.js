@@ -22,7 +22,7 @@ router.get('/', authenticate, async (req, res) => {
 
         let query = supabaseAdmin
             .from('alunos')
-            .select('*', { count: 'exact' })
+            .select('*, contratos(id, status, servico:servicos(nome))', { count: 'exact' })
             .eq('professor_id', req.professorId)
             .is('deleted_at', null)
             .order('nome', { ascending: true })

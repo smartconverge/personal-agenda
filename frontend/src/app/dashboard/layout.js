@@ -391,7 +391,11 @@ export default function DashboardLayout({ children }) {
                                     border: '1px solid rgba(255, 255, 255, 0.1)',
                                     flexShrink: 0
                                 }}>
-                                    {professor.nome.charAt(0)}
+                                    {professor.foto_url ? (
+                                        <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                    ) : (
+                                        professor.nome.charAt(0)
+                                    )}
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <p style={{
@@ -626,7 +630,11 @@ export default function DashboardLayout({ children }) {
                                     onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                                     onMouseLeave={(e) => e.currentTarget.style.transform = profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'}
                                 >
-                                    {professor.nome.charAt(0)}
+                                    {professor.foto_url ? (
+                                        <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                    ) : (
+                                        professor.nome.charAt(0)
+                                    )}
                                 </button>
 
                                 {/* Dropdown Menu */}
@@ -670,7 +678,11 @@ export default function DashboardLayout({ children }) {
                                                     background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
                                                     border: '1px solid var(--border)'
                                                 }}>
-                                                    {professor.nome.charAt(0)}
+                                                    {professor.foto_url ? (
+                                                        <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                                    ) : (
+                                                        professor.nome.charAt(0)
+                                                    )}
                                                 </div>
                                                 <div style={{ flex: 1, minWidth: 0 }}>
                                                     <p style={{

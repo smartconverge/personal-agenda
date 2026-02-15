@@ -121,7 +121,7 @@ router.post('/login', async (req, res) => {
         // Buscar dados do professor
         let { data: professor, error: professorError } = await supabaseAdmin
             .from('professores')
-            .select('id, nome, email, telefone_whatsapp')
+            .select('id, nome, email, telefone_whatsapp, foto_url, plano, plano_expira_em')
             .eq('id', data.user.id)
             .maybeSingle(); // Usa maybeSingle para não estourar erro se não achar
 

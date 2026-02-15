@@ -281,12 +281,11 @@ export default function ContratosPage() {
                             {/* Actions Group */}
                             <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
                                 <button
-                                    className="btn btn-secondary"
+                                    className="btn btn-icon btn-icon-primary"
                                     onClick={() => openEditModal(contrato)}
-                                    style={{ flex: 1, height: '2.5rem', fontSize: '0.8125rem' }}
+                                    title="Editar"
                                 >
-                                    <Icons.Edit size={14} />
-                                    <span>Editar</span>
+                                    <Icons.Edit size={18} />
                                 </button>
                                 <button
                                     className="btn btn-icon btn-icon-danger"
@@ -294,10 +293,9 @@ export default function ContratosPage() {
                                         setSelectedContrato(contrato);
                                         setShowDeleteDialog(true);
                                     }}
-                                    style={{ width: '2.5rem', height: '2.5rem', flexShrink: 0 }}
                                     title="Cancelar/Excluir"
                                 >
-                                    <Icons.Delete size={16} />
+                                    <Icons.Delete size={18} />
                                 </button>
                             </div>
                         </div>

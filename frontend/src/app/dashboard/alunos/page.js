@@ -259,9 +259,15 @@ export default function AlunosPage() {
                                 background: 'var(--bg-primary)',
                                 borderRadius: '0.75rem'
                             }}>
-                                <div style={{ gridColumn: 'span 2' }}>
+                                <div>
                                     <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Contato</p>
                                     <p style={{ fontSize: '0.8125rem', fontWeight: '600', color: 'var(--text-primary)' }}>{aluno.telefone_whatsapp}</p>
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Plano Atual</p>
+                                    <p style={{ fontSize: '0.8125rem', fontWeight: '800', color: 'var(--primary)' }}>
+                                        {aluno.contratos?.find(c => c.status === 'ativo')?.servico?.nome || '—'}
+                                    </p>
                                 </div>
                                 <div style={{ gridColumn: 'span 2' }}>
                                     <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Objetivo</p>
@@ -283,11 +289,10 @@ export default function AlunosPage() {
                                 </button>
                                 <button
                                     onClick={() => handleEdit(aluno)}
-                                    className="btn btn-secondary"
-                                    style={{ width: '2.5rem', height: '2.5rem', padding: 0 }}
+                                    className="btn btn-icon btn-icon-primary"
                                     title="Editar"
                                 >
-                                    <Icons.Edit size={16} />
+                                    <Icons.Edit size={18} />
                                 </button>
                             </div>
 

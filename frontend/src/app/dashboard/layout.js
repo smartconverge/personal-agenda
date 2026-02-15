@@ -135,7 +135,8 @@ export default function DashboardLayout({ children }) {
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     position: 'fixed',
                     height: '100vh',
-                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
                     zIndex: 40,
                     borderRight: '1px solid var(--sidebar-border)'
                 }}>
@@ -185,8 +186,14 @@ export default function DashboardLayout({ children }) {
                         )}
                     </div>
 
-                    {/* Main Navigation */}
-                    <nav style={{ padding: '1.5rem 0.75rem' }}>
+                    {/* Main Navigation - Scrollable Area */}
+                    <nav style={{
+                        padding: '1.5rem 0.75rem',
+                        flex: 1,
+                        overflowY: 'auto',
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: 'var(--border) transparent'
+                    }}>
                         {/* Section: MENU */}
                         {sidebarOpen && (
                             <p style={{
@@ -349,15 +356,13 @@ export default function DashboardLayout({ children }) {
                         })}
                     </nav>
 
-                    {/* User Profile + Logout */}
+                    {/* User Profile + Logout - Fixed at Bottom */}
                     <div style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
+                        marginTop: 'auto',
                         padding: '1rem',
                         borderTop: '1px solid var(--sidebar-border)',
-                        background: 'var(--sidebar-bg-dark)'
+                        background: 'var(--sidebar-bg-dark)',
+                        flexShrink: 0
                     }}>
                         {sidebarOpen && (
                             <Link

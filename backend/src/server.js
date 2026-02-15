@@ -27,6 +27,8 @@ const notificacoesRoutes = require('./routes/notificacoes');
 console.log('✅ Notificações carregadas');
 const webhookRoutes = require('./routes/webhook');
 console.log('✅ Webhook carregado');
+const perfilRoutes = require('./routes/perfil');
+console.log('✅ Perfil carregado');
 
 const { initCronJobs } = require('./jobs/cron');
 const { errorHandler } = require('./middleware/errorHandler');
@@ -58,6 +60,7 @@ app.use('/contratos', contratosRoutes);
 app.use('/sessoes', sessoesRoutes);
 app.use('/notificacoes', notificacoesRoutes);
 app.use('/webhook', webhookRoutes);
+app.use('/perfil', perfilRoutes);
 
 // Error handler
 app.use(errorHandler);

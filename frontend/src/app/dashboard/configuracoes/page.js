@@ -127,7 +127,7 @@ export default function ConfiguracoesPage() {
                                 required
                             />
                         </div>
-                        <button type="submit" className="btn-secondary" disabled={loading}>
+                        <button type="submit" className="btn btn-primary" disabled={loading}>
                             {loading ? 'Processando...' : 'Atualizar Senha'}
                         </button>
                     </form>
@@ -144,7 +144,7 @@ export default function ConfiguracoesPage() {
                                 <strong>Tema do Sistema</strong>
                                 <p>Alternar entre modo claro e escuro.</p>
                             </div>
-                            <button onClick={toggleTema} className="btn-theme-toggle">
+                            <button onClick={toggleTema} className="btn btn-secondary">
                                 {preferencias.tema === 'light' ? (
                                     <><Icons.Dashboard size={16} /> Modo Escuro</>
                                 ) : (
@@ -174,7 +174,7 @@ export default function ConfiguracoesPage() {
                 <div className="config-card card danger-zone">
                     <h3 className="card-title">Gestão de Dados</h3>
                     <p className="danger-text">Ao excluir sua conta, você perderá acesso a todos os seus alunos, contratos, serviços e histórico de agendamentos. Esta ação não pode ser desfeita.</p>
-                    <button onClick={handleExcluirConta} className="btn-danger">
+                    <button onClick={handleExcluirConta} className="btn btn-danger">
                         Excluir Minha Conta
                     </button>
                 </div>
@@ -249,22 +249,6 @@ export default function ConfiguracoesPage() {
                     color: var(--text-primary);
                 }
 
-                .btn-secondary {
-                    padding: 0.75rem 1.5rem;
-                    background: var(--bg-tertiary);
-                    border: 1px solid var(--border);
-                    border-radius: 0.75rem;
-                    font-weight: 700;
-                    color: var(--text-primary);
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-
-                .btn-secondary:hover:not(:disabled) {
-                    background: var(--border);
-                    transform: translateY(-1px);
-                }
-
                 .settings-list {
                     display: flex;
                     flex-direction: column;
@@ -296,20 +280,6 @@ export default function ConfiguracoesPage() {
                     margin: 0;
                 }
 
-                .btn-theme-toggle {
-                    padding: 0.5rem 1rem;
-                    background: var(--bg-primary);
-                    border: 1px solid var(--border);
-                    border-radius: 2rem;
-                    font-size: 0.8125rem;
-                    font-weight: 600;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    color: var(--text-primary);
-                }
-
                 .danger-zone {
                     border-color: rgba(239, 68, 68, 0.2);
                     background: rgba(239, 68, 68, 0.02);
@@ -319,22 +289,6 @@ export default function ConfiguracoesPage() {
                     font-size: 0.875rem;
                     color: var(--text-muted);
                     margin-bottom: 1.5rem;
-                }
-
-                .btn-danger {
-                    padding: 0.75rem 1.5rem;
-                    background: rgba(239, 68, 68, 0.1);
-                    color: #ef4444;
-                    border: 1px solid rgba(239, 68, 68, 0.2);
-                    border-radius: 0.75rem;
-                    font-weight: 700;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-
-                .btn-danger:hover {
-                    background: #ef4444;
-                    color: white;
                 }
 
                 /* Switch Styles */

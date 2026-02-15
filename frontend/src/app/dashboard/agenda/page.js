@@ -195,7 +195,6 @@ export default function AgendaPage() {
                 <button
                     className="btn btn-primary"
                     onClick={() => { resetForm(); setShowModal(true); }}
-                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
                 >
                     <Icons.Plus size={18} />
                     <span>Nova Sessão</span>
@@ -208,17 +207,15 @@ export default function AgendaPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '0.4rem' }}>
                             <button
-                                className="btn btn-primary"
+                                className="btn-icon btn-icon-primary"
                                 onClick={() => navigateDate(-1)}
-                                style={{ width: '2.5rem', height: '2.5rem', padding: 0 }}
                                 title="Anterior"
                             >
                                 <Icons.ChevronLeft size={20} />
                             </button>
                             <button
-                                className="btn btn-primary"
+                                className="btn-icon btn-icon-primary"
                                 onClick={() => navigateDate(1)}
-                                style={{ width: '2.5rem', height: '2.5rem', padding: 0 }}
                                 title="Próximo"
                             >
                                 <Icons.ChevronRight size={20} />
@@ -292,7 +289,6 @@ export default function AgendaPage() {
                         </div>
                         <button
                             className="btn btn-secondary"
-                            style={{ height: '2.5rem', padding: '0 1.25rem', fontSize: '0.8125rem', fontWeight: '800' }}
                             onClick={() => setCurrentDate(new Date())}
                         >
                             Ir para Hoje
@@ -649,7 +645,7 @@ export default function AgendaPage() {
                     <div style={{ marginBottom: '2rem', padding: '1.25rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                             <h3 style={{ fontSize: '1rem', fontWeight: '800', margin: 0 }}>Horários da Sessão</h3>
-                            <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto' }} onClick={addHorario}>+ Add Horário</button>
+                            <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }} onClick={addHorario}>+ Add Horário</button>
                         </div>
                         {formData.horarios.map((horario, index) => (
                             <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: index < formData.horarios.length - 1 ? '1px dashed var(--border)' : 'none' }}>
@@ -708,8 +704,8 @@ export default function AgendaPage() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} style={{ padding: '0.625rem 1.5rem' }}>Cancelar</button>
-                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2.5rem' }}>Agendar Sessões</button>
+                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
+                        <button type="submit" className="btn btn-primary">Agendar Sessões</button>
                     </div>
                 </form>
             </Modal>

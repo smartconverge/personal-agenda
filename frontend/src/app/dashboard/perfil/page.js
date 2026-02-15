@@ -137,7 +137,7 @@ export default function PerfilPage() {
                                 accept="image/*"
                                 style={{ display: 'none' }}
                             />
-                            <button type="button" className="btn-change-photo" onClick={handlePhotoClick} disabled={loading}>
+                            <button type="button" className="btn btn-secondary" onClick={handlePhotoClick} disabled={loading}>
                                 <Icons.Edit size={16} /> Alterar Foto
                             </button>
                         </div>
@@ -233,7 +233,7 @@ export default function PerfilPage() {
                 </div>
 
                 <div className="form-actions">
-                    <button type="submit" className="btn-primary" disabled={loading}>
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
                         {loading ? 'Salvando...' : 'Salvar Alterações'}
                     </button>
                 </div>
@@ -313,23 +313,10 @@ export default function PerfilPage() {
                     object-fit: cover;
                 }
 
-                .btn-change-photo {
-                    padding: 0.5rem 1rem;
-                    background: var(--bg-tertiary);
-                    border: 1px solid var(--border);
-                    border-radius: 0.5rem;
-                    font-size: 0.8125rem;
-                    font-weight: 600;
-                    color: var(--text-primary);
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    transition: all 0.2s;
-                }
-
-                .btn-change-photo:hover {
-                    background: var(--border);
+                .avatar-large img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
                 }
 
                 .plan-badge-inline {
@@ -417,27 +404,6 @@ export default function PerfilPage() {
                     display: flex;
                     justify-content: flex-end;
                     gap: 1rem;
-                }
-
-                .btn-primary {
-                    padding: 0.75rem 2rem;
-                    background: var(--primary);
-                    color: white;
-                    border: none;
-                    border-radius: 0.75rem;
-                    font-weight: 700;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-
-                .btn-primary:hover {
-                    filter: brightness(1.1);
-                    transform: translateY(-1px);
-                }
-
-                .btn-primary:disabled {
-                    opacity: 0.7;
-                    cursor: not-allowed;
                 }
 
                 @media (max-width: 768px) {

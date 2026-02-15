@@ -129,7 +129,6 @@ export default function MeusServicosPage() {
                 <button
                     className="btn btn-primary"
                     onClick={openNewModal}
-                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
                 >
                     <Icons.Plus size={18} />
                     <span>Novo Serviço</span>
@@ -254,22 +253,8 @@ export default function MeusServicosPage() {
                                 </div>
                                 <button
                                     onClick={() => openEditModal(servico)}
-                                    style={{
-                                        background: 'none',
-                                        border: 'none',
-                                        color: 'black',
-                                        fontSize: '0.8125rem',
-                                        fontWeight: '700',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.4rem',
-                                        padding: '0.5rem',
-                                        borderRadius: '0.5rem',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
-                                    onMouseLeave={(e) => e.currentTarget.style.color = 'black'}
+                                    className="btn btn-secondary"
+                                    style={{ fontSize: '0.8125rem', padding: '0.5rem 1rem' }}
                                 >
                                     Detalhes
                                     <Icons.RightArrow size={14} />
@@ -287,22 +272,11 @@ export default function MeusServicosPage() {
                                     position: 'absolute',
                                     top: '0.75rem',
                                     right: '0.75rem',
-                                    width: '2rem',
-                                    height: '2rem',
-                                    borderRadius: '50%',
-                                    background: 'transparent',
-                                    border: 'none',
-                                    color: 'var(--danger)',
-                                    opacity: 0,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
+                                    opacity: 0, // Mantendo opacidade para hover do card
                                 }}
-                                className="delete-btn-hover"
+                                className="btn-icon btn-icon-danger delete-btn-hover"
                             >
-                                <Icons.Delete size={16} />
+                                <Icons.Delete size={18} />
                             </button>
                         </div>
                     ))
@@ -384,10 +358,10 @@ export default function MeusServicosPage() {
                     )}
 
                     <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
-                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} style={{ padding: '0.625rem 1.25rem' }}>
+                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
                             Cancelar
                         </button>
-                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>
+                        <button type="submit" className="btn btn-primary">
                             {selectedServico ? 'Salvar' : 'Criar Serviço'}
                         </button>
                     </div>

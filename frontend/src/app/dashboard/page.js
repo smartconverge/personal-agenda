@@ -254,7 +254,7 @@ export default function DashboardPage() {
                             {sessoes.length} {sessoes.length === 1 ? 'sessão agendada' : 'sessões agendadas'} para hoje
                         </p>
                     </div>
-                    <Link href="/dashboard/agenda" className="btn btn-primary" style={{ height: '2.75rem', padding: '0 1.25rem' }}>
+                    <Link href="/dashboard/agenda" className="btn btn-primary">
                         <Icons.Calendar size={18} />
                         <span>Ver Agenda Completa</span>
                     </Link>

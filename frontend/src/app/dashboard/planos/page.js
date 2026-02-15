@@ -102,7 +102,7 @@ export default function PlanosPage() {
                             <ul className="feature-list">
                                 {plano.features.map((feature, idx) => (
                                     <li key={idx} className="feature-item">
-                                        <Icons.Dashboard size={16} className="feature-icon" />
+                                        <Icons.CheckCircle size={16} className="feature-icon" />
                                         <span>{feature}</span>
                                     </li>
                                 ))}
@@ -110,7 +110,7 @@ export default function PlanosPage() {
                         </div>
 
                         <div className="plano-footer">
-                            <button className={`btn-plano ${plano.current ? 'current' : ''} ${plano.popular ? 'btn-popular' : ''}`}>
+                            <button className={`btn ${plano.current ? 'btn-secondary' : (plano.popular ? 'btn-primary' : 'btn-secondary')} ${plano.current ? 'disabled' : ''}`} style={{ width: '100%', height: '3.5rem', fontSize: '1rem', borderRadius: '0.75rem' }}>
                                 {plano.current ? 'Seu Plano Atual' : 'Assinar Agora'}
                             </button>
                             <span className="plano-limit-info">{plano.limit}</span>

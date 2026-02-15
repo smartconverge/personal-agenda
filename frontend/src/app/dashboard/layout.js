@@ -361,7 +361,7 @@ export default function DashboardLayout({ children }) {
                     }}>
                         {sidebarOpen && (
                             <Link
-                                href="/dashboard/configuracoes"
+                                href="/dashboard/perfil"
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -369,19 +369,19 @@ export default function DashboardLayout({ children }) {
                                     marginBottom: '1rem',
                                     padding: '0.75rem',
                                     borderRadius: '0.75rem',
-                                    background: pathname === '/dashboard/configuracoes' ? 'var(--sidebar-accent)' : 'rgba(255, 255, 255, 0.04)',
+                                    background: pathname === '/dashboard/perfil' ? 'var(--sidebar-accent)' : 'rgba(255, 255, 255, 0.04)',
                                     border: '1px solid rgba(255, 255, 255, 0.05)',
                                     textDecoration: 'none',
                                     transition: 'all 0.2s',
                                     cursor: 'pointer'
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (pathname !== '/dashboard/configuracoes') {
+                                    if (pathname !== '/dashboard/perfil') {
                                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
                                     }
                                 }}
                                 onMouseLeave={(e) => {
-                                    if (pathname !== '/dashboard/configuracoes') {
+                                    if (pathname !== '/dashboard/perfil') {
                                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'
                                     }
                                 }}
@@ -566,7 +566,7 @@ export default function DashboardLayout({ children }) {
                                         Gerencie seus alunos cadastrados e seus progressos.
                                     </p>
                                 )}
-                                {pathname.includes('/servicos') && (
+                                {pathname.includes('servicos') && (
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
                                         Configure suas modalidades e durações de treino.
                                     </p>

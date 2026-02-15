@@ -6,6 +6,8 @@ import api from '@/lib/api'
 import { useToast } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
 
+import Pagination from '@/components/Pagination'
+
 export default function AlunosPage() {
     const router = useRouter()
     const { showToast } = useToast()
@@ -22,14 +24,42 @@ export default function AlunosPage() {
     })
     const [searchTerm, setSearchTerm] = useState('')
 
+    // Pagination Params
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [totalItems, setTotalItems] = useState(0)
+    const itemsPerPage = 9 // Grid 3x3
+
     useEffect(() => {
         loadAlunos()
-    }, [])
+    }, [page]) // Recarregar quando mudar página
+
+    // Debounce search ou carregar ao clicar no botão de busca?
+    // Para simplificar, vamos carregar ao dar Enter ou clicar no botão, 
+    // ou usar um useEffect com debounce. Aqui usaremos useEffect no searchTerm com delay
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (page === 1) loadAlunos()
+            else setPage(1) // Voltar para pág 1 dispara o outro effect
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [searchTerm])
 
     const loadAlunos = async () => {
+        setLoading(true)
         try {
-            const response = await api.get('/alunos')
-            setAlunos(response.data.data || [])
+            const response = await api.get('/alunos', {
+                params: {
+                    page,
+                    limit: itemsPerPage,
+                    nome: searchTerm
+                }
+            })
+            if (response.data.success) {
+                setAlunos(response.data.data || [])
+                setTotalPages(response.data.meta.totalPages)
+                setTotalItems(response.data.meta.total)
+            }
         } catch (error) {
             console.error(error)
             showToast('Erro ao carregar alunos', 'error')
@@ -92,12 +122,7 @@ export default function AlunosPage() {
         return name.substring(0, 2).toUpperCase()
     }
 
-    const filteredAlunos = alunos.filter(aluno =>
-        aluno.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (aluno.email && aluno.email.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
-
-    if (loading) {
+    if (loading && alunos.length === 0) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
                 <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
@@ -131,7 +156,7 @@ export default function AlunosPage() {
                     </div>
                     <input
                         type="text"
-                        placeholder="Buscar por nome ou email..."
+                        placeholder="Buscar por nome..."
                         className="input"
                         style={{ paddingLeft: '3rem', height: '2.75rem', borderRadius: '0.75rem' }}
                         value={searchTerm}
@@ -159,7 +184,7 @@ export default function AlunosPage() {
                 gap: '1.5rem',
                 padding: '0.5rem'
             }}>
-                {filteredAlunos.length === 0 ? (
+                {alunos.length === 0 ? (
                     <div className="card-flat" style={{ textAlign: 'center', padding: '5rem 2rem', gridColumn: '1 / -1' }}>
                         <div style={{
                             width: '4rem',
@@ -394,6 +419,16 @@ export default function AlunosPage() {
                     </div>
                 </div>
             )}
-        </div>
+
+            </div>
+
+            <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={(newPage) => setPage(newPage)}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+            />
+        </div >
     )
 }

@@ -15,13 +15,18 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get('/', authenticate, async (req, res) => {
     try {
         const { nome, notificacoes_ativas } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
 
         let query = supabaseAdmin
             .from('alunos')
-            .select('*')
+            .select('*', { count: 'exact' })
             .eq('professor_id', req.professorId)
             .is('deleted_at', null)
-            .order('nome', { ascending: true });
+            .order('nome', { ascending: true })
+            .range(from, to);
 
         if (nome) {
             query = query.ilike('nome', `%${nome}%`);
@@ -31,13 +36,19 @@ router.get('/', authenticate, async (req, res) => {
             query = query.eq('notificacoes_ativas', notificacoes_ativas === 'true');
         }
 
-        const { data, error } = await query;
+        const { data, count, error } = await query;
 
         if (error) throw error;
 
         res.json({
             success: true,
-            data
+            data,
+            meta: {
+                page,
+                limit,
+                total: count,
+                totalPages: Math.ceil(count / limit)
+            }
         });
     } catch (error) {
         console.error('Erro ao listar alunos:', error);

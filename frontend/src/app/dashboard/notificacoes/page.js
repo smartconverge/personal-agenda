@@ -3,19 +3,36 @@
 import { useEffect, useState } from 'react'
 import api from '@/lib/api'
 import { Icons } from '@/components/Icons'
+import Pagination from '@/components/Pagination'
 
 export default function NotificacoesPage() {
     const [notificacoes, setNotificacoes] = useState([])
     const [loading, setLoading] = useState(true)
 
+    // Pagination Params
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [totalItems, setTotalItems] = useState(0)
+    const itemsPerPage = 20
+
     useEffect(() => {
         loadNotificacoes()
-    }, [])
+    }, [page])
 
     const loadNotificacoes = async () => {
+        setLoading(true)
         try {
-            const response = await api.get('/notificacoes')
-            setNotificacoes(response.data.data || [])
+            const response = await api.get('/notificacoes', {
+                params: {
+                    page,
+                    limit: itemsPerPage
+                }
+            })
+            if (response.data.success) {
+                setNotificacoes(response.data.data || [])
+                setTotalPages(response.data.meta.totalPages)
+                setTotalItems(response.data.meta.total)
+            }
         } catch (error) {
             console.error('Erro ao carregar notificações:', error)
         } finally {
@@ -60,7 +77,7 @@ export default function NotificacoesPage() {
         }
     }
 
-    if (loading) {
+    if (loading && notificacoes.length === 0) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
                 <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
@@ -73,7 +90,7 @@ export default function NotificacoesPage() {
             <div className="card-premium" style={{ padding: '0', overflow: 'hidden', background: 'var(--bg-secondary)' }}>
                 <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
                     <span className="badge badge-secondary">
-                        {notificacoes.length} total
+                        {totalItems} total
                     </span>
                 </div>
 
@@ -159,6 +176,14 @@ export default function NotificacoesPage() {
                     </div>
                 )}
             </div>
+
+            <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={(newPage) => setPage(newPage)}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+            />
         </div>
     )
 }

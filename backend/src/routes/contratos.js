@@ -10,6 +10,10 @@ const { supabaseAdmin } = require('../config/supabase');
 router.get('/', authenticate, async (req, res) => {
     try {
         const { aluno_id, status } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
 
         let query = supabaseAdmin
             .from('contratos')
@@ -17,10 +21,11 @@ router.get('/', authenticate, async (req, res) => {
         *,
         aluno:alunos(id, nome, telefone_whatsapp),
         servico:servicos(id, nome, tipo, duracao_minutos)
-      `)
+      `, { count: 'exact' })
             .eq('professor_id', req.professorId)
             .is('deleted_at', null)
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false })
+            .range(from, to);
 
         if (aluno_id) {
             query = query.eq('aluno_id', aluno_id);
@@ -30,13 +35,19 @@ router.get('/', authenticate, async (req, res) => {
             query = query.eq('status', status);
         }
 
-        const { data, error } = await query;
+        const { data, count, error } = await query;
 
         if (error) throw error;
 
         res.json({
             success: true,
-            data
+            data,
+            meta: {
+                page,
+                limit,
+                total: count,
+                totalPages: Math.ceil(count / limit)
+            }
         });
     } catch (error) {
         console.error('Erro ao listar contratos:', error);

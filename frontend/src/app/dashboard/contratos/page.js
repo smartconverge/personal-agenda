@@ -1,10 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import api from '@/lib/api'
-import Modal from '@/components/Modal'
-import { useToast } from '@/components/Toast'
-import { Icons } from '@/components/Icons'
+import Pagination from '@/components/Pagination'
 
 export default function ContratosPage() {
     const { showToast } = useToast()
@@ -23,22 +19,50 @@ export default function ContratosPage() {
     })
     const [filterStatus, setFilterStatus] = useState('todos')
 
+    // Pagination
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [totalItems, setTotalItems] = useState(0)
+    const itemsPerPage = 10
+
     useEffect(() => {
-        loadData()
+        loadDependencies()
     }, [])
 
-    const loadData = async () => {
+    useEffect(() => {
+        loadContratos()
+    }, [page, filterStatus])
+
+    const loadDependencies = async () => {
         try {
-            const [contratosRes, alunosRes, servicosRes] = await Promise.all([
-                api.get('/contratos'),
-                api.get('/alunos'),
+            const [alunosRes, servicosRes] = await Promise.all([
+                api.get('/alunos?limit=1000'), // Carregar todos para o select
                 api.get('/servicos')
             ])
-            setContratos(contratosRes.data.data)
             setAlunos(alunosRes.data.data)
             setServicos(servicosRes.data.data)
         } catch (error) {
-            showToast('Erro ao carregar dados', 'error')
+            console.error('Erro ao carregar dependências', error)
+        }
+    }
+
+    const loadContratos = async () => {
+        setLoading(true)
+        try {
+            const response = await api.get('/contratos', {
+                params: {
+                    page,
+                    limit: itemsPerPage,
+                    status: filterStatus === 'todos' ? undefined : filterStatus
+                }
+            })
+            if (response.data.success) {
+                setContratos(response.data.data || [])
+                setTotalPages(response.data.meta.totalPages)
+                setTotalItems(response.data.meta.total)
+            }
+        } catch (error) {
+            showToast('Erro ao carregar contratos', 'error')
         } finally {
             setLoading(false)
         }
@@ -56,7 +80,7 @@ export default function ContratosPage() {
             }
             setShowModal(false)
             resetForm()
-            loadData()
+            loadContratos()
         } catch (error) {
             showToast(error.response?.data?.error || 'Erro ao salvar contrato', 'error')
         }

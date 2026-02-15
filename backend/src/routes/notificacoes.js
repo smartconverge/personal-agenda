@@ -10,13 +10,17 @@ const { supabaseAdmin } = require('../config/supabase');
 router.get('/', authenticate, async (req, res) => {
     try {
         const { tipo, status } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
 
         let query = supabaseAdmin
             .from('notification_log')
-            .select('*')
+            .select('*', { count: 'exact' })
             .eq('professor_id', req.professorId)
             .order('created_at', { ascending: false })
-            .limit(100);
+            .range(from, to);
 
         if (tipo) {
             query = query.eq('tipo', tipo);
@@ -26,13 +30,19 @@ router.get('/', authenticate, async (req, res) => {
             query = query.eq('status', status);
         }
 
-        const { data, error } = await query;
+        const { data, count, error } = await query;
 
         if (error) throw error;
 
         res.json({
             success: true,
-            data
+            data,
+            meta: {
+                page,
+                limit,
+                total: count,
+                totalPages: Math.ceil(count / limit)
+            }
         });
     } catch (error) {
         console.error('Erro ao listar notificações:', error);

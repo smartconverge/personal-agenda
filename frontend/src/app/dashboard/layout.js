@@ -456,7 +456,7 @@ export default function DashboardLayout({ children }) {
                         }}>
                             <Icons.Dashboard size={14} />
                             <span>
-                                Você esta usando o plano <strong>{professor.plano} (Degustação)</strong>.
+                                Você esta usando o plano <strong>STARTER (Degustação)</strong>.
                                 Restam <strong>{Math.ceil((new Date(professor.plano_expira_em) - new Date()) / (1000 * 60 * 60 * 24))} dias</strong> de acesso total.
                             </span>
                             <Link href="/dashboard/planos" style={{

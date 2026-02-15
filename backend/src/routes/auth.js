@@ -51,7 +51,7 @@ router.post('/register', async (req, res) => {
                     nome,
                     email,
                     telefone_whatsapp,
-                    plano: 'PRO', // Inicia com PRO (Trial)
+                    plano: 'STARTER', // Novo Trial focado no plano STARTER
                     plano_expira_em: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
                     created_at: new Date()
                 }
@@ -136,7 +136,7 @@ router.post('/login', async (req, res) => {
                     nome: data.user.user_metadata?.nome || 'Professor',
                     email: data.user.email,
                     telefone_whatsapp: '', // Inicializa vazio
-                    plano: 'PRO', // Inicia com PRO (Trial)
+                    plano: 'STARTER', // Novo Trial focado no plano STARTER
                     plano_expira_em: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
                     created_at: new Date()
                 }])
@@ -158,7 +158,7 @@ router.post('/login', async (req, res) => {
                 const { data: updatedProfessor, error: updateError } = await supabaseAdmin
                     .from('professores')
                     .update({
-                        plano: 'PRO',
+                        plano: 'STARTER',
                         plano_expira_em: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
                     })
                     .eq('id', professor.id)

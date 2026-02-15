@@ -29,40 +29,15 @@ const planGuard = (feature) => {
             const planoAtivo = (expiraEm && expiraEm > hoje) ? professor.plano : 'STARTER';
 
             // 3. Validação de limites específicos
-            if (feature === 'create_aluno') {
-                if (planoAtivo === 'STARTER') {
-                    // Contar alunos ativos do professor
-                    const { count, error: countError } = await supabaseAdmin
-                        .from('alunos')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('professor_id', req.professorId)
-                        .is('deleted_at', null);
+            // Conforme nova estratégia: STARTER tem alunos ilimitados.
+            // Bloqueios futuros (Notificações para Alunos e Financeiro) serão adicionados aqui.
 
-                    if (countError) throw countError;
-
-                    if (count >= 5) {
-                        return res.status(403).json({
-                            success: false,
-                            error: 'Limite de 5 alunos atingido no plano STARTER. Faça upgrade para continuar cadastrando.'
-                        });
-                    }
-                } else if (planoAtivo === 'PRO') {
-                    const { count, error: countError } = await supabaseAdmin
-                        .from('alunos')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('professor_id', req.professorId)
-                        .is('deleted_at', null);
-
-                    if (countError) throw countError;
-
-                    if (count >= 20) {
-                        return res.status(403).json({
-                            success: false,
-                            error: 'Limite de 20 alunos atingido no plano PRO. Faça upgrade para PREMIUM para alunos ilimitados.'
-                        });
-                    }
-                }
-                // PREMIUM é ilimitado
+            if (feature === 'agenda_recorrente') {
+                // STARTER tem agenda completa (incluindo conflitos), mas 
+                // decidimos manter recorrencia bloqueada ou liberada? 
+                // A proposta diz "Agenda completa". Vou liberar.
+                // Mas se quiser manter algum diferencial para o PRO, 
+                // podemos bloquear notificações automáticas.
             }
 
             if (feature === 'agenda_recorrente') {

@@ -22,55 +22,60 @@ export default function PlanosPage() {
     const planos = [
         {
             nome: 'STARTER',
-            preco: 'Grátis',
-            descricao: 'Ideal para quem está iniciando sua jornada como Personal Trainer.',
-            features: [
-                'Até 5 alunos ativos',
-                'Agenda básica',
-                'Gestão de serviços',
-                'Notificações WhatsApp (Limitadas)',
-                'Suporte via e-mail'
-            ],
-            limit: 'Limite de 5 alunos',
-            button: 'Começar Agora',
-            current: isCurrentPlan('STARTER'),
-            popular: false
-        },
-        {
-            nome: 'PRO',
-            preco: 'R$ 49,90',
+            preco: 'R$ 29,90',
             period: '/mês',
-            descricao: 'A escolha ideal para quem quer escalar seus atendimentos.',
+            descricao: 'O Essencial para Organizar sua Agenda e focar no atendimento.',
             features: [
-                'Até 20 alunos ativos',
-                'Agenda avançada (Recorrência)',
-                'Fichas de treino ilimitadas',
-                'Notificações automáticas ilimitadas',
-                'Relatórios de faturamento',
-                'Suporte prioritário'
+                'Agenda completa (bloqueio de conflitos)',
+                'Cadastro ilimitado de alunos',
+                'Cadastro de serviços (presencial/online)',
+                'Dashboard básico de visão geral',
+                'Importação de planilhas',
+                'Gestão de contratos simples',
+                'Notificações para o PROFESSOR (WhatsApp)'
             ],
-            limit: 'Limite de 20 alunos',
-            button: 'Mudar para Pro',
-            current: isCurrentPlan('PRO'),
+            limit: 'Ilimitado',
+            button: 'Assinar Agora',
+            current: isCurrentPlan('STARTER'),
             popular: true
         },
         {
-            nome: 'PREMIUM',
-            preco: 'R$ 89,90',
+            nome: 'PRO',
+            preco: 'R$ 59,90',
             period: '/mês',
-            descricao: 'Gestão profissional completa para alta performance.',
+            descricao: 'Automação Completa + Gestão Financeira (Em Breve).',
             features: [
-                'Alunos ilimitados',
-                'Consultoria via Chat IA (Beta)',
-                'Gestão Multi-unidade',
-                'Análise de performance com IA',
-                'Personalização completa de marca',
-                'Acesso antecipado a novas features'
+                'Tudo do STARTER',
+                'Lembretes automáticos para ALUNOS',
+                'Controle de mensalidades/pagamentos',
+                'Dashboard financeiro e inadimplência',
+                'Envio de links de pagamento (Pix/PicPay)',
+                'Relatórios mensais em PDF'
             ],
-            limit: 'Sem limites',
-            button: 'Seja Premium',
-            current: isCurrentPlan('PREMIUM'),
-            popular: false
+            limit: 'Em Breve',
+            button: 'Em Breve',
+            current: false,
+            popular: false,
+            disabled: true
+        },
+        {
+            nome: 'PREMIUM',
+            preco: 'R$ 99,90',
+            period: '/mês',
+            descricao: 'Inteligência Artificial + Recursos Avançados (Em Breve).',
+            features: [
+                'Tudo do PRO',
+                'IA para agendamento via WhatsApp',
+                'Sistema de Fichas de Treino nativo',
+                'Avaliação física e fotos de progresso',
+                'App mobile nativo (iOS/Android)',
+                'Whitelabel (sua marca)'
+            ],
+            limit: 'Em Breve',
+            button: 'Em Breve',
+            current: false,
+            popular: false,
+            disabled: true
         }
     ]
 

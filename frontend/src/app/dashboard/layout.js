@@ -511,7 +511,7 @@ export default function DashboardLayout({ children }) {
                             <button
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
                                 style={{
-                                    padding: '0.5rem',
+                                    padding: '0.55rem',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -520,10 +520,18 @@ export default function DashboardLayout({ children }) {
                                     cursor: 'pointer',
                                     color: 'var(--text-secondary)',
                                     borderRadius: '0.5rem',
-                                    transition: 'all 0.2s'
+                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
+                                    e.currentTarget.style.boxShadow = 'var(--shadow)'
+                                    e.currentTarget.style.transform = 'translateY(-1px)'
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                    e.currentTarget.style.boxShadow = 'none'
+                                    e.currentTarget.style.transform = 'translateY(0)'
+                                }}
                                 className="desktop-only"
                             >
                                 <Icons.SidebarToggle size={20} />
@@ -605,16 +613,41 @@ export default function DashboardLayout({ children }) {
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                            <Link href="/dashboard/notificacoes" onClick={() => {
-                                localStorage.setItem('last_notifications_view', Date.now().toString())
-                                setNotificacoesCount(0)
-                            }} style={{ position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+                            <Link
+                                href="/dashboard/notificacoes"
+                                onClick={() => {
+                                    localStorage.setItem('last_notifications_view', Date.now().toString())
+                                    setNotificacoesCount(0)
+                                }}
+                                style={{
+                                    position: 'relative',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    textDecoration: 'none',
+                                    padding: '0.625rem',
+                                    borderRadius: '0.75rem',
+                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    background: 'transparent'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'var(--bg-tertiary)'
+                                    e.currentTarget.style.boxShadow = 'var(--shadow-sm)'
+                                    e.currentTarget.style.transform = 'translateY(-1px)'
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'transparent'
+                                    e.currentTarget.style.boxShadow = 'none'
+                                    e.currentTarget.style.transform = 'translateY(0)'
+                                }}
+                            >
                                 <Icons.Notifications size={22} color="var(--text-secondary)" />
                                 {notificacoesCount > 0 && (
                                     <span style={{
                                         position: 'absolute',
-                                        top: '-6px',
-                                        right: '-8px',
+                                        top: '4px',
+                                        right: '4px',
                                         backgroundColor: '#ef4444',
                                         color: 'white',
                                         fontSize: '0.625rem',
@@ -645,8 +678,14 @@ export default function DashboardLayout({ children }) {
                                         transition: 'all 0.2s',
                                         transform: profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'
                                     }}
-                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                    onMouseLeave={(e) => e.currentTarget.style.transform = profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = 'scale(1.05) translateY(-1px)'
+                                        e.currentTarget.style.boxShadow = 'var(--shadow)'
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'
+                                        e.currentTarget.style.boxShadow = 'none'
+                                    }}
                                 >
                                     {professor.foto_url ? (
                                         <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />

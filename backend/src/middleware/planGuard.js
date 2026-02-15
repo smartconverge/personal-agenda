@@ -33,15 +33,7 @@ const planGuard = (feature) => {
             // Bloqueios futuros (Notificações para Alunos e Financeiro) serão adicionados aqui.
 
             if (feature === 'agenda_recorrente') {
-                // STARTER tem agenda completa (incluindo conflitos), mas 
-                // decidimos manter recorrencia bloqueada ou liberada? 
-                // A proposta diz "Agenda completa". Vou liberar.
-                // Mas se quiser manter algum diferencial para o PRO, 
-                // podemos bloquear notificações automáticas.
-            }
-
-            if (feature === 'agenda_recorrente') {
-                if (planoAtivo === 'STARTER' && req.body.recorrencia === 'semanal') {
+                if (planoAtivo === 'STARTER' && (req.body.recorrencia === 'semanal' || req.body.recorrente === true)) {
                     return res.status(403).json({
                         success: false,
                         error: 'Agenda recorrente está disponível apenas nos planos PRO e PREMIUM.'

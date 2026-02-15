@@ -133,7 +133,8 @@ router.get('/', authenticate, async (req, res) => {
  */
 router.post('/', authenticate, planGuard('agenda_recorrente'), async (req, res) => {
     try {
-        const { aluno_id, servico_id, data_hora_inicio, recorrencia } = req.body;
+        const { aluno_id, servico_id, data_hora_inicio, recorrencia, recorrente } = req.body;
+        const isRecorrente = recorrencia === 'semanal' || recorrente === true;
 
         if (!aluno_id || !servico_id || !data_hora_inicio) {
             return res.status(400).json({
@@ -181,12 +182,15 @@ router.post('/', authenticate, planGuard('agenda_recorrente'), async (req, res) 
             .is('deleted_at', null)
             .limit(1);
 
+        /* 
+        // Desativado temporariamente para não bloquear o MVP enquanto não há interface de contratos
         if (!contratoAtivo || contratoAtivo.length === 0) {
             return res.status(403).json({
                 success: false,
                 error: 'Não é possível agendar: Aluno não possui contrato ativo para este serviço.'
             });
         }
+        */
 
         // Calcular data/hora fim
         const dataInicio = new Date(data_hora_inicio);
@@ -209,7 +213,7 @@ router.post('/', authenticate, planGuard('agenda_recorrente'), async (req, res) 
 
         let sessoesCriadas;
 
-        if (recorrencia === 'semanal') {
+        if (isRecorrente) {
             // Criar sessões recorrentes
             const sessoes = await criarSessoesRecorrentes(
                 req.professorId,
@@ -403,12 +407,14 @@ router.put('/:id/remarcar', authenticate, async (req, res) => {
             .is('deleted_at', null)
             .limit(1);
 
+        /*
         if (!contratoAtivo || contratoAtivo.length === 0) {
             return res.status(403).json({
                 success: false,
                 error: 'Não é possível remarcar: Aluno não possui contrato ativo para este serviço.'
             });
         }
+        */
 
         // Calcular nova data/hora fim
         const novaDataInicio = new Date(nova_data_hora_inicio);

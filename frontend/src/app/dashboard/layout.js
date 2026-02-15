@@ -111,7 +111,7 @@ export default function DashboardLayout({ children }) {
     ]
 
     const planoItems = [
-        { href: '/dashboard/planos', label: 'Meus Planos', icon: 'Dollar' },
+        { href: '/dashboard/planos', label: 'Meus Planos', icon: 'Star' },
     ]
 
     const sistemaItems = [

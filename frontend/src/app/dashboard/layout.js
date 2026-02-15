@@ -14,6 +14,7 @@ export default function DashboardLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [hoveredPath, setHoveredPath] = useState(null)
     const [notificacoesCount, setNotificacoesCount] = useState(0)
+    const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -401,11 +402,221 @@ export default function DashboardLayout({ children }) {
                                     </span>
                                 )}
                             </Link>
-                            <div className="avatar avatar-sm" style={{
-                                background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                                border: '1px solid var(--border)'
-                            }}>
-                                {professor.nome.charAt(0)}
+
+                            {/* Profile Dropdown */}
+                            <div style={{ position: 'relative' }}>
+                                <button
+                                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                                    className="avatar avatar-sm"
+                                    style={{
+                                        background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                                        border: '1px solid var(--border)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s',
+                                        transform: profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.transform = profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'}
+                                >
+                                    {professor.nome.charAt(0)}
+                                </button>
+
+                                {/* Dropdown Menu */}
+                                {profileDropdownOpen && (
+                                    <>
+                                        {/* Backdrop para fechar ao clicar fora */}
+                                        <div
+                                            onClick={() => setProfileDropdownOpen(false)}
+                                            style={{
+                                                position: 'fixed',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                zIndex: 40
+                                            }}
+                                        />
+
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 'calc(100% + 0.75rem)',
+                                            right: 0,
+                                            width: '16rem',
+                                            backgroundColor: 'var(--bg-secondary)',
+                                            border: '1px solid var(--border)',
+                                            borderRadius: '0.75rem',
+                                            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                                            zIndex: 50,
+                                            overflow: 'hidden',
+                                            animation: 'slideDown 0.2s ease-out'
+                                        }}>
+                                            {/* User Info */}
+                                            <div style={{
+                                                padding: '1rem',
+                                                borderBottom: '1px solid var(--border)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.75rem'
+                                            }}>
+                                                <div className="avatar avatar-sm" style={{
+                                                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                                                    border: '1px solid var(--border)'
+                                                }}>
+                                                    {professor.nome.charAt(0)}
+                                                </div>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <p style={{
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: '600',
+                                                        color: 'var(--text-primary)',
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        margin: 0
+                                                    }}>
+                                                        {professor.nome}
+                                                    </p>
+                                                    <p style={{
+                                                        fontSize: '0.75rem',
+                                                        color: 'var(--text-muted)',
+                                                        margin: 0,
+                                                        marginTop: '2px',
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }}>
+                                                        {professor.email}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Menu Items */}
+                                            <div style={{ padding: '0.5rem' }}>
+                                                <Link
+                                                    href="/dashboard/perfil"
+                                                    onClick={() => setProfileDropdownOpen(false)}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.75rem',
+                                                        padding: '0.625rem 0.75rem',
+                                                        borderRadius: '0.5rem',
+                                                        textDecoration: 'none',
+                                                        color: 'var(--text-primary)',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: '500',
+                                                        transition: 'all 0.2s',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
+                                                        e.currentTarget.style.color = 'var(--primary)'
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'transparent'
+                                                        e.currentTarget.style.color = 'var(--text-primary)'
+                                                    }}
+                                                >
+                                                    <Icons.User size={18} />
+                                                    <span>Meu Perfil</span>
+                                                </Link>
+
+                                                <Link
+                                                    href="/dashboard/configuracoes"
+                                                    onClick={() => setProfileDropdownOpen(false)}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.75rem',
+                                                        padding: '0.625rem 0.75rem',
+                                                        borderRadius: '0.5rem',
+                                                        textDecoration: 'none',
+                                                        color: 'var(--text-primary)',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: '500',
+                                                        transition: 'all 0.2s',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
+                                                        e.currentTarget.style.color = 'var(--primary)'
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'transparent'
+                                                        e.currentTarget.style.color = 'var(--text-primary)'
+                                                    }}
+                                                >
+                                                    <Icons.Settings size={18} />
+                                                    <span>Configurações</span>
+                                                </Link>
+
+                                                <Link
+                                                    href="/dashboard/planos"
+                                                    onClick={() => setProfileDropdownOpen(false)}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.75rem',
+                                                        padding: '0.625rem 0.75rem',
+                                                        borderRadius: '0.5rem',
+                                                        textDecoration: 'none',
+                                                        color: 'var(--text-primary)',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: '500',
+                                                        transition: 'all 0.2s',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
+                                                        e.currentTarget.style.color = 'var(--primary)'
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'transparent'
+                                                        e.currentTarget.style.color = 'var(--text-primary)'
+                                                    }}
+                                                >
+                                                    <Icons.Money size={18} />
+                                                    <span>Planos</span>
+                                                </Link>
+                                            </div>
+
+                                            {/* Logout */}
+                                            <div style={{ padding: '0.5rem', borderTop: '1px solid var(--border)' }}>
+                                                <button
+                                                    onClick={() => {
+                                                        setProfileDropdownOpen(false)
+                                                        handleLogout()
+                                                    }}
+                                                    style={{
+                                                        width: '100%',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.75rem',
+                                                        padding: '0.625rem 0.75rem',
+                                                        borderRadius: '0.5rem',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        color: '#ef4444',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: '500',
+                                                        transition: 'all 0.2s',
+                                                        cursor: 'pointer',
+                                                        textAlign: 'left'
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.08)'
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.currentTarget.style.backgroundColor = 'transparent'
+                                                    }}
+                                                >
+                                                    <Icons.Logout size={18} />
+                                                    <span>Sair</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </header>

@@ -143,7 +143,7 @@ export default function AlunosPage() {
                 <button
                     onClick={() => {
                         setEditingAluno(null)
-                        setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '', plano: 'Basic' })
+                        setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '', plano: 'STARTER' })
                         setShowModal(true)
                     }}
                     className="btn btn-primary"
@@ -362,8 +362,9 @@ export default function AlunosPage() {
                                         value={formData.plano}
                                         onChange={(e) => setFormData({ ...formData, plano: e.target.value })}
                                     >
-                                        <option value="Basic">Basic</option>
-                                        <option value="Premium">Premium</option>
+                                        <option value="STARTER">Starter</option>
+                                        <option value="PRO">Pro</option>
+                                        <option value="PREMIUM">Premium</option>
                                     </select>
                                 </div>
 

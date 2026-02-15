@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticate } = require('../middleware/auth');
+const { planGuard } = require('../middleware/planGuard');
 const { supabaseAdmin } = require('../config/supabase');
 
 /**
@@ -130,7 +131,7 @@ router.get('/', authenticate, async (req, res) => {
  * POST /sessoes
  * Criar sessão(ões)
  */
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, planGuard('agenda_recorrente'), async (req, res) => {
     try {
         const { aluno_id, servico_id, data_hora_inicio, recorrencia } = req.body;
 

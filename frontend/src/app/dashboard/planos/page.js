@@ -2,61 +2,75 @@
 
 import { Icons } from '@/components/Icons'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function PlanosPage() {
+    const [professor, setProfessor] = useState(null)
+
+    useEffect(() => {
+        const professorData = localStorage.getItem('professor')
+        if (professorData) {
+            setProfessor(JSON.parse(professorData))
+        }
+    }, [])
+
+    const isCurrentPlan = (nomePlano) => {
+        if (!professor) return nomePlano === 'STARTER' // Fallback
+        return professor.plano?.toUpperCase() === nomePlano.toUpperCase()
+    }
+
     const planos = [
         {
             nome: 'STARTER',
             preco: 'Grátis',
-            descricao: 'Ideal para quem está começando o trabalho como personal.',
+            descricao: 'Ideal para quem está iniciando sua jornada como Personal Trainer.',
             features: [
                 'Até 5 alunos ativos',
                 'Agenda básica',
-                'Controle de contratos',
-                'Notificações no WhatsApp (Limitadas)',
+                'Gestão de serviços',
+                'Notificações WhatsApp (Limitadas)',
                 'Suporte via e-mail'
             ],
             limit: 'Limite de 5 alunos',
-            button: 'Plano Atual',
-            current: true,
-            premium: false
+            button: 'Começar Agora',
+            current: isCurrentPlan('STARTER'),
+            popular: false
         },
         {
             nome: 'PRO',
             preco: 'R$ 49,90',
             period: '/mês',
-            descricao: 'Para o personal que quer escalar seus atendimentos.',
+            descricao: 'A escolha ideal para quem quer escalar seus atendimentos.',
             features: [
                 'Até 20 alunos ativos',
-                'Agenda avançada com recorrência',
+                'Agenda avançada (Recorrência)',
                 'Fichas de treino ilimitadas',
                 'Notificações automáticas ilimitadas',
-                'Suporte prioritário',
-                'Relatórios financeiros'
+                'Relatórios de faturamento',
+                'Suporte prioritário'
             ],
             limit: 'Limite de 20 alunos',
-            button: 'Fazer Upgrade',
-            current: false,
-            premium: true
+            button: 'Mudar para Pro',
+            current: isCurrentPlan('PRO'),
+            popular: true
         },
         {
             nome: 'PREMIUM',
             preco: 'R$ 89,90',
             period: '/mês',
-            descricao: 'Gestão completa com IA e recursos exclusivos.',
+            descricao: 'Gestão profissional completa para alta performance.',
             features: [
                 'Alunos ilimitados',
                 'Consultoria via Chat IA (Beta)',
-                'Personalização completa de marca',
                 'Gestão Multi-unidade',
                 'Análise de performance com IA',
-                'Acesso antecipado a novos recursos'
+                'Personalização completa de marca',
+                'Acesso antecipado a novas features'
             ],
             limit: 'Sem limites',
-            button: 'Fazer Upgrade',
-            current: false,
-            premium: true,
-            popular: true
+            button: 'Seja Premium',
+            current: isCurrentPlan('PREMIUM'),
+            popular: false
         }
     ]
 

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const Papa = require('papaparse');
 const { authenticate } = require('../middleware/auth');
+const { planGuard } = require('../middleware/planGuard');
 const { supabaseAdmin } = require('../config/supabase');
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -89,7 +90,7 @@ router.get('/:id', authenticate, async (req, res) => {
  * POST /alunos
  * Criar novo aluno
  */
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, planGuard('create_aluno'), async (req, res) => {
     try {
         const { nome, email, telefone_whatsapp, notificacoes_ativas, objetivo, plano } = req.body;
 
@@ -109,7 +110,7 @@ router.post('/', authenticate, async (req, res) => {
                 telefone_whatsapp: telefone_whatsapp.trim(),
                 notificacoes_ativas: notificacoes_ativas || false,
                 objetivo: objetivo ? objetivo.trim() : null,
-                plano: plano || 'Basic'
+                plano: plano || 'STARTER'
             })
             .select()
             .single();
@@ -232,7 +233,7 @@ router.delete('/:id', authenticate, async (req, res) => {
  * POST /alunos/importar-csv
  * Importar alunos via CSV
  */
-router.post('/importar-csv', authenticate, upload.single('file'), async (req, res) => {
+router.post('/importar-csv', authenticate, planGuard('create_aluno'), upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({

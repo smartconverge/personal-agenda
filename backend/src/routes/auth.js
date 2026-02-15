@@ -51,6 +51,8 @@ router.post('/register', async (req, res) => {
                     nome,
                     email,
                     telefone_whatsapp,
+                    plano: 'PRO', // Inicia com PRO (Trial)
+                    plano_expira_em: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
                     created_at: new Date()
                 }
             ]);
@@ -134,6 +136,8 @@ router.post('/login', async (req, res) => {
                     nome: data.user.user_metadata?.nome || 'Professor',
                     email: data.user.email,
                     telefone_whatsapp: '', // Inicializa vazio
+                    plano: 'PRO', // Inicia com PRO (Trial)
+                    plano_expira_em: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
                     created_at: new Date()
                 }])
                 .select()
@@ -147,6 +151,24 @@ router.post('/login', async (req, res) => {
                 });
             }
             professor = newProfessor;
+        } else if (professor) {
+            // Se já existe mas não tem plano definido (legado ou erro de migração), inicializa Trial
+            if (!professor.plano || !professor.plano_expira_em) {
+                console.log('🔄 Inicializando Trial para professor existente:', professor.email);
+                const { data: updatedProfessor, error: updateError } = await supabaseAdmin
+                    .from('professores')
+                    .update({
+                        plano: 'PRO',
+                        plano_expira_em: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+                    })
+                    .eq('id', professor.id)
+                    .select()
+                    .single();
+
+                if (!updateError) {
+                    professor = updatedProfessor;
+                }
+            }
         } else if (professorError) {
             console.error('Erro ao buscar professor:', professorError);
             return res.status(500).json({

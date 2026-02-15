@@ -27,7 +27,9 @@ export default function DashboardLayout({ children }) {
 
         if (professorData) {
             try {
-                setProfessor(JSON.parse(professorData))
+                const parsed = JSON.parse(professorData)
+                setProfessor(parsed)
+                loadProfile() // Carrega dados atualizados (plano/trial)
                 loadNotificacoesCount()
             } catch (error) {
                 console.error('Erro ao ler dados do professor:', error)
@@ -41,6 +43,19 @@ export default function DashboardLayout({ children }) {
             setNotificacoesCount(0)
         }
     }, [router, pathname])
+
+    const loadProfile = async () => {
+        try {
+            const response = await api.get('/perfil')
+            if (response.data.success) {
+                const updatedProfessor = response.data.data
+                setProfessor(updatedProfessor)
+                localStorage.setItem('professor', JSON.stringify(updatedProfessor))
+            }
+        } catch (error) {
+            console.error('Erro ao carregar perfil:', error)
+        }
+    }
 
     const loadNotificacoesCount = async () => {
         try {
@@ -424,6 +439,36 @@ export default function DashboardLayout({ children }) {
                     display: 'flex',
                     flexDirection: 'column'
                 }}>
+                    {/* Trial Banner */}
+                    {professor?.plano_expira_em && (new Date(professor.plano_expira_em) > new Date()) && (
+                        <div style={{
+                            background: 'linear-gradient(90deg, var(--primary), var(--primary-dark))',
+                            color: 'white',
+                            padding: '0.5rem 1rem',
+                            textAlign: 'center',
+                            fontSize: '0.8125rem',
+                            fontWeight: '700',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.5rem',
+                            zIndex: 100
+                        }}>
+                            <Icons.Dashboard size={14} />
+                            <span>
+                                Você esta usando o plano <strong>{professor.plano} (Degustação)</strong>.
+                                Restam <strong>{Math.ceil((new Date(professor.plano_expira_em) - new Date()) / (1000 * 60 * 60 * 24))} dias</strong> de acesso total.
+                            </span>
+                            <Link href="/dashboard/planos" style={{
+                                color: 'white',
+                                textDecoration: 'underline',
+                                marginLeft: '1rem',
+                                opacity: 0.9
+                            }}>
+                                Ver Planos
+                            </Link>
+                        </div>
+                    )}
                     {/* Header */}
                     <header style={{
                         backgroundColor: 'var(--bg-secondary)',

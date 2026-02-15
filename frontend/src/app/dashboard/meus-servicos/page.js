@@ -203,7 +203,7 @@ export default function MeusServicosPage() {
                                 <h3 style={{
                                     fontSize: '1.25rem',
                                     fontWeight: '800',
-                                    color: 'black',
+                                    color: 'var(--text-primary)',
                                     marginBottom: '0.5rem',
                                     letterSpacing: '-0.01em'
                                 }}>

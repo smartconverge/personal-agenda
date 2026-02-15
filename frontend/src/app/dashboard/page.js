@@ -294,7 +294,7 @@ export default function DashboardPage() {
                                 style={{
                                     padding: '1.5rem',
                                     position: 'relative',
-                                    background: 'white',
+                                    background: 'var(--bg-secondary)',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',

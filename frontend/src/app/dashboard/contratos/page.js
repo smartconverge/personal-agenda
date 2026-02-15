@@ -219,7 +219,7 @@ export default function ContratosPage() {
                                     <h3 style={{
                                         fontSize: '1.125rem',
                                         fontWeight: '800',
-                                        color: 'black',
+                                        color: 'var(--text-primary)',
                                         marginBottom: '0.25rem'
                                     }}>
                                         {contrato.aluno?.nome || 'N/A'}
@@ -258,7 +258,7 @@ export default function ContratosPage() {
                                 </div>
                                 <div style={{ textAlign: 'right' }}>
                                     <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '800', marginBottom: '0.125rem' }}>Prox. Venc.</p>
-                                    <p style={{ fontSize: '0.875rem', fontWeight: '700', color: 'black' }}>
+                                    <p style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--text-primary)' }}>
                                         {new Date(contrato.data_vencimento).toLocaleDateString('pt-BR')}
                                     </p>
                                 </div>

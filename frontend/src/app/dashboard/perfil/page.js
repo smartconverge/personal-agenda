@@ -113,10 +113,7 @@ export default function PerfilPage() {
 
     return (
         <div className="perfil-container">
-            <div className="header-perfil">
-                <h2 className="title-section">Meu Perfil</h2>
-                <p className="subtitle-section">Gerencie suas informações pessoais e profissionais.</p>
-            </div>
+
 
             <form onSubmit={handleSubmit} className="perfil-form">
                 <div className="perfil-grid">

@@ -551,7 +551,10 @@ export default function DashboardLayout({ children }) {
                                             pathname.includes('servicos') ? 'Serviços' :
                                                 pathname.includes('/contratos') ? 'Contratos' :
                                                     pathname.includes('/agenda') ? 'Agenda' :
-                                                        pathname.includes('/notificacoes') ? 'Notificações' : 'Personal Agenda'}
+                                                        pathname.includes('/notificacoes') ? 'Notificações' :
+                                                            pathname.includes('/perfil') ? 'Meu Perfil' :
+                                                                pathname.includes('/configuracoes') ? 'Configurações' :
+                                                                    pathname.includes('/planos') ? 'Planos' : 'Personal Agenda'}
                                 </h1>
                                 {pathname === '/dashboard' && professor?.nome && (
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
@@ -581,6 +584,21 @@ export default function DashboardLayout({ children }) {
                                 {pathname.includes('/notificacoes') && (
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
                                         Histórico de mensagens enviadas aos seus alunos.
+                                    </p>
+                                )}
+                                {pathname.includes('/perfil') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Gerencie suas informações pessoais e profissionais.
+                                    </p>
+                                )}
+                                {pathname.includes('/configuracoes') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Gerencie as preferências e segurança da conta.
+                                    </p>
+                                )}
+                                {pathname.includes('/planos') && (
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                        Evolua sua gestão com recursos Premium.
                                     </p>
                                 )}
                             </div>

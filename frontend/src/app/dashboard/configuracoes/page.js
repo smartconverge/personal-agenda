@@ -82,10 +82,7 @@ export default function ConfiguracoesPage() {
 
     return (
         <div className="config-container">
-            <div className="header-config">
-                <h2 className="title-section">Configurações</h2>
-                <p className="subtitle-section">Gerencie as preferências do sistema e segurança da sua conta.</p>
-            </div>
+
 
             <div className="config-grid">
                 {/* Segurança */}

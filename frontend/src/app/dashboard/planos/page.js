@@ -81,10 +81,7 @@ export default function PlanosPage() {
 
     return (
         <div className="planos-container">
-            <div className="header-planos">
-                <h2 className="title-section">Escolha seu Plano</h2>
-                <p className="subtitle-section">Evolua sua gestão com recursos desenvolvidos especialmente para Personal Trainers.</p>
-            </div>
+
 
             <div className="planos-grid">
                 {planos.map((plano) => (

@@ -1,5 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import api from '@/lib/api'
+import { useToast } from '@/components/Toast'
+import { Icons } from '@/components/Icons'
+import Modal from '@/components/Modal'
 import Pagination from '@/components/Pagination'
 
 export default function ContratosPage() {

@@ -74,6 +74,14 @@ export default function DashboardLayout({ children }) {
         { href: '/dashboard/notificacoes', label: 'Notificações', icon: 'Notifications' },
     ]
 
+    const planoItems = [
+        { href: '/dashboard/planos', label: 'Meus Planos', icon: 'Money' },
+    ]
+
+    const sistemaItems = [
+        { href: '/dashboard/configuracoes', label: 'Configurações', icon: 'Settings' },
+    ]
+
     if (!professor) {
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
@@ -141,8 +149,9 @@ export default function DashboardLayout({ children }) {
                         )}
                     </div>
 
-                    {/* Navigation */}
+                    {/* Main Navigation */}
                     <nav style={{ padding: '1.5rem 0.75rem' }}>
+                        {/* Section: MENU */}
                         {sidebarOpen && (
                             <p style={{
                                 fontSize: '0.625rem',
@@ -190,6 +199,118 @@ export default function DashboardLayout({ children }) {
                                 </Link>
                             )
                         })}
+
+                        {/* Section: PLANOS */}
+                        {sidebarOpen && (
+                            <div style={{
+                                height: '1px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                margin: '1.5rem 1rem 1rem 1rem'
+                            }} />
+                        )}
+                        {sidebarOpen && (
+                            <p style={{
+                                fontSize: '0.625rem',
+                                fontWeight: '800',
+                                color: 'var(--sidebar-text)',
+                                opacity: 0.4,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                marginBottom: '1rem',
+                                paddingLeft: '1rem'
+                            }}>
+                                Planos
+                            </p>
+                        )}
+                        {planoItems.map((item) => {
+                            const IconComponent = Icons[item.icon]
+                            const isActive = pathname === item.href
+
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onMouseEnter={() => setHoveredPath(item.href)}
+                                    onMouseLeave={() => setHoveredPath(null)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.875rem',
+                                        padding: '0.75rem 1rem',
+                                        borderRadius: '0.625rem',
+                                        marginBottom: '0.25rem',
+                                        textDecoration: 'none',
+                                        color: (isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)',
+                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : (hoveredPath === item.href ? 'rgba(255, 255, 255, 0.05)' : 'transparent'),
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        cursor: 'pointer',
+                                        fontWeight: isActive ? '700' : '500',
+                                        fontSize: '0.875rem'
+                                    }}
+                                >
+                                    <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                                        <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
+                                    </span>
+                                    {sidebarOpen && <span>{item.label}</span>}
+                                </Link>
+                            )
+                        })}
+
+                        {/* Section: SISTEMA */}
+                        {sidebarOpen && (
+                            <div style={{
+                                height: '1px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                margin: '1.5rem 1rem 1rem 1rem'
+                            }} />
+                        )}
+                        {sidebarOpen && (
+                            <p style={{
+                                fontSize: '0.625rem',
+                                fontWeight: '800',
+                                color: 'var(--sidebar-text)',
+                                opacity: 0.4,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                marginBottom: '1rem',
+                                paddingLeft: '1rem'
+                            }}>
+                                Sistema
+                            </p>
+                        )}
+                        {sistemaItems.map((item) => {
+                            const IconComponent = Icons[item.icon]
+                            const isActive = pathname === item.href
+
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onMouseEnter={() => setHoveredPath(item.href)}
+                                    onMouseLeave={() => setHoveredPath(null)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.875rem',
+                                        padding: '0.75rem 1rem',
+                                        borderRadius: '0.625rem',
+                                        marginBottom: '0.25rem',
+                                        textDecoration: 'none',
+                                        color: (isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)',
+                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : (hoveredPath === item.href ? 'rgba(255, 255, 255, 0.05)' : 'transparent'),
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        cursor: 'pointer',
+                                        fontWeight: isActive ? '700' : '500',
+                                        fontSize: '0.875rem'
+                                    }}
+                                >
+                                    <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                                        <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
+                                    </span>
+                                    {sidebarOpen && <span>{item.label}</span>}
+                                </Link>
+                            )
+                        })}
                     </nav>
 
                     {/* User Profile + Logout */}
@@ -203,19 +324,36 @@ export default function DashboardLayout({ children }) {
                         background: 'var(--sidebar-bg-dark)'
                     }}>
                         {sidebarOpen && (
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.75rem',
-                                marginBottom: '1rem',
-                                padding: '0.75rem',
-                                borderRadius: '0.75rem',
-                                background: 'rgba(255, 255, 255, 0.04)',
-                                border: '1px solid rgba(255, 255, 255, 0.05)'
-                            }}>
+                            <Link
+                                href="/dashboard/configuracoes"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    marginBottom: '1rem',
+                                    padding: '0.75rem',
+                                    borderRadius: '0.75rem',
+                                    background: pathname === '/dashboard/configuracoes' ? 'var(--sidebar-accent)' : 'rgba(255, 255, 255, 0.04)',
+                                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                                    textDecoration: 'none',
+                                    transition: 'all 0.2s',
+                                    cursor: 'pointer'
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (pathname !== '/dashboard/configuracoes') {
+                                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (pathname !== '/dashboard/configuracoes') {
+                                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'
+                                    }
+                                }}
+                            >
                                 <div className="avatar avatar-sm" style={{
                                     background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    flexShrink: 0
                                 }}>
                                     {professor.nome.charAt(0)}
                                 </div>
@@ -226,19 +364,23 @@ export default function DashboardLayout({ children }) {
                                         color: 'white',
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
+                                        textOverflow: 'ellipsis',
+                                        margin: 0
                                     }}>
                                         {professor.nome}
                                     </p>
                                     <p style={{
                                         fontSize: '0.7rem',
                                         color: 'var(--sidebar-text)',
-                                        opacity: 0.7
+                                        opacity: 0.7,
+                                        margin: 0,
+                                        marginTop: '2px'
                                     }}>
                                         Personal Trainer
                                     </p>
                                 </div>
-                            </div>
+                                <Icons.ChevronRight size={14} color="var(--sidebar-text)" style={{ opacity: 0.5 }} />
+                            </Link>
                         )}
                         <button
                             onClick={handleLogout}
@@ -519,64 +661,6 @@ export default function DashboardLayout({ children }) {
                                                 >
                                                     <Icons.User size={18} />
                                                     <span>Meu Perfil</span>
-                                                </Link>
-
-                                                <Link
-                                                    href="/dashboard/configuracoes"
-                                                    onClick={() => setProfileDropdownOpen(false)}
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '0.75rem',
-                                                        padding: '0.625rem 0.75rem',
-                                                        borderRadius: '0.5rem',
-                                                        textDecoration: 'none',
-                                                        color: 'var(--text-primary)',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: '500',
-                                                        transition: 'all 0.2s',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
-                                                        e.currentTarget.style.color = 'var(--primary)'
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'transparent'
-                                                        e.currentTarget.style.color = 'var(--text-primary)'
-                                                    }}
-                                                >
-                                                    <Icons.Settings size={18} />
-                                                    <span>Configurações</span>
-                                                </Link>
-
-                                                <Link
-                                                    href="/dashboard/planos"
-                                                    onClick={() => setProfileDropdownOpen(false)}
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '0.75rem',
-                                                        padding: '0.625rem 0.75rem',
-                                                        borderRadius: '0.5rem',
-                                                        textDecoration: 'none',
-                                                        color: 'var(--text-primary)',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: '500',
-                                                        transition: 'all 0.2s',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
-                                                        e.currentTarget.style.color = 'var(--primary)'
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'transparent'
-                                                        e.currentTarget.style.color = 'var(--text-primary)'
-                                                    }}
-                                                >
-                                                    <Icons.Money size={18} />
-                                                    <span>Planos</span>
                                                 </Link>
                                             </div>
 

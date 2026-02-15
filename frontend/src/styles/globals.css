@@ -665,8 +665,6 @@ h6 {
     display: none !important;
   }
 
-  }
-
   .card-list {
     display: none;
   }
@@ -678,6 +676,7 @@ h6 {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

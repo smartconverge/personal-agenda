@@ -43,21 +43,35 @@ app.use(helmet());
 
 // CORS restrito às origens permitidas
 const allowedOrigins = [
-    'https://app.smartconverge.com.br',
-    'http://localhost:3000',
-    'http://localhost:3001'
+  'https://app.smartconverge.com.br',
+  'http://localhost:3000',
+  'http://localhost:3001'
 ];
 app.use(cors({
-    origin: function (origin, callback) {
-        // Permitir requests sem origin (ex: curl, mobile apps, server-to-server)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-        return callback(new Error('Bloqueado pelo CORS'), false);
-    },
-    credentials: true
+  origin: function (origin, callback) {
+    // Permitir requests sem origin (ex: curl, mobile apps, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Bloqueado pelo CORS'), false);
+  },
+  credentials: true
 }));
+
+// Rate Limiting Security
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  limit: 100, // Limite de 100 requisições por IP
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    error: 'Muitas requisições deste IP, tente novamente em 15 minutos'
+  }
+});
+app.use(limiter);
 
 app.use(morgan('combined'));
 app.use(express.json());

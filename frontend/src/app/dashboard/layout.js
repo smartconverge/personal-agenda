@@ -46,6 +46,20 @@ export default function DashboardLayout({ children }) {
             localStorage.setItem('last_notifications_view', Date.now().toString())
             setNotificacoesCount(0)
         }
+
+        // Listener para atualização de perfil em tempo real
+        const handleProfileUpdate = () => {
+            const updatedData = localStorage.getItem('professor')
+            if (updatedData) {
+                setProfessor(JSON.parse(updatedData))
+            }
+        }
+
+        window.addEventListener('user-profile-updated', handleProfileUpdate)
+
+        return () => {
+            window.removeEventListener('user-profile-updated', handleProfileUpdate)
+        }
     }, [router, pathname])
 
     const loadProfile = async () => {

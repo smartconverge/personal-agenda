@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Icons } from '@/components/Icons'
 import api from '@/lib/api'
 import { useToast } from '@/components/Toast'
@@ -18,6 +18,8 @@ export default function PerfilPage() {
         bio: '',
         foto_url: ''
     })
+
+    const fileInputRef = useRef(null)
 
     useEffect(() => {
         const loadPerfil = async () => {
@@ -40,6 +42,50 @@ export default function PerfilPage() {
         loadPerfil()
     }, [])
 
+    const handlePhotoClick = () => {
+        fileInputRef.current?.click()
+    }
+
+    const handlePhotoChange = async (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        if (file.size > 5 * 1024 * 1024) {
+            addToast('A imagem deve ter no máximo 5MB', 'error')
+            return
+        }
+
+        const formData = new FormData()
+        formData.append('foto', file)
+
+        try {
+            setLoading(true)
+            const response = await api.post('/perfil/upload-foto', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+
+            if (response.data.success) {
+                const newFotoUrl = response.data.data.foto_url
+                setProfessor(prev => ({ ...prev, foto_url: newFotoUrl }))
+
+                // Atualizar localStorage
+                const current = JSON.parse(localStorage.getItem('professor') || '{}')
+                localStorage.setItem('professor', JSON.stringify({ ...current, foto_url: newFotoUrl }))
+
+                addToast('Foto atualizada com sucesso!', 'success')
+
+                // Disparar evento para atualizar layout
+                window.dispatchEvent(new Event('user-profile-updated'))
+            }
+        } catch (error) {
+            console.error('Erro ao enviar foto:', error)
+            addToast('Erro ao enviar foto. Tente novamente.', 'error')
+        } finally {
+            setLoading(false)
+            if (fileInputRef.current) fileInputRef.current.value = ''
+        }
+    }
+
     const handleChange = (e) => {
         const { name, value } = e.target
         setProfessor(prev => ({ ...prev, [name]: value }))
@@ -55,6 +101,7 @@ export default function PerfilPage() {
                 const currentProfessor = JSON.parse(localStorage.getItem('professor') || '{}')
                 localStorage.setItem('professor', JSON.stringify({ ...currentProfessor, ...response.data.data }))
                 addToast('Perfil atualizado com sucesso!', 'success')
+                window.dispatchEvent(new Event('user-profile-updated'))
             }
         } catch (error) {
             console.error('Erro ao atualizar perfil:', error)
@@ -83,8 +130,15 @@ export default function PerfilPage() {
                                     professor.nome?.charAt(0) || 'P'
                                 )}
                             </div>
-                            <button type="button" className="btn-change-photo">
-                                <Icons.Dashboard size={16} /> Alterar Foto
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handlePhotoChange}
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                            />
+                            <button type="button" className="btn-change-photo" onClick={handlePhotoClick} disabled={loading}>
+                                <Icons.Edit size={16} /> Alterar Foto
                             </button>
                         </div>
                         <div className="plan-badge-inline">

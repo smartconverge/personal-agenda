@@ -33,6 +33,7 @@ const planGuard = (feature) => {
             // Bloqueios futuros (Notificações para Alunos e Financeiro) serão adicionados aqui.
 
             if (feature === 'agenda_recorrente') {
+                // Apenas PRO e PREMIUM podem ter agenda recorrente (pela proposta do usuário)
                 if (planoAtivo === 'STARTER' && (req.body.recorrencia === 'semanal' || req.body.recorrente === true)) {
                     return res.status(403).json({
                         success: false,

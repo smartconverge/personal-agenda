@@ -448,6 +448,14 @@ export default function ContratosPage() {
                     </div>
                 </div>
             </Modal>
+
+            <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={(newPage) => setPage(newPage)}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+            />
         </div>
     )
 }

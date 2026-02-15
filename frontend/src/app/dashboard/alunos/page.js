@@ -205,7 +205,7 @@ export default function AlunosPage() {
                         </p>
                     </div>
                 ) : (
-                    filteredAlunos.map((aluno) => (
+                    alunos.map((aluno) => (
                         <div
                             key={aluno.id}
                             className="card-premium"

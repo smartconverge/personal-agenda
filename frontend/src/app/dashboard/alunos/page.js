@@ -420,8 +420,6 @@ export default function AlunosPage() {
                 </div>
             )}
 
-            </div>
-
             <Pagination
                 currentPage={page}
                 totalPages={totalPages}
@@ -429,6 +427,6 @@ export default function AlunosPage() {
                 totalItems={totalItems}
                 itemsPerPage={itemsPerPage}
             />
-        </div >
+        </div>
     )
 }

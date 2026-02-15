@@ -70,7 +70,7 @@ export default function NotificacoesPage() {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div className="card-premium" style={{ padding: '0', overflow: 'hidden', background: 'white' }}>
+            <div className="card-premium" style={{ padding: '0', overflow: 'hidden', background: 'var(--bg-secondary)' }}>
                 <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
                     <span className="badge badge-secondary">
                         {notificacoes.length} total

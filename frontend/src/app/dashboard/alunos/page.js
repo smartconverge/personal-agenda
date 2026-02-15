@@ -18,8 +18,7 @@ export default function AlunosPage() {
         email: '',
         telefone_whatsapp: '',
         notificacoes_ativas: true,
-        objetivo: '',
-        plano: 'Basic'
+        objetivo: ''
     })
     const [searchTerm, setSearchTerm] = useState('')
 
@@ -52,7 +51,7 @@ export default function AlunosPage() {
 
             setShowModal(false)
             setEditingAluno(null)
-            setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '', plano: 'Basic' })
+            setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '' })
             loadAlunos()
             showToast(editingAluno ? 'Aluno atualizado!' : 'Aluno criado!', 'success')
         } catch (error) {
@@ -67,8 +66,7 @@ export default function AlunosPage() {
             email: aluno.email || '',
             telefone_whatsapp: aluno.telefone_whatsapp,
             notificacoes_ativas: aluno.notificacoes_ativas,
-            objetivo: aluno.objetivo || '',
-            plano: aluno.plano || 'Basic'
+            objetivo: aluno.objetivo || ''
         })
         setShowModal(true)
     }
@@ -143,7 +141,7 @@ export default function AlunosPage() {
                 <button
                     onClick={() => {
                         setEditingAluno(null)
-                        setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '', plano: 'STARTER' })
+                        setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '' })
                         setShowModal(true)
                     }}
                     className="btn btn-primary"
@@ -191,7 +189,7 @@ export default function AlunosPage() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 position: 'relative',
-                                background: 'white'
+                                background: 'var(--bg-secondary)'
                             }}
                         >
                             {/* Header: Avatar + Info */}
@@ -211,7 +209,7 @@ export default function AlunosPage() {
                                     <h3 style={{
                                         fontSize: '1.125rem',
                                         fontWeight: '800',
-                                        color: 'black',
+                                        color: 'var(--text-primary)',
                                         marginBottom: '0.25rem',
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
@@ -236,22 +234,9 @@ export default function AlunosPage() {
                                 background: 'var(--bg-primary)',
                                 borderRadius: '0.75rem'
                             }}>
-                                <div>
+                                <div style={{ gridColumn: 'span 2' }}>
                                     <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Contato</p>
                                     <p style={{ fontSize: '0.8125rem', fontWeight: '600', color: 'var(--text-primary)' }}>{aluno.telefone_whatsapp}</p>
-                                </div>
-                                <div>
-                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Plano</p>
-                                    <span style={{
-                                        fontSize: '0.75rem',
-                                        fontWeight: '800',
-                                        color: 'var(--primary)',
-                                        background: 'var(--primary-light)20',
-                                        padding: '0.125rem 0.5rem',
-                                        borderRadius: '0.375rem'
-                                    }}>
-                                        {aluno.plano || 'Basic'}
-                                    </span>
                                 </div>
                                 <div style={{ gridColumn: 'span 2' }}>
                                     <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Objetivo</p>
@@ -355,18 +340,7 @@ export default function AlunosPage() {
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="label">Plano</label>
-                                    <select
-                                        className="input"
-                                        value={formData.plano}
-                                        onChange={(e) => setFormData({ ...formData, plano: e.target.value })}
-                                    >
-                                        <option value="STARTER">Starter</option>
-                                        <option value="PRO">Pro</option>
-                                        <option value="PREMIUM">Premium</option>
-                                    </select>
-                                </div>
+
 
                                 <div style={{ gridColumn: 'span 2' }}>
                                     <label className="label">Email</label>

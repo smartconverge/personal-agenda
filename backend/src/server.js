@@ -40,7 +40,25 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+
+// CORS restrito às origens permitidas
+const allowedOrigins = [
+    'https://app.smartconverge.com.br',
+    'http://localhost:3000',
+    'http://localhost:3001'
+];
+app.use(cors({
+    origin: function (origin, callback) {
+        // Permitir requests sem origin (ex: curl, mobile apps, server-to-server)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Bloqueado pelo CORS'), false);
+    },
+    credentials: true
+}));
+
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

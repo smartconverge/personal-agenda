@@ -20,6 +20,10 @@ export default function DashboardLayout({ children }) {
         const token = localStorage.getItem('token')
         const professorData = localStorage.getItem('professor')
 
+        // Carregar tema salvo
+        const savedTheme = localStorage.getItem('theme') || 'light'
+        document.documentElement.setAttribute('data-theme', savedTheme)
+
         if (!token) {
             router.push('/login')
             return

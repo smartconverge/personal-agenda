@@ -210,7 +210,7 @@ export default function ContratosPage() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 position: 'relative',
-                                background: 'white'
+                                background: 'var(--bg-secondary)'
                             }}
                         >
                             {/* Header: Student + Status */}

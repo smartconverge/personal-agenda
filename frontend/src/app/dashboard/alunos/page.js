@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
+import Modal from '@/components/Modal'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import { useToast } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
 
@@ -14,6 +16,8 @@ export default function AlunosPage() {
     const [alunos, setAlunos] = useState([])
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+    const [selectedAluno, setSelectedAluno] = useState(null)
     const [editingAluno, setEditingAluno] = useState(null)
     const [formData, setFormData] = useState({
         nome: '',
@@ -34,13 +38,10 @@ export default function AlunosPage() {
         loadAlunos()
     }, [page]) // Recarregar quando mudar página
 
-    // Debounce search ou carregar ao clicar no botão de busca?
-    // Para simplificar, vamos carregar ao dar Enter ou clicar no botão, 
-    // ou usar um useEffect com debounce. Aqui usaremos useEffect no searchTerm com delay
     useEffect(() => {
         const timer = setTimeout(() => {
             if (page === 1) loadAlunos()
-            else setPage(1) // Voltar para pág 1 dispara o outro effect
+            else setPage(1)
         }, 500)
         return () => clearTimeout(timer)
     }, [searchTerm])
@@ -101,15 +102,16 @@ export default function AlunosPage() {
         setShowModal(true)
     }
 
-    const handleDelete = async (id) => {
-        if (!confirm('Tem certeza que deseja excluir este aluno?')) return
-
+    const handleDelete = async () => {
         try {
-            await api.delete(`/alunos/${id}`)
+            await api.delete(`/alunos/${selectedAluno.id}`)
             showToast('Aluno excluído!', 'success')
             loadAlunos()
         } catch (error) {
             showToast('Erro ao excluir aluno', 'error')
+        } finally {
+            setShowDeleteDialog(false)
+            setSelectedAluno(null)
         }
     }
 
@@ -300,7 +302,8 @@ export default function AlunosPage() {
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDelete(aluno.id);
+                                    setSelectedAluno(aluno);
+                                    setShowDeleteDialog(true);
                                 }}
                                 className="delete-btn-hover"
                                 style={{
@@ -329,101 +332,97 @@ export default function AlunosPage() {
             </div>
 
             {/* Modal */}
-            {showModal && (
-                <div className="modal-overlay page-enter" onClick={() => setShowModal(false)}>
-                    <div className="modal" style={{ maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
-                        <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                                <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-primary)' }}>
-                                    {editingAluno ? 'Editar Aluno' : 'Novo Aluno'}
-                                </h2>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Preencha os dados do aluno</p>
-                            </div>
-                            <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                                <Icons.Error size={24} />
-                            </button>
+            <Modal
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+                title={editingAluno ? 'Editar Aluno' : 'Novo Aluno'}
+            >
+                <form onSubmit={handleSubmit}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                        <div style={{ gridColumn: 'span 2' }}>
+                            <label className="label">Nome Completo *</label>
+                            <input
+                                type="text"
+                                className="input"
+                                placeholder="Ex: João Silva"
+                                value={formData.nome}
+                                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                                required
+                            />
                         </div>
 
-                        <form onSubmit={handleSubmit} style={{ padding: '1.5rem' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <label className="label">Nome Completo *</label>
-                                    <input
-                                        type="text"
-                                        className="input"
-                                        placeholder="Ex: João Silva"
-                                        value={formData.nome}
-                                        onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                                        required
-                                    />
-                                </div>
+                        <div>
+                            <label className="label">WhatsApp *</label>
+                            <input
+                                type="text"
+                                className="input"
+                                placeholder="11999999999"
+                                value={formData.telefone_whatsapp}
+                                onChange={(e) => setFormData({ ...formData, telefone_whatsapp: e.target.value })}
+                                required
+                            />
+                        </div>
 
-                                <div>
-                                    <label className="label">WhatsApp *</label>
-                                    <input
-                                        type="text"
-                                        className="input"
-                                        placeholder="11999999999"
-                                        value={formData.telefone_whatsapp}
-                                        onChange={(e) => setFormData({ ...formData, telefone_whatsapp: e.target.value })}
-                                        required
-                                    />
-                                </div>
+                        <div style={{ gridColumn: 'span 2' }}>
+                            <label className="label">Email</label>
+                            <input
+                                type="email"
+                                className="input"
+                                placeholder="aluno@email.com"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            />
+                        </div>
 
-
-
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <label className="label">Email</label>
-                                    <input
-                                        type="email"
-                                        className="input"
-                                        placeholder="aluno@email.com"
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    />
-                                </div>
-
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <label className="label">Objetivo de Treino</label>
-                                    <input
-                                        type="text"
-                                        className="input"
-                                        placeholder="Ex: Emagrecimento, Hipertrofia..."
-                                        value={formData.objetivo}
-                                        onChange={(e) => setFormData({ ...formData, objetivo: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-
-                            <div style={{ marginBottom: '2rem' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.5rem 0' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.notificacoes_ativas}
-                                        onChange={(e) => setFormData({ ...formData, notificacoes_ativas: e.target.checked })}
-                                        style={{ width: '1.125rem', height: '1.125rem', accentColor: 'var(--primary)' }}
-                                    />
-                                    <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Habilitar notificações automáticas</span>
-                                </label>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="btn btn-secondary"
-                                    style={{ padding: '0.625rem 1.25rem' }}
-                                >
-                                    Cancelar
-                                </button>
-                                <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>
-                                    {editingAluno ? 'Salvar Alterações' : 'Cadastrar Aluno'}
-                                </button>
-                            </div>
-                        </form>
+                        <div style={{ gridColumn: 'span 2' }}>
+                            <label className="label">Objetivo de Treino</label>
+                            <input
+                                type="text"
+                                className="input"
+                                placeholder="Ex: Emagrecimento, Hipertrofia..."
+                                value={formData.objetivo}
+                                onChange={(e) => setFormData({ ...formData, objetivo: e.target.value })}
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
+
+                    <div style={{ marginBottom: '2rem' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.5rem 0' }}>
+                            <input
+                                type="checkbox"
+                                checked={formData.notificacoes_ativas}
+                                onChange={(e) => setFormData({ ...formData, notificacoes_ativas: e.target.checked })}
+                                style={{ width: '1.125rem', height: '1.125rem', accentColor: 'var(--primary)' }}
+                            />
+                            <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Habilitar notificações automáticas</span>
+                        </label>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                        <button
+                            type="button"
+                            onClick={() => setShowModal(false)}
+                            className="btn btn-secondary"
+                            style={{ padding: '0.625rem 1.25rem' }}
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>
+                            {editingAluno ? 'Salvar Alterações' : 'Cadastrar Aluno'}
+                        </button>
+                    </div>
+                </form>
+            </Modal>
+
+            <ConfirmDialog
+                isOpen={showDeleteDialog}
+                onClose={() => setShowDeleteDialog(false)}
+                onConfirm={handleDelete}
+                title="Excluir Aluno"
+                message={`Tem certeza que deseja excluir ${selectedAluno?.nome}? Todas as sessões e contratos vinculados serão mantidos no histórico.`}
+                confirmText="Excluir Aluno"
+                danger
+            />
 
             <Pagination
                 currentPage={page}

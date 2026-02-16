@@ -132,17 +132,29 @@ class NotificationService {
                 return;
             }
 
-            let title = isAfternoon ? `🌤️ *Agenda Professor - Aulas Restantes*` : `🚀 *Agenda Professor - ${new Date().toLocaleDateString('pt-BR')}*`;
-            let message = `💼 *RESUMO PROFESSOR*\n${title}\n\n`;
+            const dataFormatada = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+            let title = isAfternoon ? `🌤️ *AULAS RESTANTES* (${dataFormatada})` : `🚀 *AGENDA DE HOJE* (${dataFormatada})`;
 
-            sessoes.forEach(s => {
+            let message = `━━━━━━━━━━━━━━\n`;
+            message += `💼 *PERSONAL AGENDA*\n`;
+            message += `━━━━━━━━━━━━━━\n\n`;
+            message += `${title}\n\n`;
+
+            sessoes.forEach((s, index) => {
                 if (s.aluno && s.servico) {
-                    const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                    message += `⏰ ${hora} - ${s.aluno.nome} (${s.servico.nome})\n`;
+                    const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        timeZone: 'America/Sao_Paulo'
+                    });
+                    message += `⏰ *${hora}* - ${s.aluno.nome}\n`;
+                    message += `💪 _${s.servico.nome}_\n\n`;
                 }
             });
 
-            message += `\nTotal: ${sessoes.length} aulas${isAfternoon ? ' restantes' : ''}. Bom trabalho!`;
+            message += `━━━━━━━━━━━━━━\n`;
+            message += `🎯 Total: *${sessoes.length} aulas*${isAfternoon ? ' restantes' : ''}\n`;
+            message += `━━━━━━━━━━━━━━`;
 
             // Envia para o telefone do professor
             // Se ele tiver instância própria conectada, usa ela (pra ele ver que tá funcionando)
@@ -190,10 +202,13 @@ class NotificationService {
                 .gte('data_hora_inicio', agora.toISOString())
                 .lte('data_hora_inicio', umaSemanaFrente.toISOString());
 
-            let message = `💼 *RESUMO PROFESSOR - SEMANAL*\n\n`;
+            let message = `━━━━━━━━━━━━━━\n`;
+            message += `💼 *RESUMO SEMANAL*\n`;
+            message += `━━━━━━━━━━━━━━\n\n`;
             message += `✅ *Semana Passada:* ${concluidas?.length || 0} aulas concluídas.\n`;
-            message += `📅 *Próxima Semana:* ${agendadas?.length || 0} aulas já agendadas.\n\n`;
-            message += `Bora bater as metas! 💪`;
+            message += `📅 *Próxima Semana:* ${agendadas?.length || 0} aulas agendadas.\n\n`;
+            message += `Bora bater as metas! 💪\n`;
+            message += `━━━━━━━━━━━━━━`;
 
             // Envia para o telefone do professor
             const instanceToSend = professor.whatsapp_instance || this.centralInstance;
@@ -246,9 +261,24 @@ class NotificationService {
                     let message = '';
 
                     if (mode === 'hourly') {
-                        message = `🏋️‍♂️ *LEMBRETE ALUNO*\n\nOlá, ${sessao.aluno.nome}! 👋\n\nSua aula de *${sessao.servico.nome}* começa em 1 hora, às *${hora}*.\n\nAté logo! 💪`;
+                        message = `━━━━━━━━━━━━━━\n`;
+                        message += `🏋️‍♂️ *LEMBRETE DE TREINO*\n`;
+                        message += `━━━━━━━━━━━━━━\n\n`;
+                        message += `Olá, *${sessao.aluno.nome}*! 👋\n\n`;
+                        message += `Sua aula de *${sessao.servico.nome}* começa em *1 hora*.\n\n`;
+                        message += `⏰ Início: *${hora}*\n\n`;
+                        message += `Vamo pra cima! 🔥💪\n`;
+                        message += `━━━━━━━━━━━━━━`;
                     } else {
-                        message = `🏋️‍♂️ *LEMBRETE ALUNO*\n\nBom dia, ${sessao.aluno.nome}! 👋\n\nConfirmando nossa aula de hoje:\n💪 *${sessao.servico.nome}*\n⏰ às *${hora}*.\n\nVamo pra cima! 🔥`;
+                        message = `━━━━━━━━━━━━━━\n`;
+                        message += `🏋️‍♂️ *LEMBRETE DE TREINO*\n`;
+                        message += `━━━━━━━━━━━━━━\n\n`;
+                        message += `Bom dia, *${sessao.aluno.nome}*! 👋\n\n`;
+                        message += `Confirmando nossa aula de hoje:\n`;
+                        message += `💪 *${sessao.servico.nome}*\n`;
+                        message += `⏰ às *${hora}*\n\n`;
+                        message += `Até logo! 🔥\n`;
+                        message += `━━━━━━━━━━━━━━`;
                     }
 
                     await this.sendMessage(sessao.aluno.telefone_whatsapp, message, sessao.professor?.whatsapp_instance);

@@ -42,16 +42,22 @@ async function processarComando(professorId, comando) {
             return '☕ *Você não tem sessões agendadas para hoje.* Aproveite o descanso ou foque no planejamento! 🔥';
         }
 
-        let mensagemHoje = '📅 *Sua agenda de hoje:*\n\n';
+        let mensagemHoje = `━━━━━━━━━━━━━━\n`;
+        mensagemHoje += `📅 *AGENDA DE HOJE*\n`;
+        mensagemHoje += `━━━━━━━━━━━━━━\n\n`;
+
         sessoesHoje.forEach(s => {
             const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
                 hour: '2-digit',
                 minute: '2-digit',
                 timeZone: 'America/Sao_Paulo'
             });
-            mensagemHoje += `• ${hora} - *${s.aluno.nome}* (${s.servico.nome})\n`;
+            mensagemHoje += `⏰ *${hora}* - ${s.aluno.nome}\n`;
+            mensagemHoje += `💪 _${s.servico.nome}_\n\n`;
         });
-        mensagemHoje += `\n🎯 Total: ${sessoesHoje.length} sessões`;
+
+        mensagemHoje += `━━━━━━━━━━━━━━\n`;
+        mensagemHoje += `🎯 Total: *${sessoesHoje.length} sessões*`;
         return mensagemHoje;
     }
 
@@ -76,16 +82,22 @@ async function processarComando(professorId, comando) {
             return '✨ *Nenhum agendamento para amanhã ainda.*';
         }
 
-        let mensagemAmanha = '🌅 *Sessões de amanhã:*\n\n';
+        let mensagemAmanha = `━━━━━━━━━━━━━━\n`;
+        mensagemAmanha += `🌅 *AGENDA DE AMANHÃ*\n`;
+        mensagemAmanha += `━━━━━━━━━━━━━━\n\n`;
+
         sessoesAmanha.forEach(s => {
             const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
                 hour: '2-digit',
                 minute: '2-digit',
                 timeZone: 'America/Sao_Paulo'
             });
-            mensagemAmanha += `• ${hora} - *${s.aluno.nome}* (${s.servico.nome})\n`;
+            mensagemAmanha += `⏰ *${hora}* - ${s.aluno.nome}\n`;
+            mensagemAmanha += `💪 _${s.servico.nome}_\n\n`;
         });
-        mensagemAmanha += `\n🎯 Total: ${sessoesAmanha.length} sessões`;
+
+        mensagemAmanha += `━━━━━━━━━━━━━━\n`;
+        mensagemAmanha += `🎯 Total: *${sessoesAmanha.length} sessões*`;
         return mensagemAmanha;
     }
 
@@ -120,21 +132,26 @@ async function processarComando(professorId, comando) {
             sessoPorDia[dataStr].push(s);
         });
 
-        let mensagemSemana = '🗓️ *Resumo da sua semana:*\n\n';
+        let mensagemSemana = `━━━━━━━━━━━━━━\n`;
+        mensagemSemana += `🗓️ *RESUMO DA SEMANA*\n`;
+        mensagemSemana += `━━━━━━━━━━━━━━\n\n`;
+
         Object.keys(sessoPorDia).forEach(dia => {
             const diaCapitalizado = dia.charAt(0).toUpperCase() + dia.slice(1);
-            mensagemSemana += `*${diaCapitalizado}:*\n`;
+            mensagemSemana += `📌 *${diaCapitalizado}*\n`;
             sessoPorDia[dia].forEach(s => {
                 const hora = new Date(s.data_hora_inicio).toLocaleTimeString('pt-BR', {
                     hour: '2-digit',
                     minute: '2-digit',
                     timeZone: 'America/Sao_Paulo'
                 });
-                mensagemSemana += `  • ${hora} - ${s.aluno.nome} (${s.servico.nome})\n`;
+                mensagemSemana += `  • ${hora} - ${s.aluno.nome} (_${s.servico.nome}_)\n`;
             });
             mensagemSemana += '\n';
         });
-        mensagemSemana += `✅ Total: ${sessoesSemana.length} aulas na semana`;
+
+        mensagemSemana += `━━━━━━━━━━━━━━\n`;
+        mensagemSemana += `✅ Total: *${sessoesSemana.length} aulas* na semana`;
         return mensagemSemana;
     }
 
@@ -157,16 +174,22 @@ async function processarComando(professorId, comando) {
             return '💰 *Ótimas notícias! Nenhum contrato vencendo nos próximos 7 dias.*';
         }
 
-        let mensagemVencimentos = '💸 *Contratos vencendo (7 dias):*\n\n';
+        let mensagemVencimentos = `━━━━━━━━━━━━━━\n`;
+        mensagemVencimentos += `💸 *CONTRATOS VENCENDO*\n`;
+        mensagemVencimentos += `━━━━━━━━━━━━━━\n\n`;
+
         contratosVencendo.forEach(c => {
             const dataVenc = new Date(c.data_vencimento).toLocaleDateString('pt-BR', {
                 timeZone: 'America/Sao_Paulo'
             });
             const diasRestantes = Math.ceil((new Date(c.data_vencimento) - hoje) / (1000 * 60 * 60 * 24));
-            mensagemVencimentos += `• *${c.aluno.nome}* (${c.servico.nome})\n`;
-            mensagemVencimentos += `  📅 Vence em: ${dataVenc} (${diasRestantes === 0 ? 'HOJE!' : diasRestantes + ' dias'})\n`;
-            mensagemVencimentos += `  💰 Valor: R$ ${parseFloat(c.valor_mensal).toFixed(2)}\n\n`;
+            mensagemVencimentos += `👤 *${c.aluno.nome}*\n`;
+            mensagemVencimentos += `📚 _${c.servico.nome}_\n`;
+            mensagemVencimentos += `📅 Venc: ${dataVenc} (*${diasRestantes === 0 ? 'HOJE!' : diasRestantes + ' dias'}*)\n`;
+            mensagemVencimentos += `💰 Valor: *R$ ${parseFloat(c.valor_mensal).toFixed(2)}*\n\n`;
         });
+
+        mensagemVencimentos += `━━━━━━━━━━━━━━`;
         return mensagemVencimentos;
     }
 

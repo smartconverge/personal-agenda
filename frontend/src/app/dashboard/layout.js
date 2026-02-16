@@ -854,10 +854,8 @@ export default function DashboardLayout({ children }) {
 
                 {/* Bottom Navigation - Mobile Only (Unified Menu) */}
                 <nav className="bottom-nav" style={{
-                    display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '4.5rem'
+                    alignItems: 'center'
                 }}>
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

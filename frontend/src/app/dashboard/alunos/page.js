@@ -121,18 +121,22 @@ export default function AlunosPage() {
         }
     }
 
-    const downloadTemplate = () => {
-        const BOM = '\uFEFF'
-        const headers = 'nome;telefone_whatsapp;notificacoes_ativas\n'
-        const example = 'João Silva;11999999999;true\nMaria Oliveira;11888888888;false'
-        const blob = new Blob([BOM + headers + example], { type: 'text/csv;charset=utf-8;' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'modelo_alunos.csv')
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+    const downloadTemplate = async () => {
+        // Cria planilha Excel nativa (.xlsx) - funciona perfeitamente no Excel Brasil
+        const XLSX = (await import('xlsx')).default || (await import('xlsx'))
+
+        const data = [
+            { nome: 'João Silva', telefone_whatsapp: '11999999999', notificacoes_ativas: 'true' },
+            { nome: 'Maria Oliveira', telefone_whatsapp: '11888888888', notificacoes_ativas: 'false' }
+        ]
+
+        const ws = XLSX.utils.json_to_sheet(data)
+        // Ajusta largura das colunas
+        ws['!cols'] = [{ wch: 25 }, { wch: 20 }, { wch: 20 }]
+
+        const wb = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(wb, ws, 'Alunos')
+        XLSX.writeFile(wb, 'modelo_alunos.xlsx')
     }
 
     const handleEdit = (aluno) => {

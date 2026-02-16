@@ -593,4 +593,48 @@ router.put('/:id', authenticate, async (req, res) => {
     }
 });
 
+/**
+ * DELETE /sessoes/limpar-aluno
+ * Excluir todas as sessões futuras de um aluno (Limpeza manual)
+ */
+router.delete('/limpar-aluno', authenticate, async (req, res) => {
+    try {
+        const { aluno_id } = req.query;
+
+        if (!aluno_id) {
+            return res.status(400).json({
+                success: false,
+                error: 'aluno_id é obrigatório'
+            });
+        }
+
+        const agora = new Date().toISOString();
+
+        const { data, error } = await supabaseAdmin
+            .from('sessoes')
+            .delete()
+            .eq('aluno_id', aluno_id)
+            .eq('professor_id', req.professorId)
+            .gte('data_hora_inicio', agora)
+            .select();
+
+        if (error) throw error;
+
+        res.json({
+            success: true,
+            data: {
+                message: `${data?.length || 0} sessões futuras removidas com sucesso.`,
+                count: data?.length || 0
+            }
+        });
+
+    } catch (error) {
+        console.error('Erro ao limpar sessões do aluno:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao limpar sessões do aluno'
+        });
+    }
+});
+
 module.exports = router;

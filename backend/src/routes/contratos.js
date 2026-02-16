@@ -201,11 +201,14 @@ router.delete('/:id', authenticate, async (req, res) => {
             .single();
 
         if (erroBusca || !contrato) {
+            console.error(`[CONTRATO] Falha ao localizar contrato ${id} para limpeza:`, erroBusca);
             return res.status(404).json({
                 success: false,
                 error: 'Contrato não encontrado'
             });
         }
+
+        console.log(`[CONTRATO] Iniciando limpeza para contrato ${id}. Aluno: ${contrato.aluno_id}, Serviço: ${contrato.servico_id}`);
 
         // 2. Gerenciar sessões futuras agendadas deste serviço específico
         const agora = new Date().toISOString();
@@ -223,6 +226,7 @@ router.delete('/:id', authenticate, async (req, res) => {
 
             if (erroDelecao) throw erroDelecao;
             sessoesAfetadas = deletadas?.length || 0;
+            console.log(`[CONTRATO] ${sessoesAfetadas} sessões futuras DELETADAS.`);
         } else {
             // Apenas marcar como cancelada TODAS as sessões futuras (exceto as já concluídas)
             const { data: canceladas, error: erroCancelamento } = await supabaseAdmin
@@ -236,6 +240,7 @@ router.delete('/:id', authenticate, async (req, res) => {
 
             if (erroCancelamento) throw erroCancelamento;
             sessoesAfetadas = canceladas?.length || 0;
+            console.log(`[CONTRATO] ${sessoesAfetadas} sessões futuras CANCELADAS.`);
         }
 
         let mensagem = `Contrato ${excluir === 'true' ? 'excluído' : 'cancelado'} e ${sessoesAfetadas} sessões futuras do serviço foram ${excluir === 'true' ? 'removidas' : 'canceladas'}.`;

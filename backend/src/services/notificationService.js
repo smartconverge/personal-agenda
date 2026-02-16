@@ -9,7 +9,7 @@ class NotificationService {
         this.apiUrl = process.env.EVOLUTION_API_URL;
         this.instance = process.env.EVOLUTION_INSTANCE_NAME; // Instância Padrão/Aluno
         this.centralInstance = process.env.EVOLUTION_CENTRAL_INSTANCE || process.env.EVOLUTION_INSTANCE_NAME; // Instância para Professor
-        this.token = process.env.EVOLUTION_API_TOKEN;
+        this.token = process.env.EVOLUTION_API_TOKEN || process.env.AUTHENTICATION_API_KEY || process.env.EVOLUTION_GLOBAL_KEY;
     }
 
     /**

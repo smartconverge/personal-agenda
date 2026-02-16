@@ -8,7 +8,7 @@ const { supabaseAdmin } = require('../config/supabase');
 const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL;
 // Para criar/deletar instâncias, precisamos da Global Key. 
 // O Token da instância serve apenas para manipular a própria instância.
-const EVOLUTION_API_TOKEN = process.env.EVOLUTION_GLOBAL_KEY || process.env.EVOLUTION_API_TOKEN;
+const EVOLUTION_API_TOKEN = process.env.EVOLUTION_GLOBAL_KEY || process.env.AUTHENTICATION_API_KEY || process.env.EVOLUTION_API_TOKEN;
 
 // Headers padrão para Evolution API
 const evolutionHeaders = {

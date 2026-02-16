@@ -2,38 +2,23 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-// ESCUDO GLOBAL CONTRA QUEDAS - Impede o servidor de morrer por qualquer erro
-process.on('uncaughtException', (err) => {
-  console.error('🔥 ERRO CRÍTICO (Uncaught):', err);
-});
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('🔥 ERRO CRÍTICO (Unhandled Rejection):', reason);
-});
-
-console.log('📦 Carregando rotas...');
+// Rotas
 const authRoutes = require('./routes/auth');
-console.log('✅ Auth carregado');
 const alunosRoutes = require('./routes/alunos');
-console.log('✅ Alunos carregados');
 const servicosRoutes = require('./routes/servicos');
-console.log('✅ Serviços carregados');
 const contratosRoutes = require('./routes/contratos');
-console.log('✅ Contratos carregados');
 const sessoesRoutes = require('./routes/sessoes');
-console.log('✅ Sessões carregadas');
 const notificacoesRoutes = require('./routes/notificacoes');
-console.log('✅ Notificações carregadas');
 const webhookRoutes = require('./routes/webhook');
-console.log('✅ Webhook carregado');
 const perfilRoutes = require('./routes/perfil');
-console.log('✅ Perfil carregado');
 const configuracoesRoutes = require('./routes/configuracoes');
-console.log('✅ Configurações carregadas');
 const whatsappRoutes = require('./routes/whatsapp');
-console.log('✅ Whatsapp carregado');
 
+// Middlewares e Jobs
 const { initCronJobs } = require('./jobs/cron');
 const { errorHandler } = require('./middleware/errorHandler');
 
@@ -53,11 +38,12 @@ app.get('/status-deploy', (req, res) => {
   });
 });
 
-const cookieParser = require('cookie-parser');
-
-// Middleware
+// Middleware Base
 app.use(helmet());
 app.use(cookieParser());
+app.use(morgan('combined'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // CORS restrito às origens permitidas
 // CORS restrito às origens permitidas
@@ -80,7 +66,6 @@ app.use(cors({
 }));
 
 // Rate Limiting Security
-const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 100,
@@ -93,10 +78,6 @@ const limiter = rateLimit({
   }
 });
 app.use(limiter);
-
-app.use(morgan('combined'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Rota Raiz (Imediata para o Coolify)
 app.get('/', (req, res) => {

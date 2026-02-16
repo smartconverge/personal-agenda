@@ -230,425 +230,437 @@ export default function AlunoDetalhesPage() {
     }
 
     const handleAvisarAgendamentos = async () => {
+        try {
+            setLoading(true)
+            await api.post('/notificacoes/resumo-aluno', { aluno_id: id })
+            showToast('Resumo enviado para o WhatsApp!', 'success')
+        } catch (error) {
+            console.error(error)
+            const msg = error.response?.data?.error || 'Erro ao enviar resumo.'
+            showToast(msg, 'error')
+        } finally {
+            setLoading(false)
+        }
+    }
 
-        const resetForm = () => {
-            setFormData({
-                servico_id: '',
-                recorrente: false,
-                meses_recorrencia: 3,
-                notificar: false,
-                horarios: [{ dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
-            })
-        }
+    const resetForm = () => {
+        setFormData({
+            servico_id: '',
+            recorrente: false,
+            meses_recorrencia: 3,
+            notificar: false,
+            horarios: [{ dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
+        })
+    }
 
-        const addHorario = () => setFormData({ ...formData, horarios: [...formData.horarios, { dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }] })
-        const removeHorario = (i) => {
-            if (formData.horarios.length === 1) return
-            const newHorarios = [...formData.horarios]
-            newHorarios.splice(i, 1)
-            setFormData({ ...formData, horarios: newHorarios })
-        }
-        const updateHorario = (i, f, v) => {
-            const newHorarios = [...formData.horarios]
-            newHorarios[i] = { ...newHorarios[i], [f]: v }
-            setFormData({ ...formData, horarios: newHorarios })
-        }
+    const addHorario = () => setFormData({ ...formData, horarios: [...formData.horarios, { dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }] })
+    const removeHorario = (i) => {
+        if (formData.horarios.length === 1) return
+        const newHorarios = [...formData.horarios]
+        newHorarios.splice(i, 1)
+        setFormData({ ...formData, horarios: newHorarios })
+    }
+    const updateHorario = (i, f, v) => {
+        const newHorarios = [...formData.horarios]
+        newHorarios[i] = { ...newHorarios[i], [f]: v }
+        setFormData({ ...formData, horarios: newHorarios })
+    }
 
-        const getStatusBadge = (status) => {
-            switch (status) {
-                case 'agendada': return 'badge-info'
-                case 'concluida': return 'badge-success'
-                case 'cancelada': return 'badge-danger'
-                case 'remarcada': return 'badge-warning'
-                default: return 'badge-secondary'
-            }
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case 'agendada': return 'badge-info'
+            case 'concluida': return 'badge-success'
+            case 'cancelada': return 'badge-danger'
+            case 'remarcada': return 'badge-warning'
+            default: return 'badge-secondary'
         }
-        const getStatusIcon = (status) => {
-            switch (status) {
-                case 'agendada': return <Icons.Calendar size={14} />
-                case 'concluida': return <Icons.CheckCircle size={14} />
-                case 'cancelada': return <Icons.Error size={14} />
-                case 'remarcada': return <Icons.Info size={14} />
-                default: return <Icons.Edit size={14} />
-            }
+    }
+    const getStatusIcon = (status) => {
+        switch (status) {
+            case 'agendada': return <Icons.Calendar size={14} />
+            case 'concluida': return <Icons.CheckCircle size={14} />
+            case 'cancelada': return <Icons.Error size={14} />
+            case 'remarcada': return <Icons.Info size={14} />
+            default: return <Icons.Edit size={14} />
         }
-        const navigateDate = (d) => {
-            const newDate = new Date(currentDate)
-            if (viewMode === 'dia') newDate.setDate(newDate.getDate() + d)
-            else if (viewMode === 'semana') newDate.setDate(newDate.getDate() + (d * 7))
-            else newDate.setMonth(newDate.getMonth() + d)
-            setCurrentDate(newDate)
-        }
+    }
+    const navigateDate = (d) => {
+        const newDate = new Date(currentDate)
+        if (viewMode === 'dia') newDate.setDate(newDate.getDate() + d)
+        else if (viewMode === 'semana') newDate.setDate(newDate.getDate() + (d * 7))
+        else newDate.setMonth(newDate.getMonth() + d)
+        setCurrentDate(newDate)
+    }
 
-        if (!aluno) return <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}><div className="spinner" /></div>
-        const sortedSessoes = [...sessoes].sort((a, b) => new Date(a.data_hora_inicio) - new Date(b.data_hora_inicio))
+    if (!aluno) return <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}><div className="spinner" /></div>
+    const sortedSessoes = [...sessoes].sort((a, b) => new Date(a.data_hora_inicio) - new Date(b.data_hora_inicio))
 
-        return (
-            <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-                {/* Header / Infobar */}
-                <div style={{ marginBottom: '2rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                        <button className="btn-icon btn-icon-secondary" onClick={() => router.push('/dashboard/alunos')}>
-                            <Icons.Logout size={18} style={{ transform: 'rotate(180deg)' }} />
+    return (
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+            {/* Header / Infobar */}
+            <div style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                    <button className="btn-icon btn-icon-secondary" onClick={() => router.push('/dashboard/alunos')}>
+                        <Icons.Logout size={18} style={{ transform: 'rotate(180deg)' }} />
+                    </button>
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Voltar para Alunos</span>
+                </div>
+
+                <div className="card-premium" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                        <div className="avatar avatar-lg" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--primary)', border: '2px solid var(--primary-light)' }}>
+                            {aluno.nome?.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
+                                <h1 style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--text-primary)' }}>{aluno.nome}</h1>
+                                <span className={`badge ${aluno.plano === 'Premium' ? 'badge-info' : 'badge-secondary'}`}>
+                                    {aluno.plano || 'Basic'}
+                                </span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                                    <Icons.Goal size={14} />
+                                    <span>Objetivo: <strong>{aluno.objetivo || 'Não definido'}</strong></span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                                    <Icons.Students size={14} />
+                                    <span>WhatsApp: {aluno.telefone_whatsapp}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        <button
+                            className="btn btn-danger"
+                            style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: 0.9 }}
+                            onClick={() => setShowLimparDialog(true)}
+                            disabled={loading}
+                        >
+                            <Icons.Delete size={18} />
+                            <span>Limpar Agenda Futura</span>
                         </button>
-                        <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Voltar para Alunos</span>
+
+                        <button
+                            className="btn btn-secondary"
+                            style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                            onClick={handleAvisarAgendamentos}
+                            disabled={loading}
+                        >
+                            <Icons.Students size={18} />
+                            <span>Avisar Agendamentos (WhatsApp)</span>
+                        </button>
+
+                        <button className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => { resetForm(); setShowModal(true); }}>
+                            <Icons.Plus size={18} />
+                            <span>Novo Agendamento</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* View Controls */}
+            <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '0.75rem 1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '0.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                        {['dia', 'semana', 'mes'].map((v) => (
+                            <button
+                                key={v}
+                                className={`btn ${viewMode === v ? '' : ''}`}
+                                style={{
+                                    padding: '0.5rem 1.25rem',
+                                    fontSize: '0.8125rem',
+                                    height: 'auto',
+                                    background: viewMode === v ? 'var(--primary)' : 'transparent',
+                                    color: viewMode === v ? 'white' : 'var(--text-secondary)',
+                                    boxShadow: 'none',
+                                    textTransform: 'capitalize'
+                                }}
+                                onClick={() => setViewMode(v)}
+                            >
+                                {v}
+                            </button>
+                        ))}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(-1)}><Icons.Menu size={16} style={{ transform: 'rotate(90deg)' }} /></button>
+                        <span style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--text-primary)', minWidth: '180px', textAlign: 'center' }}>
+                            {currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                        </span>
+                        <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(1)}><Icons.Menu size={16} style={{ transform: 'rotate(-90deg)' }} /></button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Sessions List */}
+            <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
+                {loading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="spinner" /></div>
+                ) : sortedSessoes.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+                        <Icons.Calendar size={48} color="var(--text-muted)" style={{ opacity: 0.3, marginBottom: '1rem' }} />
+                        <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Nenhuma sessão agendada para este período</p>
+                    </div>
+                ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                        <table className="table" style={{ margin: 0 }}>
+                            <thead>
+                                <tr>
+                                    <th style={{ paddingLeft: '1.5rem' }}>Data e Horário</th>
+                                    <th>Serviço</th>
+                                    <th>Status</th>
+                                    <th>Obs</th>
+                                    <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sortedSessoes.map((sessao) => (
+                                    <tr key={sessao.id} className="table-row-hover">
+                                        <td style={{ paddingLeft: '1.5rem' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                <span style={{ fontWeight: '800', color: 'var(--text-primary)', fontSize: '0.9375rem' }}>
+                                                    {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                                    {new Date(sessao.data_hora_inicio).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span style={{ fontWeight: '600' }}>{sessao.servico?.nome || 'N/A'}</span>
+                                        </td>
+                                        <td>
+                                            <span className={`badge ${getStatusBadge(sessao.status)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                                {getStatusIcon(sessao.status)}
+                                                {sessao.status.toUpperCase()}
+                                            </span>
+                                        </td>
+                                        <td>{sessao.observacoes ? <Icons.Info size={16} color="var(--primary)" title={sessao.observacoes} /> : <span style={{ opacity: 0.3 }}>-</span>}</td>
+                                        <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                                <button className="btn-icon btn-icon-secondary" onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}>
+                                                    <Icons.Info size={16} />
+                                                </button>
+                                                {sessao.status === 'agendada' && (
+                                                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                                        <button className="btn-icon btn-icon-primary" onClick={() => { setSelectedSessao(sessao); setShowConcluirDialog(true); }}>
+                                                            <Icons.CheckCircle size={16} />
+                                                        </button>
+                                                        <button className="btn-icon btn-icon-secondary" onClick={() => {
+                                                            setSelectedSessao(sessao);
+                                                            const d = new Date(sessao.data_hora_inicio);
+                                                            setRemarcarData({ nova_data: d.toISOString().split('T')[0], nova_hora: d.toTimeString().slice(0, 5), observacoes: sessao.observacoes || '' });
+                                                            setShowRemarcarModal(true);
+                                                        }}>
+                                                            <Icons.TrendingUp size={16} />
+                                                        </button>
+                                                        <button className="btn-icon btn-icon-danger" onClick={() => {
+                                                            setSelectedSessao(sessao);
+                                                            setCancelarData({ observacoes: '' });
+                                                            setShowCancelDialog(true);
+                                                        }}>
+                                                            <Icons.Delete size={16} />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                {sessao.status === 'concluida' && (
+                                                    <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.7rem', height: 'auto' }} onClick={() => handleReabrir(sessao)}>
+                                                        ↩ Reabrir
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+
+            {/* Modal Nova Sessão */}
+            <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Nova(s) Sessão(ões)" size="lg">
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <label className="label">Escolha a Modalidade</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                            {servicos.map(servico => (
+                                <button
+                                    key={servico.id}
+                                    type="button"
+                                    className={`card-flat ${formData.servico_id === servico.id ? 'active' : ''}`}
+                                    style={{
+                                        padding: '1rem',
+                                        textAlign: 'left',
+                                        border: formData.servico_id === servico.id ? '2px solid var(--primary)' : '1px solid var(--border)',
+                                        backgroundColor: formData.servico_id === servico.id ? 'var(--primary-light)10' : 'transparent',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onClick={() => setFormData({ ...formData, servico_id: servico.id })}
+                                >
+                                    <p style={{ fontWeight: '800', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{servico.nome}</p>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{servico.duracao_minutos} min • {servico.tipo}</p>
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    <div className="card-premium" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                            <div className="avatar avatar-lg" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--primary)', border: '2px solid var(--primary-light)' }}>
-                                {aluno.nome?.substring(0, 2).toUpperCase()}
+                    <div style={{ marginBottom: '1.5rem', backgroundColor: 'var(--bg-primary)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <h3 style={{ fontSize: '0.9375rem', fontWeight: '800', margin: 0 }}>Define o Agendamento</h3>
+                            <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto' }} onClick={addHorario}>+ Adicionar Horário</button>
+                        </div>
+                        {formData.horarios.map((horario, index) => (
+                            <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: index < formData.horarios.length - 1 ? '1px dashed var(--border)' : 'none' }}>
+                                <div style={{ flex: 1 }}>
+                                    <label className="label">Data</label>
+                                    <input type="date" className="input" value={horario.data_inicio} onChange={(e) => updateHorario(index, 'data_inicio', e.target.value)} required />
+                                </div>
+                                <div style={{ width: '130px' }}>
+                                    <label className="label">Hora de Início</label>
+                                    <input type="time" className="input" value={horario.hora} onChange={(e) => updateHorario(index, 'hora', e.target.value)} required />
+                                </div>
+                                {formData.horarios.length > 1 && (
+                                    <button type="button" className="btn-icon btn-icon-danger" onClick={() => removeHorario(index)}>
+                                        <Icons.Delete size={16} />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                            <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
+                            <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Repetir semanalmente? {formData.recorrente && `(Agendar ${formData.meses_recorrencia * 4} aulas)`}</span>
+                        </label>
+                        {formData.recorrente && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '2rem' }}>
+                                <span style={{ fontSize: '0.875rem' }}>Durante:</span>
+                                <input type="number" className="input" style={{ width: '70px', height: '2.25rem' }} min="1" max="12" value={formData.meses_recorrencia} onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })} />
+                                <span style={{ fontSize: '0.875rem' }}>meses</span>
+                            </div>
+                        )}
+
+                        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={formData.notificar} onChange={(e) => setFormData({ ...formData, notificar: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
+                                <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Notificar aluno agora via WhatsApp?</span>
+                            </label>
+                            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '2rem', marginTop: '0.25rem' }}>
+                                Se você estiver agendando muitas aulas, desmarque aqui e use o botão "Avisar Agendamentos" depois.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                        <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} style={{ padding: '0.625rem 1.5rem' }}>Cancelar</button>
+                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2.5rem' }}>Agendar</button>
+                    </div>
+                </form>
+            </Modal>
+
+            {/* Modal Detalhes */}
+            <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="Detalhes da Sessão">
+                {selectedSessao && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                        <div style={{ padding: '1.25rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Modalidade</p>
+                                <p style={{ fontSize: '1.125rem', fontWeight: '800', color: 'var(--primary)' }}>{selectedSessao.servico?.nome}</p>
+                            </div>
+                            <span className={`badge ${getStatusBadge(selectedSessao.status)}`}>{selectedSessao.status}</span>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div>
+                                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Data</p>
+                                <p style={{ fontWeight: '700' }}>{new Date(selectedSessao.data_hora_inicio).toLocaleDateString('pt-BR', { dateStyle: 'long' })}</p>
                             </div>
                             <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
-                                    <h1 style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--text-primary)' }}>{aluno.nome}</h1>
-                                    <span className={`badge ${aluno.plano === 'Premium' ? 'badge-info' : 'badge-secondary'}`}>
-                                        {aluno.plano || 'Basic'}
-                                    </span>
-                                </div>
-                                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                        <Icons.Goal size={14} />
-                                        <span>Objetivo: <strong>{aluno.objetivo || 'Não definido'}</strong></span>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                        <Icons.Students size={14} />
-                                        <span>WhatsApp: {aluno.telefone_whatsapp}</span>
-                                    </div>
-                                </div>
+                                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Horário</p>
+                                <p style={{ fontWeight: '700' }}>{new Date(selectedSessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                            <button
-                                className="btn btn-danger"
-                                style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: 0.9 }}
-                                onClick={() => setShowLimparDialog(true)}
-                                disabled={loading}
-                            >
-                                <Icons.Delete size={18} />
-                                <span>Limpar Agenda Futura</span>
-                            </button>
 
-                            <button
-                                className="btn btn-secondary"
-                                style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                                onClick={handleAvisarAgendamentos}
-                                disabled={loading}
-                            >
-                                <Icons.Students size={18} />
-                                <span>Avisar Agendamentos (WhatsApp)</span>
-                            </button>
+                        {selectedSessao.observacoes && (
+                            <div style={{ padding: '1rem', backgroundColor: 'var(--primary-light)10', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--primary)' }}>
+                                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: '800' }}>OBSERVAÇÕES / JUSTIFICATIVA</p>
+                                <p style={{ fontSize: '0.875rem', lineHeight: '1.5' }}>{selectedSessao.observacoes}</p>
+                            </div>
+                        )}
 
-                            <button className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => { resetForm(); setShowModal(true); }}>
-                                <Icons.Plus size={18} />
-                                <span>Novo Agendamento</span>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                            <button className="btn btn-secondary" style={{ flex: 1, gap: '0.5rem' }} onClick={() => {
+                                setShowDetailModal(false);
+                                const d = new Date(selectedSessao.data_hora_inicio);
+                                setRemarcarData({ nova_data: d.toISOString().split('T')[0], nova_hora: d.toTimeString().slice(0, 5), observacoes: selectedSessao.observacoes || '' });
+                                setShowRemarcarModal(true);
+                            }}>
+                                <Icons.TrendingUp size={16} />
+                                <span>Remarcar / Editar</span>
                             </button>
                         </div>
                     </div>
-                </div>
+                )}
+            </Modal>
 
-                {/* View Controls */}
-                <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '0.75rem 1.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                        <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '0.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                            {['dia', 'semana', 'mes'].map((v) => (
-                                <button
-                                    key={v}
-                                    className={`btn ${viewMode === v ? '' : ''}`}
-                                    style={{
-                                        padding: '0.5rem 1.25rem',
-                                        fontSize: '0.8125rem',
-                                        height: 'auto',
-                                        background: viewMode === v ? 'var(--primary)' : 'transparent',
-                                        color: viewMode === v ? 'white' : 'var(--text-secondary)',
-                                        boxShadow: 'none',
-                                        textTransform: 'capitalize'
-                                    }}
-                                    onClick={() => setViewMode(v)}
-                                >
-                                    {v}
-                                </button>
-                            ))}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(-1)}><Icons.Menu size={16} style={{ transform: 'rotate(90deg)' }} /></button>
-                            <span style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--text-primary)', minWidth: '180px', textAlign: 'center' }}>
-                                {currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
-                            </span>
-                            <button className="btn-icon btn-icon-secondary" onClick={() => navigateDate(1)}><Icons.Menu size={16} style={{ transform: 'rotate(-90deg)' }} /></button>
-                        </div>
+            {/* Modal Remarcar */}
+            <Modal isOpen={showRemarcarModal} onClose={() => setShowRemarcarModal(false)} title="Remarcar Sessão">
+                <form onSubmit={handleRemarcar}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                        <div><label className="label">Nova Data</label><input type="date" className="input" value={remarcarData.nova_data} onChange={(e) => setRemarcarData({ ...remarcarData, nova_data: e.target.value })} required /></div>
+                        <div><label className="label">Nova Hora</label><input type="time" className="input" value={remarcarData.nova_hora} onChange={(e) => setRemarcarData({ ...remarcarData, nova_hora: e.target.value })} required /></div>
                     </div>
-                </div>
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <label className="label">O que aconteceu? (Opcional)</label>
+                        <textarea className="input" rows="3" value={remarcarData.observacoes} onChange={(e) => setRemarcarData({ ...remarcarData, observacoes: e.target.value })} placeholder="Ex: Aluno solicitou mudança em cima da hora." />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                        <button type="button" className="btn btn-secondary" onClick={() => setShowRemarcarModal(false)}>Voltar</button>
+                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>Confirmar Alteração</button>
+                    </div>
+                </form>
+            </Modal>
 
-                {/* Sessions List */}
-                <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
-                    {loading ? (
-                        <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><div className="spinner" /></div>
-                    ) : sortedSessoes.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-                            <Icons.Calendar size={48} color="var(--text-muted)" style={{ opacity: 0.3, marginBottom: '1rem' }} />
-                            <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Nenhuma sessão agendada para este período</p>
+            {/* Modal Cancelar */}
+            <Modal isOpen={showCancelDialog} onClose={() => setShowCancelDialog(false)} title="Cancelar Sessão">
+                <form onSubmit={handleCancelar}>
+                    <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                        <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '50%', backgroundColor: 'var(--danger)10', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                            <Icons.Alert size={24} />
                         </div>
-                    ) : (
-                        <div style={{ overflowX: 'auto' }}>
-                            <table className="table" style={{ margin: 0 }}>
-                                <thead>
-                                    <tr>
-                                        <th style={{ paddingLeft: '1.5rem' }}>Data e Horário</th>
-                                        <th>Serviço</th>
-                                        <th>Status</th>
-                                        <th>Obs</th>
-                                        <th style={{ paddingRight: '1.5rem', textAlign: 'right' }}>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {sortedSessoes.map((sessao) => (
-                                        <tr key={sessao.id} className="table-row-hover">
-                                            <td style={{ paddingLeft: '1.5rem' }}>
-                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <span style={{ fontWeight: '800', color: 'var(--text-primary)', fontSize: '0.9375rem' }}>
-                                                        {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                    </span>
-                                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                                        {new Date(sessao.data_hora_inicio).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span style={{ fontWeight: '600' }}>{sessao.servico?.nome || 'N/A'}</span>
-                                            </td>
-                                            <td>
-                                                <span className={`badge ${getStatusBadge(sessao.status)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                                                    {getStatusIcon(sessao.status)}
-                                                    {sessao.status.toUpperCase()}
-                                                </span>
-                                            </td>
-                                            <td>{sessao.observacoes ? <Icons.Info size={16} color="var(--primary)" title={sessao.observacoes} /> : <span style={{ opacity: 0.3 }}>-</span>}</td>
-                                            <td style={{ paddingRight: '1.5rem', textAlign: 'right' }}>
-                                                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                                                    <button className="btn-icon btn-icon-secondary" onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}>
-                                                        <Icons.Info size={16} />
-                                                    </button>
-                                                    {sessao.status === 'agendada' && (
-                                                        <div style={{ display: 'flex', gap: '0.4rem' }}>
-                                                            <button className="btn-icon btn-icon-primary" onClick={() => { setSelectedSessao(sessao); setShowConcluirDialog(true); }}>
-                                                                <Icons.CheckCircle size={16} />
-                                                            </button>
-                                                            <button className="btn-icon btn-icon-secondary" onClick={() => {
-                                                                setSelectedSessao(sessao);
-                                                                const d = new Date(sessao.data_hora_inicio);
-                                                                setRemarcarData({ nova_data: d.toISOString().split('T')[0], nova_hora: d.toTimeString().slice(0, 5), observacoes: sessao.observacoes || '' });
-                                                                setShowRemarcarModal(true);
-                                                            }}>
-                                                                <Icons.TrendingUp size={16} />
-                                                            </button>
-                                                            <button className="btn-icon btn-icon-danger" onClick={() => {
-                                                                setSelectedSessao(sessao);
-                                                                setCancelarData({ observacoes: '' });
-                                                                setShowCancelDialog(true);
-                                                            }}>
-                                                                <Icons.Delete size={16} />
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                    {sessao.status === 'concluida' && (
-                                                        <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.7rem', height: 'auto' }} onClick={() => handleReabrir(sessao)}>
-                                                            ↩ Reabrir
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
+                        <h3 style={{ fontWeight: '800' }}>Confirmar Cancelamento?</h3>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Esta ação não pode ser desfeita.</p>
+                    </div>
 
-                {/* Modal Nova Sessão */}
-                <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Nova(s) Sessão(ões)" size="lg">
-                    <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label className="label">Escolha a Modalidade</label>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
-                                {servicos.map(servico => (
-                                    <button
-                                        key={servico.id}
-                                        type="button"
-                                        className={`card-flat ${formData.servico_id === servico.id ? 'active' : ''}`}
-                                        style={{
-                                            padding: '1rem',
-                                            textAlign: 'left',
-                                            border: formData.servico_id === servico.id ? '2px solid var(--primary)' : '1px solid var(--border)',
-                                            backgroundColor: formData.servico_id === servico.id ? 'var(--primary-light)10' : 'transparent',
-                                            transition: 'all 0.2s'
-                                        }}
-                                        onClick={() => setFormData({ ...formData, servico_id: servico.id })}
-                                    >
-                                        <p style={{ fontWeight: '800', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{servico.nome}</p>
-                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{servico.duracao_minutos} min • {servico.tipo}</p>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <label className="label">Motivo (Opcional)</label>
+                        <textarea className="input" rows="3" value={cancelarData.observacoes} onChange={(e) => setCancelarData({ ...cancelarData, observacoes: e.target.value })} placeholder="Ex: Doença, imprevisto, etc." />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
+                        <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowCancelDialog(false)}>Voltar</button>
+                        <button type="submit" className="btn btn-danger" style={{ flex: 1 }}>Sim, Cancelar</button>
+                    </div>
+                </form>
+            </Modal>
 
-                        <div style={{ marginBottom: '1.5rem', backgroundColor: 'var(--bg-primary)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                                <h3 style={{ fontSize: '0.9375rem', fontWeight: '800', margin: 0 }}>Define o Agendamento</h3>
-                                <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto' }} onClick={addHorario}>+ Adicionar Horário</button>
-                            </div>
-                            {formData.horarios.map((horario, index) => (
-                                <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: index < formData.horarios.length - 1 ? '1px dashed var(--border)' : 'none' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <label className="label">Data</label>
-                                        <input type="date" className="input" value={horario.data_inicio} onChange={(e) => updateHorario(index, 'data_inicio', e.target.value)} required />
-                                    </div>
-                                    <div style={{ width: '130px' }}>
-                                        <label className="label">Hora de Início</label>
-                                        <input type="time" className="input" value={horario.hora} onChange={(e) => updateHorario(index, 'hora', e.target.value)} required />
-                                    </div>
-                                    {formData.horarios.length > 1 && (
-                                        <button type="button" className="btn-icon btn-icon-danger" onClick={() => removeHorario(index)}>
-                                            <Icons.Delete size={16} />
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
-                                <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Repetir semanalmente? {formData.recorrente && `(Agendar ${formData.meses_recorrencia * 4} aulas)`}</span>
-                            </label>
-                            {formData.recorrente && (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '2rem' }}>
-                                    <span style={{ fontSize: '0.875rem' }}>Durante:</span>
-                                    <input type="number" className="input" style={{ width: '70px', height: '2.25rem' }} min="1" max="12" value={formData.meses_recorrencia} onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })} />
-                                    <span style={{ fontSize: '0.875rem' }}>meses</span>
-                                </div>
-                            )}
-
-                            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                    <input type="checkbox" checked={formData.notificar} onChange={(e) => setFormData({ ...formData, notificar: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
-                                    <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Notificar aluno agora via WhatsApp?</span>
-                                </label>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '2rem', marginTop: '0.25rem' }}>
-                                    Se você estiver agendando muitas aulas, desmarque aqui e use o botão "Avisar Agendamentos" depois.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                            <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} style={{ padding: '0.625rem 1.5rem' }}>Cancelar</button>
-                            <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2.5rem' }}>Agendar</button>
-                        </div>
-                    </form>
-                </Modal>
-
-                {/* Modal Detalhes */}
-                <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="Detalhes da Sessão">
-                    {selectedSessao && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                            <div style={{ padding: '1.25rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div>
-                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Modalidade</p>
-                                    <p style={{ fontSize: '1.125rem', fontWeight: '800', color: 'var(--primary)' }}>{selectedSessao.servico?.nome}</p>
-                                </div>
-                                <span className={`badge ${getStatusBadge(selectedSessao.status)}`}>{selectedSessao.status}</span>
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                <div>
-                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Data</p>
-                                    <p style={{ fontWeight: '700' }}>{new Date(selectedSessao.data_hora_inicio).toLocaleDateString('pt-BR', { dateStyle: 'long' })}</p>
-                                </div>
-                                <div>
-                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Horário</p>
-                                    <p style={{ fontWeight: '700' }}>{new Date(selectedSessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
-                                </div>
-                            </div>
-
-                            {selectedSessao.observacoes && (
-                                <div style={{ padding: '1rem', backgroundColor: 'var(--primary-light)10', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--primary)' }}>
-                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: '800' }}>OBSERVAÇÕES / JUSTIFICATIVA</p>
-                                    <p style={{ fontSize: '0.875rem', lineHeight: '1.5' }}>{selectedSessao.observacoes}</p>
-                                </div>
-                            )}
-
-                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                                <button className="btn btn-secondary" style={{ flex: 1, gap: '0.5rem' }} onClick={() => {
-                                    setShowDetailModal(false);
-                                    const d = new Date(selectedSessao.data_hora_inicio);
-                                    setRemarcarData({ nova_data: d.toISOString().split('T')[0], nova_hora: d.toTimeString().slice(0, 5), observacoes: selectedSessao.observacoes || '' });
-                                    setShowRemarcarModal(true);
-                                }}>
-                                    <Icons.TrendingUp size={16} />
-                                    <span>Remarcar / Editar</span>
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </Modal>
-
-                {/* Modal Remarcar */}
-                <Modal isOpen={showRemarcarModal} onClose={() => setShowRemarcarModal(false)} title="Remarcar Sessão">
-                    <form onSubmit={handleRemarcar}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-                            <div><label className="label">Nova Data</label><input type="date" className="input" value={remarcarData.nova_data} onChange={(e) => setRemarcarData({ ...remarcarData, nova_data: e.target.value })} required /></div>
-                            <div><label className="label">Nova Hora</label><input type="time" className="input" value={remarcarData.nova_hora} onChange={(e) => setRemarcarData({ ...remarcarData, nova_hora: e.target.value })} required /></div>
-                        </div>
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label className="label">O que aconteceu? (Opcional)</label>
-                            <textarea className="input" rows="3" value={remarcarData.observacoes} onChange={(e) => setRemarcarData({ ...remarcarData, observacoes: e.target.value })} placeholder="Ex: Aluno solicitou mudança em cima da hora." />
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-                            <button type="button" className="btn btn-secondary" onClick={() => setShowRemarcarModal(false)}>Voltar</button>
-                            <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>Confirmar Alteração</button>
-                        </div>
-                    </form>
-                </Modal>
-
-                {/* Modal Cancelar */}
-                <Modal isOpen={showCancelDialog} onClose={() => setShowCancelDialog(false)} title="Cancelar Sessão">
-                    <form onSubmit={handleCancelar}>
-                        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                            <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '50%', backgroundColor: 'var(--danger)10', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-                                <Icons.Alert size={24} />
-                            </div>
-                            <h3 style={{ fontWeight: '800' }}>Confirmar Cancelamento?</h3>
-                            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Esta ação não pode ser desfeita.</p>
-                        </div>
-
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label className="label">Motivo (Opcional)</label>
-                            <textarea className="input" rows="3" value={cancelarData.observacoes} onChange={(e) => setCancelarData({ ...cancelarData, observacoes: e.target.value })} placeholder="Ex: Doença, imprevisto, etc." />
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
-                            <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowCancelDialog(false)}>Voltar</button>
-                            <button type="submit" className="btn btn-danger" style={{ flex: 1 }}>Sim, Cancelar</button>
-                        </div>
-                    </form>
-                </Modal>
-
-                <ConfirmDialog
-                    isOpen={showConcluirDialog}
-                    onClose={() => setShowConcluirDialog(false)}
-                    onConfirm={handleConcluir}
-                    title="Concluir Aula"
-                    message="Deseja marcar esta sessão como concluída?"
-                    confirmText="Sim, Concluir"
-                />
-                <ConfirmDialog
-                    isOpen={showLimparDialog}
-                    onClose={() => setShowLimparDialog(false)}
-                    onConfirm={handleLimparAgenda}
-                    title="Limpar Toda a Agenda Futura"
-                    message={`Tem certeza que deseja EXCLUIR permanentemente todas as aulas futuras de ${aluno.nome}? Esta ação não pode ser desfeita.`}
-                    confirmText="Sim, Limpar Tudo"
-                />
-            </div>
-        )
-    }
+            <ConfirmDialog
+                isOpen={showConcluirDialog}
+                onClose={() => setShowConcluirDialog(false)}
+                onConfirm={handleConcluir}
+                title="Concluir Aula"
+                message="Deseja marcar esta sessão como concluída?"
+                confirmText="Sim, Concluir"
+            />
+            <ConfirmDialog
+                isOpen={showLimparDialog}
+                onClose={() => setShowLimparDialog(false)}
+                onConfirm={handleLimparAgenda}
+                title="Limpar Toda a Agenda Futura"
+                message={`Tem certeza que deseja EXCLUIR permanentemente todas as aulas futuras de ${aluno.nome}? Esta ação não pode ser desfeita.`}
+                confirmText="Sim, Limpar Tudo"
+            />
+        </div>
+    )
+}

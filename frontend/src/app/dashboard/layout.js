@@ -505,7 +505,11 @@ export default function DashboardLayout({ children }) {
                             <Icons.Dashboard size={14} />
                             <span>
                                 Você esta usando o plano <strong>STARTER (Degustação)</strong>.
-                                Restam <strong>{Math.ceil((new Date(professor.plano_expira_em) - new Date()) / (1000 * 60 * 60 * 24))} dias</strong> de acesso total.
+                                Restam <strong>{(() => {
+                                    const diff = new Date(professor.plano_expira_em) - new Date();
+                                    const dias = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                                    return `${dias} ${dias === 1 ? 'dia' : 'dias'}`;
+                                })()}</strong> de acesso total.
                             </span>
                             <Link href="/dashboard/planos" style={{
                                 color: 'white',

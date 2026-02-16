@@ -625,9 +625,9 @@ export default function AlunoDetalhesPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
                         <div style={{
                             padding: '1.25rem',
-                            backgroundColor: formData.notificar ? 'var(--danger)10' : 'var(--bg-secondary)',
+                            backgroundColor: formData.notificar ? 'rgba(239, 68, 68, 0.08)' : 'var(--bg-secondary)',
                             borderRadius: 'var(--radius-md)',
-                            border: formData.notificar ? '1px solid var(--danger)30' : '1px solid var(--border)',
+                            border: formData.notificar ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid var(--border)',
                             transition: 'all 0.2s'
                         }}>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', marginBottom: '0.5rem' }}>

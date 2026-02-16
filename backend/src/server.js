@@ -6,23 +6,26 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+console.log('🚀 Iniciando servidor - Verificando arquivos...');
 // Rotas
-const authRoutes = require('./routes/auth');
-const alunosRoutes = require('./routes/alunos');
-const servicosRoutes = require('./routes/servicos');
-const contratosRoutes = require('./routes/contratos');
-const sessoesRoutes = require('./routes/sessoes');
-const notificacoesRoutes = require('./routes/notificacoes');
-const webhookRoutes = require('./routes/webhook');
-const perfilRoutes = require('./routes/perfil');
-const configuracoesRoutes = require('./routes/configuracoes');
-const whatsappRoutes = require('./routes/whatsapp');
+const authRoutes = require('./routes/auth'); console.log('✅ Rota Auth carregada');
+const alunosRoutes = require('./routes/alunos'); console.log('✅ Rota Alunos carregada');
+const servicosRoutes = require('./routes/servicos'); console.log('✅ Rota Serviços carregada');
+const contratosRoutes = require('./routes/contratos'); console.log('✅ Rota Contratos carregada');
+const sessoesRoutes = require('./routes/sessoes'); console.log('✅ Rota Sessões carregada');
+const notificacoesRoutes = require('./routes/notificacoes'); console.log('✅ Rota Notificações carregada');
+const webhookRoutes = require('./routes/webhook'); console.log('✅ Rota Webhook carregada');
+const perfilRoutes = require('./routes/perfil'); console.log('✅ Rota Perfil carregada');
+const configuracoesRoutes = require('./routes/configuracoes'); console.log('✅ Rota Configurações carregada');
+const whatsappRoutes = require('./routes/whatsapp'); console.log('✅ Rota Whatsapp carregada');
 
 // Middlewares e Jobs
+console.log('⚙️ Carregando middlewares...');
 const { initCronJobs } = require('./jobs/cron');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
+console.log('📦 Express instanciado');
 app.set('trust proxy', 1); // Confia no proxy (necessário para cookies seguros e rate limit atrás de LB)
 const PORT = process.env.PORT || 3000;
 

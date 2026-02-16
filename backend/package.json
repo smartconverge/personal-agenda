@@ -1,6 +1,6 @@
 {
   "name": "personal-agenda-backend",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Backend API para Personal Agenda SaaS",
   "main": "src/server.js",
   "scripts": {

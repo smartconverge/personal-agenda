@@ -258,9 +258,10 @@ router.post('/', authenticate, planGuard('agenda_recorrente'), async (req, res) 
             sessoesCriadas = [data];
         }
 
-        // NOTIFICAÇÃO WHATSAPP (AGRUPADA)
+        // NOTIFICAÇÃO WHATSAPP (AGRUPADA) - Apenas se não for silenciado pelo professor
+        const { notificar = true } = req.body;
         const alunoInfo = sessoesCriadas[0]?.aluno;
-        if (alunoInfo && alunoInfo.telefone_whatsapp) {
+        if (notificar && alunoInfo && alunoInfo.telefone_whatsapp) {
             const notificationService = require('../services/notificationService');
             // Enviamos em background para não atrasar a resposta
             notificationService.notifyMultipleSchedule(alunoInfo, sessoesCriadas, professor?.whatsapp_instance).catch(err => console.error('Erro notificação:', err));

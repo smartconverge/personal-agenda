@@ -114,4 +114,72 @@ router.post('/testar', authenticate, async (req, res) => {
     }
 });
 
+/**
+ * POST /notificacoes/resumo-aluno
+ * Enviar resumo de todos os agendamentos futuros para o aluno
+ */
+router.post('/resumo-aluno', authenticate, async (req, res) => {
+    try {
+        const { aluno_id } = req.body;
+
+        if (!aluno_id) {
+            return res.status(400).json({
+                success: false,
+                error: 'ID do aluno é obrigatório'
+            });
+        }
+
+        // 1. Buscar dados do aluno e professor (estratégia multi-tenant)
+        const { data: aluno } = await supabaseAdmin
+            .from('alunos')
+            .select('*, professor:professores(whatsapp_instance)')
+            .eq('id', aluno_id)
+            .eq('professor_id', req.professorId)
+            .single();
+
+        if (!aluno) {
+            return res.status(404).json({
+                success: false,
+                error: 'Aluno não encontrado'
+            });
+        }
+
+        // 2. Buscar sessões agendadas futuras
+        const agora = new Date().toISOString();
+        const { data: sessoes, error: sessoesError } = await supabaseAdmin
+            .from('sessoes')
+            .select('*, servico:servicos(nome)')
+            .eq('aluno_id', aluno_id)
+            .eq('professor_id', req.professorId)
+            .eq('status', 'agendada')
+            .gte('data_hora_inicio', agora)
+            .order('data_hora_inicio', { ascending: true });
+
+        if (sessoesError) throw sessoesError;
+
+        if (!sessoes || sessoes.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: 'Não há agendamentos futuros para este aluno.'
+            });
+        }
+
+        // 3. Enviar via NotificationService
+        const notificationService = require('../services/notificationService');
+        await notificationService.notifyMultipleSchedule(aluno, sessoes, aluno.professor?.whatsapp_instance);
+
+        res.json({
+            success: true,
+            data: { message: `Resumo de ${sessoes.length} sessões enviado com sucesso!` }
+        });
+
+    } catch (error) {
+        console.error('Erro ao enviar resumo para aluno:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao enviar resumo para aluno'
+        });
+    }
+});
+
 module.exports = router;

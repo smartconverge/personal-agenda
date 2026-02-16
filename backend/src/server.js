@@ -48,10 +48,12 @@ app.use(helmet());
 app.use(cookieParser());
 
 // CORS restrito às origens permitidas
+// CORS restrito às origens permitidas
 const allowedOrigins = [
   'https://app.smartconverge.com.br',
   'http://localhost:3000',
-  'http://localhost:3001'
+  'http://localhost:3001',
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [])
 ];
 app.use(cors({
   origin: function (origin, callback) {

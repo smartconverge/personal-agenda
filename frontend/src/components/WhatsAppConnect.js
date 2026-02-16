@@ -40,9 +40,12 @@ export default function WhatsAppConnect() {
                     setStatus('disconnected')
                     setInstanceName(null)
                 }
+            } else {
+                setStatus('disconnected')
             }
         } catch (error) {
             console.error('Erro ao verificar status:', error)
+            setStatus('disconnected') // Em caso de erro, libera para tentar conectar
         } finally {
             if (!silent) setLoadingAction(false)
         }
@@ -93,10 +96,6 @@ export default function WhatsAppConnect() {
         }
     }
 
-    if (status === 'loading' && !qrCode) {
-        return <div className="p-4 text-center">Carregando status do WhatsApp...</div>
-    }
-
     return (
         <div className="card-premium" style={{ padding: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
@@ -119,7 +118,12 @@ export default function WhatsAppConnect() {
             </div>
 
             <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--background-page)', borderRadius: '0.75rem', border: '1px solid var(--border)' }}>
-                {status === 'connected' ? (
+                {status === 'loading' && !qrCode ? (
+                    <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                        <div className="spinner" style={{ width: '1.5rem', height: '1.5rem', margin: '0 auto 0.5rem' }} />
+                        Verificando conexão...
+                    </div>
+                ) : status === 'connected' ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                             <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 0 4px rgba(16, 185, 129, 0.2)' }} />

@@ -123,21 +123,21 @@ export default function DashboardPage() {
         {
             label: 'Alunos Ativos',
             value: stats?.totalAlunos || 0,
-            change: '+2 este mês',
+            change: stats?.totalAlunos > 0 ? `${stats.totalAlunos} cadastrado${stats.totalAlunos > 1 ? 's' : ''}` : 'Nenhum cadastrado',
             iconComponent: Icons.Students,
             color: 'var(--primary)'
         },
         {
             label: 'Sessões Hoje',
             value: stats?.sessoesHoje || 0,
-            change: '3 confirmadas',
+            change: stats?.sessoesHoje > 0 ? `${stats.sessoesHoje} agendada${stats.sessoesHoje > 1 ? 's' : ''}` : 'Dia livre',
             iconComponent: Icons.Calendar,
             color: 'var(--primary)'
         },
         {
             label: 'Receita Mensal',
             value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.faturamentoMensal || 0),
-            change: '+12% vs mês anterior',
+            change: stats?.contratosAtivos > 0 ? `${stats.contratosAtivos} contrato${stats.contratosAtivos > 1 ? 's' : ''} ativo${stats.contratosAtivos > 1 ? 's' : ''}` : 'Sem contratos ativos',
             iconComponent: Icons.Money,
             color: 'var(--primary)',
             highlight: true
@@ -145,7 +145,7 @@ export default function DashboardPage() {
         {
             label: 'Contratos Ativos',
             value: stats?.contratosAtivos || 0,
-            change: '2 a vencer em breve',
+            change: stats?.sessoesMes > 0 ? `${stats.sessoesMes} sessõ${stats.sessoesMes > 1 ? 'es' : ''} no mês` : 'Sem sessões este mês',
             iconComponent: Icons.Contracts,
             color: 'var(--primary)'
         },

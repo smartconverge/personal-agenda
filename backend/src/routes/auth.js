@@ -23,7 +23,8 @@ router.post('/register', async (req, res) => {
             email,
             password: senha,
             options: {
-                data: { nome }
+                data: { nome },
+                emailRedirectTo: 'https://app.smartconverge.com.br/login'
             }
         });
 

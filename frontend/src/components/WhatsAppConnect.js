@@ -61,7 +61,8 @@ export default function WhatsAppConnect() {
             await fetchQrCode()
         } catch (error) {
             console.error('Erro ao criar instância:', error)
-            alert('Erro ao iniciar conexão. Tente novamente.')
+            const msg = error.response?.data?.error || error.message || 'Erro desconhecido'
+            alert(`Erro ao iniciar conexão: ${msg}`)
             setLoadingAction(false)
         }
     }

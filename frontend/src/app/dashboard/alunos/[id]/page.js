@@ -32,6 +32,7 @@ export default function AlunoDetalhesPage() {
         servico_id: '',
         recorrente: false,
         meses_recorrencia: 3,
+        notificar: false,
         horarios: [{ dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
     })
 
@@ -134,7 +135,8 @@ export default function AlunoDetalhesPage() {
                     servico_id: formData.servico_id,
                     data_hora_inicio: dataHoraInicio,
                     recorrente: formData.recorrente,
-                    meses_recorrencia: formData.recorrente ? formData.meses_recorrencia : undefined
+                    meses_recorrencia: formData.recorrente ? formData.meses_recorrencia : undefined,
+                    notificar: formData.notificar
                 }
                 return api.post('/sessoes', payload)
             })
@@ -201,11 +203,26 @@ export default function AlunoDetalhesPage() {
         }
     }
 
+    const handleAvisarAgendamentos = async () => {
+        try {
+            setLoading(true)
+            await api.post('/notificacoes/resumo-aluno', { aluno_id: id })
+            showToast('Resumo enviado para o WhatsApp!', 'success')
+        } catch (error) {
+            console.error(error)
+            const msg = error.response?.data?.error || 'Erro ao enviar resumo.'
+            showToast(msg, 'error')
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const resetForm = () => {
         setFormData({
             servico_id: '',
             recorrente: false,
             meses_recorrencia: 3,
+            notificar: false,
             horarios: [{ dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
         })
     }
@@ -287,10 +304,21 @@ export default function AlunoDetalhesPage() {
                             </div>
                         </div>
                     </div>
-                    <button className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => { resetForm(); setShowModal(true); }}>
-                        <Icons.Plus size={18} />
-                        <span>Nova Sessão</span>
-                    </button>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <button
+                            className="btn btn-secondary"
+                            style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                            onClick={handleAvisarAgendamentos}
+                            disabled={loading}
+                        >
+                            <Icons.Students size={18} />
+                            <span>Avisar Agendamentos (WhatsApp)</span>
+                        </button>
+                        <button className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => { resetForm(); setShowModal(true); }}>
+                            <Icons.Plus size={18} />
+                            <span>Nova Sessão</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -464,18 +492,28 @@ export default function AlunoDetalhesPage() {
                         ))}
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '3rem', marginBottom: '2rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                             <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
-                            <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Repetir semanalmente?</span>
+                            <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Repetir semanalmente? {formData.recorrente && `(Agendar ${formData.meses_recorrencia * 4} aulas)`}</span>
                         </label>
                         {formData.recorrente && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '2rem' }}>
                                 <span style={{ fontSize: '0.875rem' }}>Durante:</span>
                                 <input type="number" className="input" style={{ width: '70px', height: '2.25rem' }} min="1" max="12" value={formData.meses_recorrencia} onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })} />
                                 <span style={{ fontSize: '0.875rem' }}>meses</span>
                             </div>
                         )}
+
+                        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={formData.notificar} onChange={(e) => setFormData({ ...formData, notificar: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
+                                <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Notificar aluno agora via WhatsApp?</span>
+                            </label>
+                            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '2rem', marginTop: '0.25rem' }}>
+                                Se você estiver agendando muitas aulas, desmarque aqui e use o botão "Avisar Agendamentos" depois.
+                            </p>
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>

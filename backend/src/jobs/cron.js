@@ -63,6 +63,8 @@ async function sendSummariesToAllProfessors(isAfternoon) {
 
         for (const prof of professores) {
             await notificationService.sendDailySummary(prof.id, isAfternoon);
+            // Delay anti-ban entre professores
+            await notificationService.randomDelay(3000, 8000);
         }
     } catch (err) {
         console.error('Erro ao processar resumos diários:', err);
@@ -82,6 +84,8 @@ async function sendWeeklySummariesToAllProfessors() {
 
         for (const prof of professores) {
             await notificationService.sendWeeklySummary(prof.id);
+            // Delay anti-ban entre professores
+            await notificationService.randomDelay(5000, 10000);
         }
     } catch (err) {
         console.error('Erro ao processar resumos semanais:', err);

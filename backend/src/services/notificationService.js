@@ -7,8 +7,20 @@ const { supabaseAdmin } = require('../config/supabase');
 class NotificationService {
     constructor() {
         this.apiUrl = process.env.EVOLUTION_API_URL;
-        this.instance = process.env.EVOLUTION_INSTANCE_NAME;
+        this.instance = process.env.EVOLUTION_INSTANCE_NAME; // Instância Padrão/Aluno
+        this.centralInstance = process.env.EVOLUTION_CENTRAL_INSTANCE || process.env.EVOLUTION_INSTANCE_NAME; // Instância para Professor
         this.token = process.env.EVOLUTION_API_TOKEN;
+    }
+
+    /**
+     * Helper para atraso aleatório (Anti-Ban)
+     * @param {number} min - Milissegundos mínimos
+     * @param {number} max - Milissegundos máximos
+     */
+    async randomDelay(min = 5000, max = 15000) {
+        const ms = Math.floor(Math.random() * (max - min + 1) + min);
+        console.log(`⏱️ Aguardando ${ms / 1000}s para próximo disparo...`);
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     /**
@@ -132,8 +144,8 @@ class NotificationService {
 
             message += `\nTotal: ${sessoes.length} aulas${isAfternoon ? ' restantes' : ''}. Bom trabalho!`;
 
-            // Envia para o telefone do professor usando a instância dele (ou a central)
-            await this.sendMessage(professor.telefone_whatsapp, message, professor.whatsapp_instance);
+            // Envia para o telefone do professor usando a INSTÂNCIA CENTRAL para garantir notificação
+            await this.sendMessage(professor.telefone_whatsapp, message, this.centralInstance);
         } catch (err) {
             console.error('Erro no Resumo Diário:', err);
         }
@@ -179,7 +191,8 @@ class NotificationService {
             message += `📅 *Próxima Semana:* ${agendadas?.length || 0} aulas já agendadas.\n\n`;
             message += `Bora bater as metas! 💪`;
 
-            await this.sendMessage(professor.telefone_whatsapp, message, professor.whatsapp_instance);
+            // Envia para o telefone do professor usando a INSTÂNCIA CENTRAL
+            await this.sendMessage(professor.telefone_whatsapp, message, this.centralInstance);
         } catch (err) {
             console.error('Erro no Resumo Semanal:', err);
         }

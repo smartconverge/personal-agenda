@@ -19,11 +19,11 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
                 right: 0,
                 bottom: 0,
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: 'grid',
+                placeItems: 'center',
                 zIndex: 1000,
-                padding: '1rem'
+                padding: '2rem 1rem',
+                overflowY: 'auto'
             }}
             onClick={onClose}
         >
@@ -32,9 +32,8 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
                 style={{
                     maxWidth: sizes[size],
                     width: '100%',
-                    maxHeight: '90vh',
-                    overflow: 'auto',
-                    margin: '0'
+                    margin: 'auto',
+                    position: 'relative'
                 }}
                 onClick={(e) => e.stopPropagation()}
             >

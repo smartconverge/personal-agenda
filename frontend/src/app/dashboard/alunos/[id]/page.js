@@ -622,27 +622,42 @@ export default function AlunoDetalhesPage() {
                         ))}
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                            <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
-                            <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Repetir semanalmente por {formData.meses_recorrencia} meses?</span>
-                        </label>
-                        {formData.recorrente && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '2rem' }}>
-                                <span style={{ fontSize: '0.875rem' }}>Duração da recorrência:</span>
-                                <input type="number" className="input" style={{ width: '70px', height: '2.25rem' }} min="1" max="12" value={formData.meses_recorrencia} onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })} />
-                                <span style={{ fontSize: '0.875rem' }}>meses</span>
-                            </div>
-                        )}
-
-                        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-                                <input type="checkbox" checked={formData.notificar} onChange={(e) => setFormData({ ...formData, notificar: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
-                                <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Notificar aluno agora via WhatsApp?</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+                        <div style={{
+                            padding: '1.25rem',
+                            backgroundColor: formData.notificar ? 'var(--danger)10' : 'var(--bg-secondary)',
+                            borderRadius: 'var(--radius-md)',
+                            border: formData.notificar ? '1px solid var(--danger)30' : '1px solid var(--border)',
+                            transition: 'all 0.2s'
+                        }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', marginBottom: '0.5rem' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={formData.notificar}
+                                    onChange={(e) => setFormData({ ...formData, notificar: e.target.checked })}
+                                    style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--danger)' }}
+                                />
+                                <span style={{ fontWeight: '800', fontSize: '1rem', color: formData.notificar ? 'var(--danger)' : 'var(--text-primary)' }}>
+                                    NOTIFICAR ALUNO AGORA VIA WHATSAPP?
+                                </span>
                             </label>
-                            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '2rem', marginTop: '0.25rem' }}>
-                                Se você estiver agendando muitas aulas, desmarque aqui e use o botão "Avisar Agendamentos" depois.
-                            </p>
+
+                            <div style={{
+                                marginLeft: '2rem',
+                                padding: '0.75rem',
+                                backgroundColor: 'rgba(0,0,0,0.03)',
+                                borderRadius: 'var(--radius-sm)',
+                                borderLeft: `4px solid ${formData.notificar ? 'var(--danger)' : 'var(--text-muted)'}`
+                            }}>
+                                <p style={{ fontSize: '0.8125rem', color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.25rem' }}>
+                                    ⚠️ ATENÇÃO: Use com moderação!
+                                </p>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                                    Marque esta opção **SOMENTE** para agendamentos avulsos ou modificações pontuais.
+                                    <br />
+                                    Para agendar o mês inteiro, **deixe desmarcado** e use o botão <strong style={{ color: 'var(--primary)' }}>"Avisar Agendamentos"</strong> na tela anterior para enviar um único resumo e evitar spam.
+                                </p>
+                            </div>
                         </div>
                     </div>
 

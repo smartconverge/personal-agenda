@@ -66,13 +66,14 @@ app.use(cors({
 // Rate Limiting Security
 const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  limit: 100, // Limite de 100 requisições por IP
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
+  skip: (req) => req.path === '/health' || req.path === '/', // Não limita pings de saúde
   message: {
     status: 429,
-    error: 'Muitas requisições deste IP, tente novamente em 15 minutos'
+    error: 'Muitas requisições, tente novamente em breve'
   }
 });
 app.use(limiter);

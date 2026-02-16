@@ -247,8 +247,13 @@ router.post('/whatsapp', async (req, res) => {
             .eq('telefone_whatsapp', from)
             .single();
 
-        if (!professor) {
-            console.log('Mensagem de número não cadastrado como professor, ignorando');
+        // Filtro de Segurança / Contexto:
+        // Se o professor estiver mandando mensagem na PRÓPRIA INSTÂNCIA dele, 
+        // nós ignoramos para que ele possa usar o chat para anotações pessoais sem o bot responder.
+        // O bot só responde se a mensagem CHEGAR pela instância Central.
+        const { EVOLUTION_CENTRAL_INSTANCE } = process.env;
+        if (instanceReceived === professor.whatsapp_instance && instanceReceived !== EVOLUTION_CENTRAL_INSTANCE) {
+            console.log(`📝 Mensagem ignorada (Anotação pessoal na instância: ${instanceReceived})`);
             return res.status(200).json({ success: true });
         }
 

@@ -156,10 +156,9 @@ class NotificationService {
             message += `🎯 Total: *${sessoes.length} aulas*${isAfternoon ? ' restantes' : ''}\n`;
             message += `━━━━━━━━━━━━━━`;
 
-            // Envia para o telefone do professor
-            // Se ele tiver instância própria conectada, usa ela (pra ele ver que tá funcionando)
-            // Caso contrário usa a central
-            const instanceToSend = professor.whatsapp_instance || this.centralInstance;
+            // Sempre envia pela instância central para o professor para manter separação
+            // A instância pessoal dele (whatsapp_instance) fica livre para anotações.
+            const instanceToSend = this.centralInstance;
 
             await this.sendMessage(professor.telefone_whatsapp, message, instanceToSend);
         } catch (err) {
@@ -210,8 +209,8 @@ class NotificationService {
             message += `Bora bater as metas! 💪\n`;
             message += `━━━━━━━━━━━━━━`;
 
-            // Envia para o telefone do professor
-            const instanceToSend = professor.whatsapp_instance || this.centralInstance;
+            // Envia pela instância central para o professor
+            const instanceToSend = this.centralInstance;
 
             await this.sendMessage(professor.telefone_whatsapp, message, instanceToSend);
         } catch (err) {

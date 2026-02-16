@@ -128,6 +128,7 @@ export default function AlunoDetalhesPage() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
+            setLoading(true)
             const promises = formData.horarios.map(async (horario) => {
                 const dataHoraInicio = `${horario.data_inicio}T${horario.hora}:00`
                 const payload = {
@@ -136,17 +137,26 @@ export default function AlunoDetalhesPage() {
                     data_hora_inicio: dataHoraInicio,
                     recorrente: formData.recorrente,
                     meses_recorrencia: formData.recorrente ? formData.meses_recorrencia : undefined,
-                    notificar: formData.notificar
+                    notificar: false // Sempre silencioso na criação individual para evitar spam
                 }
                 return api.post('/sessoes', payload)
             })
             await Promise.all(promises)
-            showToast('Sessões agendadas!', 'success')
+
+            // Se o professor marcou para notificar, envia o resumo consolidado uma única vez
+            if (formData.notificar) {
+                await api.post('/notificacoes/resumo-aluno', { aluno_id: id })
+            }
+
+            showToast('Sessões agendadas com sucesso!', 'success')
             setShowModal(false)
             resetForm()
             loadSessoes()
         } catch (error) {
+            console.error(error)
             showToast('Erro ao criar sessões. Verifique conflitos.', 'error')
+        } finally {
+            setLoading(false)
         }
     }
 

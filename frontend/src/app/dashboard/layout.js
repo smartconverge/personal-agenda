@@ -295,7 +295,24 @@ export default function DashboardLayout({ children }) {
                                     <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                                         <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
                                     </span>
-                                    {sidebarOpen && <span>{item.label}</span>}
+                                    {sidebarOpen && (
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                            <span>{item.label}</span>
+                                            {item.label === 'Meus Planos' && professor?.plano && (
+                                                <span style={{
+                                                    fontSize: '0.625rem',
+                                                    fontWeight: '800',
+                                                    padding: '0.125rem 0.375rem',
+                                                    borderRadius: '1rem',
+                                                    background: professor.plano === 'PREMIUM' ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(255, 255, 255, 0.1)',
+                                                    color: 'white',
+                                                    marginLeft: '0.4rem'
+                                                }}>
+                                                    {professor.plano.toUpperCase()}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                 </Link>
                             )
                         })}
@@ -985,9 +1002,26 @@ export default function DashboardLayout({ children }) {
                                                 fontWeight: '600',
                                                 color: isActive ? 'var(--primary)' : 'var(--text-primary)',
                                                 textAlign: 'center',
-                                                lineHeight: 1.1
+                                                lineHeight: 1.1,
+                                                position: 'relative'
                                             }}>
                                                 {item.label}
+                                                {item.label === 'Meus Planos' && professor?.plano && (
+                                                    <span style={{
+                                                        position: 'absolute',
+                                                        top: '-3.2rem',
+                                                        right: '-0.5rem',
+                                                        fontSize: '0.55rem',
+                                                        fontWeight: '900',
+                                                        padding: '0.1rem 0.3rem',
+                                                        borderRadius: '0.5rem',
+                                                        background: professor.plano === 'PREMIUM' ? '#f59e0b' : 'var(--primary)',
+                                                        color: 'white',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                                    }}>
+                                                        {professor.plano.toUpperCase()}
+                                                    </span>
+                                                )}
                                             </span>
                                         </Link>
                                     )

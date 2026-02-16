@@ -216,8 +216,8 @@ export default function AlunosPage() {
                 </div>
                 <button
                     onClick={() => setShowImportModal(true)}
-                    className="btn btn-secondary"
-                    style={{ height: '2.75rem', padding: '0 1.25rem' }}
+                    className="btn btn-primary"
+                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
                 >
                     <Icons.Upload size={18} />
                     <span>Importar</span>

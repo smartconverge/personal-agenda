@@ -34,7 +34,8 @@ export default function AlunoDetalhesPage() {
         recorrente: false,
         meses_recorrencia: 3,
         notificar: false,
-        horarios: [{ dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
+        selectedDays: [],
+        horarios: [{ dia_semana: new Date().getDay(), hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
     })
 
     // Reschedule & Cancel Data
@@ -249,11 +250,48 @@ export default function AlunoDetalhesPage() {
             recorrente: false,
             meses_recorrencia: 3,
             notificar: false,
-            horarios: [{ dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
+            selectedDays: [],
+            horarios: [{ dia_semana: new Date().getDay(), hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }]
         })
     }
 
-    const addHorario = () => setFormData({ ...formData, horarios: [...formData.horarios, { dia_semana: 1, hora: '08:00', data_inicio: new Date().toISOString().split('T')[0] }] })
+    const addHorario = () => {
+        const lastHorario = formData.horarios.length > 0 ? formData.horarios[formData.horarios.length - 1] : null
+        const today = new Date()
+        today.setHours(12, 0, 0, 0)
+
+        let nextDate
+        if (lastHorario) {
+            const lastDate = new Date(lastHorario.data_inicio + 'T12:00:00')
+            nextDate = new Date(lastDate)
+
+            if (formData.selectedDays && formData.selectedDays.length > 0) {
+                const currentDay = lastDate.getDay()
+                const sortedPattern = [...formData.selectedDays].sort((a, b) => a - b)
+                const nextPatternDay = sortedPattern.find(d => d > currentDay)
+
+                if (nextPatternDay !== undefined) {
+                    const diff = nextPatternDay - currentDay
+                    nextDate.setDate(lastDate.getDate() + diff)
+                } else {
+                    const diff = (sortedPattern[0] - currentDay + 7) % 7
+                    nextDate.setDate(lastDate.getDate() + (diff === 0 ? 7 : diff))
+                }
+            } else {
+                nextDate.setDate(lastDate.getDate() + 1)
+            }
+        } else {
+            nextDate = today
+        }
+
+        const nextHorario = {
+            dia_semana: nextDate.getDay(),
+            hora: lastHorario ? lastHorario.hora : '08:00',
+            data_inicio: nextDate.toISOString().split('T')[0]
+        }
+
+        setFormData({ ...formData, horarios: [...formData.horarios, nextHorario] })
+    }
     const removeHorario = (i) => {
         if (formData.horarios.length === 1) return
         const newHorarios = [...formData.horarios]
@@ -519,32 +557,39 @@ export default function AlunoDetalhesPage() {
                                 <button
                                     key={dia.id}
                                     type="button"
-                                    className={`btn ${formData.horarios.some(h => h.dia_semana === dia.id) ? 'btn-primary' : 'btn-secondary'}`}
+                                    className={`btn ${formData.selectedDays.includes(dia.id) ? 'btn-primary' : 'btn-secondary'}`}
                                     style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', height: 'auto', minWidth: '50px' }}
                                     onClick={() => {
-                                        const exists = formData.horarios.some(h => h.dia_semana === dia.id)
-                                        if (exists) {
-                                            if (formData.horarios.length > 1) {
-                                                setFormData({ ...formData, horarios: formData.horarios.filter(h => h.dia_semana !== dia.id) })
+                                        const isSelected = formData.selectedDays.includes(dia.id)
+                                        let newSelectedDays
+                                        let newHorarios = [...formData.horarios]
+
+                                        if (isSelected) {
+                                            newSelectedDays = formData.selectedDays.filter(id => id !== dia.id)
+                                            newHorarios = newHorarios.filter(h => h.dia_semana !== dia.id)
+                                            if (newHorarios.length === 0) {
+                                                const today = new Date()
+                                                newHorarios = [{ dia_semana: today.getDay(), hora: '08:00', data_inicio: today.toISOString().split('T')[0] }]
                                             }
                                         } else {
-                                            // Encontrar a data mais próxima para este dia da semana
+                                            newSelectedDays = [...formData.selectedDays, dia.id].sort((a, b) => a - b)
                                             const today = new Date()
-                                            const targetDay = dia.id
                                             const currentDay = today.getDay()
-                                            const diff = (targetDay - currentDay + 7) % 7
+                                            const diff = (dia.id - currentDay + 7) % 7
                                             const nextDate = new Date(today)
-                                            nextDate.setDate(today.getDate() + diff)
+                                            nextDate.setDate(today.getDate() + (diff === 0 && formData.horarios.length > 0 ? 0 : diff))
 
-                                            setFormData({
-                                                ...formData,
-                                                horarios: [...formData.horarios, {
-                                                    dia_semana: dia.id,
-                                                    hora: '08:00',
-                                                    data_inicio: nextDate.toISOString().split('T')[0]
-                                                }].sort((a, b) => a.dia_semana - b.dia_semana)
+                                            // Se o primeiro slot for apenas o padrão e data for hoje, talvez queiramos substituir?
+                                            // Por enquanto apenas adicionamos
+                                            newHorarios.push({
+                                                dia_semana: dia.id,
+                                                hora: '08:00',
+                                                data_inicio: nextDate.toISOString().split('T')[0]
                                             })
                                         }
+
+                                        newHorarios.sort((a, b) => new Date(a.data_inicio) - new Date(b.data_inicio))
+                                        setFormData({ ...formData, selectedDays: newSelectedDays, horarios: newHorarios })
                                     }}
                                 >
                                     {dia.label}

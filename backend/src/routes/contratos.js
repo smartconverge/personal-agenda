@@ -207,18 +207,39 @@ router.delete('/:id', authenticate, async (req, res) => {
             });
         }
 
-        // 2. Cancelar TODAS as sessões futuras agendadas deste aluno
-        // Mudança: Cancelar de todos os serviços para garantir que a agenda fique livre
+        // 2. Gerenciar sessões futuras agendadas deste serviço específico
         const agora = new Date().toISOString();
-        const { data: sessoesCanceladas, error: erroCancelamento } = await supabaseAdmin
-            .from('sessoes')
-            .update({ status: 'cancelada', observacoes: 'Cancelada automaticamente pelo encerramento do contrato.' })
-            .eq('aluno_id', contrato.aluno_id)
-            .eq('status', 'agendada')
-            .gte('data_hora_inicio', agora)
-            .select();
+        let sessoesAfetadas = 0;
 
-        let mensagem = `Contrato cancelado e ${sessoesCanceladas?.length || 0} sessões futuras do aluno foram canceladas.`;
+        if (excluir === 'true') {
+            // Excluir permanentemente as sessões futuras do serviço do contrato
+            const { data: deletadas, error: erroDelecao } = await supabaseAdmin
+                .from('sessoes')
+                .delete()
+                .eq('aluno_id', contrato.aluno_id)
+                .eq('servico_id', contrato.servico_id)
+                .eq('status', 'agendada')
+                .gte('data_hora_inicio', agora)
+                .select();
+
+            if (erroDelecao) throw erroDelecao;
+            sessoesAfetadas = deletadas?.length || 0;
+        } else {
+            // Apenas marcar como cancelada
+            const { data: canceladas, error: erroCancelamento } = await supabaseAdmin
+                .from('sessoes')
+                .update({ status: 'cancelada', observacoes: 'Cancelada automaticamente pelo encerramento do contrato.' })
+                .eq('aluno_id', contrato.aluno_id)
+                .eq('servico_id', contrato.servico_id)
+                .eq('status', 'agendada')
+                .gte('data_hora_inicio', agora)
+                .select();
+
+            if (erroCancelamento) throw erroCancelamento;
+            sessoesAfetadas = canceladas?.length || 0;
+        }
+
+        let mensagem = `Contrato ${excluir === 'true' ? 'excluído' : 'cancelado'} e ${sessoesAfetadas} sessões futuras do serviço foram ${excluir === 'true' ? 'removidas' : 'canceladas'}.`;
 
         // 3. Excluir ou Cancelar o Contrato
         if (excluir === 'true') {
@@ -228,7 +249,6 @@ router.delete('/:id', authenticate, async (req, res) => {
                 .eq('id', id);
 
             if (erroExclusao) throw erroExclusao;
-            mensagem = `Contrato excluído e ${sessoesCanceladas?.length || 0} sessões futuras canceladas.`;
         } else {
             const { error: erroUpdate } = await supabaseAdmin
                 .from('contratos')
@@ -242,7 +262,7 @@ router.delete('/:id', authenticate, async (req, res) => {
             success: true,
             data: {
                 message: mensagem,
-                sessoes_canceladas: sessoesCanceladas?.length || 0
+                sessoes_afetadas: sessoesAfetadas
             }
         });
     } catch (error) {

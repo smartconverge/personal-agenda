@@ -96,7 +96,7 @@ export default function ContratosPage() {
             await api.delete(`/contratos/${selectedContrato.id}${excluir ? '?excluir=true' : ''}`)
             showToast(excluir ? 'Contrato excluído!' : 'Contrato cancelado!', 'success')
             setShowDeleteDialog(false)
-            loadData()
+            loadContratos()
         } catch (error) {
             showToast('Erro ao processar contrato', 'error')
         }

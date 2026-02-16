@@ -9,6 +9,7 @@ import { useToast } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
 
 import Pagination from '@/components/Pagination'
+import FileUpload from '@/components/FileUpload'
 
 export default function AlunosPage() {
     const router = useRouter()
@@ -27,6 +28,9 @@ export default function AlunosPage() {
         objetivo: ''
     })
     const [searchTerm, setSearchTerm] = useState('')
+    const [showImportModal, setShowImportModal] = useState(false)
+    const [importLoading, setImportLoading] = useState(false)
+    const [importResults, setImportResults] = useState(null)
 
     // Pagination Params
     const [page, setPage] = useState(1)
@@ -88,6 +92,46 @@ export default function AlunosPage() {
         } catch (error) {
             showToast(error.response?.data?.error || 'Erro ao salvar aluno', 'error')
         }
+    }
+
+    const handleImport = async (file) => {
+        setImportLoading(true)
+        setImportResults(null)
+
+        const formData = new FormData()
+        formData.append('arquivo', file)
+
+        try {
+            const response = await api.post('/alunos/importar-csv', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+
+            if (response.data.success) {
+                setImportResults(response.data.data)
+                showToast('Importação concluída!', 'success')
+                loadAlunos()
+            }
+        } catch (error) {
+            console.error(error)
+            showToast(error.response?.data?.error || 'Erro ao importar arquivo', 'error')
+        } finally {
+            setImportLoading(false)
+        }
+    }
+
+    const downloadTemplate = () => {
+        const headers = 'nome,telefone_whatsapp,notificacoes_ativas\n'
+        const example = 'João Silva,11999999999,true\nMaria Oliveira,11888888888,false'
+        const blob = new Blob([headers + example], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'modelo_alunos.csv')
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
     }
 
     const handleEdit = (aluno) => {
@@ -165,6 +209,14 @@ export default function AlunosPage() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
+                <button
+                    onClick={() => setShowImportModal(true)}
+                    className="btn btn-secondary"
+                    style={{ height: '2.75rem', padding: '0 1.25rem' }}
+                >
+                    <Icons.Upload size={18} />
+                    <span>Importar</span>
+                </button>
                 <button
                     onClick={() => {
                         setEditingAluno(null)
@@ -431,6 +483,129 @@ export default function AlunosPage() {
                 totalItems={totalItems}
                 itemsPerPage={itemsPerPage}
             />
+
+            {/* Import Modal */}
+            <Modal
+                isOpen={showImportModal}
+                onClose={() => {
+                    setShowImportModal(false)
+                    setImportResults(null)
+                }}
+                title="Importar Alunos"
+            >
+                {!importResults ? (
+                    <div>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
+                            Suba sua lista de alunos de uma vez usando um arquivo CSV ou Excel.
+                            Certifique-se de seguir o modelo abaixo para evitar erros.
+                        </p>
+
+                        <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '1rem', borderStyle: 'dashed' }}>
+                            <h4 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '0.5rem' }}>Instruções:</h4>
+                            <ul style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', paddingLeft: '1.25rem', lineHeight: '1.5' }}>
+                                <li>Formatos aceitos: <strong>.csv</strong>, <strong>.xlsx</strong> ou <strong>.xls</strong></li>
+                                <li>As colunas devem ser: <strong>nome, telefone_whatsapp, notificacoes_ativas</strong></li>
+                                <li>O telefone deve conter apenas números com DDD (ex: 11999999999)</li>
+                            </ul>
+                        </div>
+
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <button
+                                onClick={downloadTemplate}
+                                className="btn"
+                                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}
+                            >
+                                <Icons.Download size={16} />
+                                <span>Baixar Modelo</span>
+                            </button>
+
+                            <FileUpload
+                                label={importLoading ? 'Importando...' : 'Selecionar e Enviar'}
+                                onFileSelect={handleImport}
+                                accept=".csv,.xlsx,.xls"
+                            />
+                        </div>
+
+                        {importLoading && (
+                            <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+                                <div className="loading-spinner" style={{ margin: '0 auto 0.5rem' }} />
+                                <p style={{ fontSize: '0.875rem', color: 'var(--primary)' }}>Processando alunos...</p>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{ textAlign: 'center', padding: '1rem 0 2rem' }}>
+                            <div style={{
+                                width: '3.5rem',
+                                height: '3.5rem',
+                                background: 'rgba(34, 197, 94, 0.1)',
+                                color: 'rgb(34, 197, 94)',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                margin: '0 auto 1.25rem'
+                            }}>
+                                <Icons.Check size={32} />
+                            </div>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: '800' }}>Importação Finalizada!</h3>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+                            <div className="card-flat" style={{ textAlign: 'center', padding: '1rem' }}>
+                                <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary)' }}>
+                                    {importResults.importados || 0}
+                                </span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>
+                                    Novos Alunos
+                                </span>
+                            </div>
+                            <div className="card-flat" style={{ textAlign: 'center', padding: '1rem' }}>
+                                <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-secondary)' }}>
+                                    {importResults.atualizados || 0}
+                                </span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>
+                                    Atualizados
+                                </span>
+                            </div>
+                        </div>
+
+                        {importResults.erros?.length > 0 && (
+                            <div style={{ marginBottom: '2rem' }}>
+                                <h4 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '0.75rem', color: 'var(--danger)' }}>
+                                    Erros Encontrados ({importResults.erros.length}):
+                                </h4>
+                                <div style={{
+                                    maxHeight: '150px',
+                                    overflowY: 'auto',
+                                    background: 'var(--bg-tertiary)',
+                                    borderRadius: '0.75rem',
+                                    padding: '0.75rem',
+                                    fontSize: '0.75rem'
+                                }}>
+                                    {importResults.erros.map((erro, idx) => (
+                                        <div key={idx} style={{ marginBottom: '0.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.25rem' }}>
+                                            <span style={{ fontWeight: '700', color: 'var(--text-primary)' }}>Linha {idx + 1}:</span> {erro.erro}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={() => {
+                                setShowImportModal(false)
+                                setImportResults(null)
+                            }}
+                            className="btn btn-primary"
+                            style={{ width: '100%' }}
+                        >
+                            Concluir e Fechar
+                        </button>
+                    </div>
+                )}
+            </Modal>
         </div>
     )
 }

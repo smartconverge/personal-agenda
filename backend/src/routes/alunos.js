@@ -2,11 +2,24 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const Papa = require('papaparse');
+const XLSX = require('xlsx');
 const { authenticate } = require('../middleware/auth');
 const { planGuard } = require('../middleware/planGuard');
 const { supabaseAdmin } = require('../config/supabase');
 
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+    fileFilter: (req, file, cb) => {
+        const allowed = ['.csv', '.xlsx', '.xls'];
+        const ext = '.' + file.originalname.split('.').pop().toLowerCase();
+        if (allowed.includes(ext)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Formato não suportado. Use CSV ou Excel (.xlsx)'));
+        }
+    }
+});
 
 /**
  * GET /alunos
@@ -247,37 +260,64 @@ router.delete('/:id', authenticate, async (req, res) => {
 
 /**
  * POST /alunos/importar-csv
- * Importar alunos via CSV
+ * Importar alunos via CSV ou Excel (.xlsx/.xls)
  */
-router.post('/importar-csv', authenticate, planGuard('create_aluno'), upload.single('file'), async (req, res) => {
+router.post('/importar-csv', authenticate, planGuard('create_aluno'), upload.single('arquivo'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({
                 success: false,
-                error: 'Arquivo CSV não fornecido'
+                error: 'Nenhum arquivo enviado. Envie um CSV ou Excel.'
             });
         }
 
-        const csvContent = req.file.buffer.toString('utf-8');
+        const ext = req.file.originalname.split('.').pop().toLowerCase();
+        let rows = [];
 
-        const parsed = Papa.parse(csvContent, {
-            header: true,
-            skipEmptyLines: true
-        });
+        if (ext === 'csv') {
+            // Parse CSV
+            const csvContent = req.file.buffer.toString('utf-8');
+            const parsed = Papa.parse(csvContent, {
+                header: true,
+                skipEmptyLines: true
+            });
 
-        if (parsed.errors.length > 0) {
+            if (parsed.errors.length > 0) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Erro ao processar CSV',
+                    details: parsed.errors
+                });
+            }
+            rows = parsed.data;
+        } else {
+            // Parse Excel (.xlsx / .xls)
+            try {
+                const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rows = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+            } catch (xlsErr) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Erro ao ler o arquivo Excel. Verifique se o formato está correto.'
+                });
+            }
+        }
+
+        if (!rows || rows.length === 0) {
             return res.status(400).json({
                 success: false,
-                error: 'Erro ao processar CSV',
-                details: parsed.errors
+                error: 'Arquivo vazio ou sem dados válidos.'
             });
         }
+
+        console.log(`📥 Importando ${rows.length} alunos (${ext.toUpperCase()}) para professor ${req.professorId}`);
 
         // Chamar função do banco
         const { data, error } = await supabaseAdmin
             .rpc('importar_alunos_csv', {
                 p_professor_id: req.professorId,
-                p_dados: parsed.data
+                p_dados: rows
             });
 
         if (error) throw error;
@@ -287,10 +327,10 @@ router.post('/importar-csv', authenticate, planGuard('create_aluno'), upload.sin
             data
         });
     } catch (error) {
-        console.error('Erro ao importar CSV:', error);
+        console.error('Erro ao importar:', error);
         res.status(500).json({
             success: false,
-            error: 'Erro ao importar CSV'
+            error: error.message || 'Erro ao importar arquivo'
         });
     }
 });

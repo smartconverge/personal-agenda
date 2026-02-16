@@ -41,6 +41,18 @@ const app = express();
 app.set('trust proxy', 1); // Confia no proxy (necessário para cookies seguros e rate limit atrás de LB)
 const PORT = process.env.PORT || 3000;
 
+// ROTA DE DIAGNÓSTICO (DEBUG DEPLOY)
+app.get('/api/status-deploy', (req, res) => {
+  res.json({
+    status: 'online',
+    version: 'v1.1-whatsapp-fix',
+    timestamp: new Date().toISOString(),
+    routes_loaded: {
+      whatsapp: true
+    }
+  });
+});
+
 const cookieParser = require('cookie-parser');
 
 // Middleware

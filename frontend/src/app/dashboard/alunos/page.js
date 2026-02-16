@@ -122,9 +122,10 @@ export default function AlunosPage() {
     }
 
     const downloadTemplate = () => {
-        const headers = 'nome,telefone_whatsapp,notificacoes_ativas\n'
-        const example = 'João Silva,11999999999,true\nMaria Oliveira,11888888888,false'
-        const blob = new Blob([headers + example], { type: 'text/csv;charset=utf-8;' })
+        const BOM = '\uFEFF'
+        const headers = 'nome;telefone_whatsapp;notificacoes_ativas\n'
+        const example = 'João Silva;11999999999;true\nMaria Oliveira;11888888888;false'
+        const blob = new Blob([BOM + headers + example], { type: 'text/csv;charset=utf-8;' })
         const url = URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = url

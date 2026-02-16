@@ -275,11 +275,16 @@ router.post('/importar-csv', authenticate, planGuard('create_aluno'), upload.sin
         let rows = [];
 
         if (ext === 'csv') {
-            // Parse CSV
-            const csvContent = req.file.buffer.toString('utf-8');
+            // Parse CSV - remove BOM e detecta delimitador automaticamente (; ou ,)
+            let csvContent = req.file.buffer.toString('utf-8');
+            // Remove BOM UTF-8 se presente (Excel adiciona ao salvar)
+            if (csvContent.charCodeAt(0) === 0xFEFF) {
+                csvContent = csvContent.substring(1);
+            }
             const parsed = Papa.parse(csvContent, {
                 header: true,
-                skipEmptyLines: true
+                skipEmptyLines: true,
+                delimiter: '' // auto-detect: funciona com , e ;
             });
 
             if (parsed.errors.length > 0) {

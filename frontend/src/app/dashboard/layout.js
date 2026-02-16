@@ -852,38 +852,54 @@ export default function DashboardLayout({ children }) {
                     </main>
                 </div>
 
-                {/* Bottom Navigation - Mobile Only */}
-                <nav className="bottom-nav">
-                    {menuItems.slice(0, 4).map((item) => {
-                        const IconComponent = Icons[item.icon]
-                        const isActive = pathname === item.href
-
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`bottom-nav-item ${isActive ? 'active' : ''}`}
-                            >
-                                <span className="bottom-nav-icon">
-                                    <IconComponent size={22} color={isActive ? 'var(--primary)' : 'var(--text-muted)'} />
-                                </span>
-                                <span>{item.label}</span>
-                            </Link>
-                        )
-                    })}
+                {/* Bottom Navigation - Mobile Only (Unified Menu) */}
+                <nav className="bottom-nav" style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '4.5rem'
+                }}>
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         className={`bottom-nav-item ${mobileMenuOpen ? 'active' : ''}`}
-                        style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                            padding: '0.5rem 2rem',
+                            borderRadius: '1rem',
+                            transition: 'all 0.2s'
+                        }}
                     >
-                        <span className="bottom-nav-icon">
-                            <Icons.Menu size={22} color={mobileMenuOpen ? 'var(--primary)' : 'var(--text-muted)'} />
-                        </span>
-                        <span>Mais</span>
+                        <div style={{
+                            width: '2.5rem',
+                            height: '2.5rem',
+                            borderRadius: '50%',
+                            background: mobileMenuOpen ? 'var(--primary)' : 'rgba(255, 255, 255, 0.05)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginBottom: '2px',
+                            transition: 'all 0.2s',
+                            boxShadow: mobileMenuOpen ? '0 4px 12px var(--primary-light)' : 'none'
+                        }}>
+                            <Icons.Menu size={24} color={mobileMenuOpen ? 'white' : 'var(--text-muted)'} />
+                        </div>
+                        <span style={{
+                            fontSize: '0.75rem',
+                            fontWeight: '700',
+                            color: mobileMenuOpen ? 'var(--primary)' : 'var(--text-muted)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em'
+                        }}>MENU</span>
                     </button>
                 </nav>
 
-                {/* Mobile Menu Overlay */}
+                {/* Mobile Menu Overlay - Unified */}
                 {mobileMenuOpen && (
                     <>
                         <div
@@ -891,8 +907,8 @@ export default function DashboardLayout({ children }) {
                             style={{
                                 position: 'fixed',
                                 inset: 0,
-                                background: 'rgba(0, 0, 0, 0.5)',
-                                backdropFilter: 'blur(4px)',
+                                background: 'rgba(0, 0, 0, 0.6)',
+                                backdropFilter: 'blur(8px)',
                                 zIndex: 110,
                                 animation: 'fade-in 0.2s'
                             }}
@@ -903,129 +919,110 @@ export default function DashboardLayout({ children }) {
                             left: '1rem',
                             right: '1rem',
                             backgroundColor: 'var(--bg-secondary)',
-                            borderRadius: '1.25rem',
-                            padding: '0.75rem',
+                            borderRadius: '1.5rem',
+                            padding: '1.25rem',
                             zIndex: 120,
-                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
-                            animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            border: '1px solid var(--border)'
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                            animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                            border: '1px solid var(--border)',
+                            maxHeight: '80vh',
+                            overflowY: 'auto'
                         }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
-                                <Link
-                                    href="/dashboard/agenda"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        gap: '0.5rem',
-                                        padding: '1rem',
-                                        borderRadius: '0.75rem',
-                                        backgroundColor: pathname === '/dashboard/agenda' ? 'var(--bg-tertiary)' : 'transparent',
-                                        textDecoration: 'none',
-                                        color: 'var(--text-primary)',
-                                        fontSize: '0.8125rem',
-                                        fontWeight: '600'
-                                    }}
-                                >
-                                    <div style={{ padding: '0.5rem', borderRadius: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--primary)' }}>
-                                        <Icons.Calendar size={20} />
-                                    </div>
-                                    <span>Agenda</span>
-                                </Link>
+                            <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+                                <div style={{
+                                    width: '3rem',
+                                    height: '4px',
+                                    background: 'var(--border)',
+                                    borderRadius: '2px',
+                                    margin: '0 auto 1.25rem auto',
+                                    opacity: 0.5
+                                }} />
+                                <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: '800', color: 'var(--primary)' }}>Navegação</h3>
+                            </div>
 
-                                <Link
-                                    href="/dashboard/notificacoes"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        gap: '0.5rem',
-                                        padding: '1rem',
-                                        borderRadius: '0.75rem',
-                                        backgroundColor: pathname === '/dashboard/notificacoes' ? 'var(--bg-tertiary)' : 'transparent',
-                                        textDecoration: 'none',
-                                        color: 'var(--text-primary)',
-                                        fontSize: '0.8125rem',
-                                        fontWeight: '600'
-                                    }}
-                                >
-                                    <div style={{ padding: '0.5rem', borderRadius: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', position: 'relative' }}>
-                                        <Icons.Notifications size={20} />
-                                        {notificacoesCount > 0 && (
-                                            <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, background: '#ef4444', borderRadius: '50%', border: '2px solid var(--bg-secondary)' }} />
-                                        )}
-                                    </div>
-                                    <span>Notificações</span>
-                                </Link>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                                {[...menuItems, ...planoItems, ...sistemaItems].map((item) => {
+                                    const IconComponent = Icons[item.icon]
+                                    const isActive = pathname === item.href
 
-                                <Link
-                                    href="/dashboard/planos"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        gap: '0.5rem',
-                                        padding: '1rem',
-                                        borderRadius: '0.75rem',
-                                        backgroundColor: pathname === '/dashboard/planos' ? 'var(--bg-tertiary)' : 'transparent',
-                                        textDecoration: 'none',
-                                        color: 'var(--text-primary)',
-                                        fontSize: '0.8125rem',
-                                        fontWeight: '600'
-                                    }}
-                                >
-                                    <div style={{ padding: '0.5rem', borderRadius: '0.5rem', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b' }}>
-                                        <Icons.Star size={20} />
-                                    </div>
-                                    <span>Meus Planos</span>
-                                </Link>
+                                    // Cores baseadas no ícone/setor
+                                    let iconBg = 'rgba(16, 185, 129, 0.1)';
+                                    let iconColor = 'var(--primary)';
+                                    if (item.icon === 'Notifications') { iconBg = 'rgba(59, 130, 246, 0.1)'; iconColor = '#3b82f6'; }
+                                    if (item.icon === 'Star') { iconBg = 'rgba(245, 158, 11, 0.1)'; iconColor = '#f59e0b'; }
+                                    if (item.icon === 'Settings') { iconBg = 'rgba(107, 114, 128, 0.1)'; iconColor = 'var(--text-muted)'; }
 
-                                <Link
-                                    href="/dashboard/configuracoes"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        gap: '0.5rem',
-                                        padding: '1rem',
-                                        borderRadius: '0.75rem',
-                                        backgroundColor: pathname === '/dashboard/configuracoes' ? 'var(--bg-tertiary)' : 'transparent',
-                                        textDecoration: 'none',
-                                        color: 'var(--text-primary)',
-                                        fontSize: '0.8125rem',
-                                        fontWeight: '600'
-                                    }}
-                                >
-                                    <div style={{ padding: '0.5rem', borderRadius: '0.5rem', background: 'rgba(107, 114, 128, 0.1)', color: 'var(--text-muted)' }}>
-                                        <Icons.Settings size={20} />
-                                    </div>
-                                    <span>Configurações</span>
-                                </Link>
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                padding: '0.75rem 0.25rem',
+                                                borderRadius: '1rem',
+                                                backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
+                                                textDecoration: 'none',
+                                                transition: 'all 0.2s',
+                                                border: isActive ? '1px solid var(--border)' : '1px solid transparent'
+                                            }}
+                                        >
+                                            <div style={{
+                                                width: '2.75rem',
+                                                height: '2.75rem',
+                                                borderRadius: '0.75rem',
+                                                background: isActive ? 'var(--primary)' : iconBg,
+                                                color: isActive ? 'white' : iconColor,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                <IconComponent size={22} />
+                                            </div>
+                                            <span style={{
+                                                fontSize: '0.7rem',
+                                                fontWeight: '600',
+                                                color: isActive ? 'var(--primary)' : 'var(--text-primary)',
+                                                textAlign: 'center',
+                                                lineHeight: 1.1
+                                            }}>
+                                                {item.label}
+                                            </span>
+                                        </Link>
+                                    )
+                                })}
+                            </div>
 
+                            <div style={{
+                                borderTop: '1px solid var(--border)',
+                                paddingTop: '1.25rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.75rem'
+                            }}>
                                 <Link
                                     href="/dashboard/perfil"
                                     onClick={() => setMobileMenuOpen(false)}
                                     style={{
-                                        gridColumn: 'span 2',
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: '1rem',
                                         padding: '1rem',
-                                        borderRadius: '0.75rem',
-                                        backgroundColor: pathname === '/dashboard/perfil' ? 'var(--bg-tertiary)' : 'rgba(255, 255, 255, 0.03)',
+                                        borderRadius: '1rem',
+                                        backgroundColor: 'var(--bg-tertiary)',
                                         textDecoration: 'none',
                                         color: 'var(--text-primary)',
-                                        fontSize: '0.875rem',
-                                        fontWeight: '600',
-                                        marginTop: '0.5rem',
                                         border: '1px solid var(--border)'
                                     }}
                                 >
-                                    <div className="avatar avatar-sm" style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-light))' }}>
+                                    <div className="avatar avatar-md" style={{
+                                        background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                                        width: '2.5rem',
+                                        height: '2.5rem'
+                                    }}>
                                         {professor.foto_url ? (
                                             <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                                         ) : (
@@ -1033,10 +1030,10 @@ export default function DashboardLayout({ children }) {
                                         )}
                                     </div>
                                     <div style={{ flex: 1 }}>
-                                        <p style={{ margin: 0 }}>Meu Perfil</p>
-                                        <p style={{ margin: 0, fontSize: '0.6875rem', color: 'var(--text-muted)', fontWeight: '400' }}>Gerenciar conta</p>
+                                        <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '700' }}>{professor.nome}</p>
+                                        <p style={{ margin: 0, fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Meu Perfil • Editar dados</p>
                                     </div>
-                                    <Icons.ChevronRight size={16} color="var(--text-muted)" />
+                                    <Icons.ChevronRight size={18} color="var(--text-muted)" />
                                 </Link>
 
                                 <button
@@ -1045,23 +1042,22 @@ export default function DashboardLayout({ children }) {
                                         handleLogout()
                                     }}
                                     style={{
-                                        gridColumn: 'span 2',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        gap: '0.5rem',
-                                        padding: '0.875rem',
-                                        borderRadius: '0.75rem',
+                                        gap: '0.75rem',
+                                        padding: '1rem',
+                                        borderRadius: '1rem',
                                         backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                                        border: '1px solid rgba(239, 68, 68, 0.1)',
+                                        border: '1px solid rgba(239, 68, 68, 0.15)',
                                         color: '#ef4444',
                                         fontSize: '0.875rem',
                                         fontWeight: '700',
                                         cursor: 'pointer',
-                                        marginTop: '0.5rem'
+                                        transition: 'all 0.2s'
                                     }}
                                 >
-                                    <Icons.Logout size={18} />
+                                    <Icons.Logout size={20} />
                                     <span>Sair da Conta</span>
                                 </button>
                             </div>

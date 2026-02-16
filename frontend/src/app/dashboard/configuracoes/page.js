@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Icons } from '@/components/Icons'
 import api from '@/lib/api'
 import { useToast } from '@/components/Toast'
+import WhatsAppConnect from '@/components/WhatsAppConnect'
 
 export default function ConfiguracoesPage() {
     const { addToast } = useToast()
@@ -85,6 +86,9 @@ export default function ConfiguracoesPage() {
 
 
             <div className="config-grid">
+                {/* WhatsApp Connection */}
+                <WhatsAppConnect />
+
                 {/* Segurança */}
                 <div className="config-card card">
                     <h3 className="card-title">

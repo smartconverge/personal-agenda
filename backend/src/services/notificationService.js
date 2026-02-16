@@ -144,8 +144,12 @@ class NotificationService {
 
             message += `\nTotal: ${sessoes.length} aulas${isAfternoon ? ' restantes' : ''}. Bom trabalho!`;
 
-            // Envia para o telefone do professor usando a INSTÂNCIA CENTRAL para garantir notificação
-            await this.sendMessage(professor.telefone_whatsapp, message, this.centralInstance);
+            // Envia para o telefone do professor
+            // Se ele tiver instância própria conectada, usa ela (pra ele ver que tá funcionando)
+            // Caso contrário usa a central
+            const instanceToSend = professor.whatsapp_instance || this.centralInstance;
+
+            await this.sendMessage(professor.telefone_whatsapp, message, instanceToSend);
         } catch (err) {
             console.error('Erro no Resumo Diário:', err);
         }
@@ -191,8 +195,10 @@ class NotificationService {
             message += `📅 *Próxima Semana:* ${agendadas?.length || 0} aulas já agendadas.\n\n`;
             message += `Bora bater as metas! 💪`;
 
-            // Envia para o telefone do professor usando a INSTÂNCIA CENTRAL
-            await this.sendMessage(professor.telefone_whatsapp, message, this.centralInstance);
+            // Envia para o telefone do professor
+            const instanceToSend = professor.whatsapp_instance || this.centralInstance;
+
+            await this.sendMessage(professor.telefone_whatsapp, message, instanceToSend);
         } catch (err) {
             console.error('Erro no Resumo Semanal:', err);
         }

@@ -31,6 +31,8 @@ const perfilRoutes = require('./routes/perfil');
 console.log('✅ Perfil carregado');
 const configuracoesRoutes = require('./routes/configuracoes');
 console.log('✅ Configurações carregadas');
+const whatsappRoutes = require('./routes/whatsapp');
+console.log('✅ Whatsapp carregado');
 
 const { initCronJobs } = require('./jobs/cron');
 const { errorHandler } = require('./middleware/errorHandler');
@@ -101,6 +103,7 @@ app.use('/notificacoes', notificacoesRoutes);
 app.use('/webhook', webhookRoutes);
 app.use('/perfil', perfilRoutes);
 app.use('/configuracoes', configuracoesRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
 
 // Error handler
 app.use(errorHandler);

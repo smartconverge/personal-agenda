@@ -507,8 +507,56 @@ export default function AlunoDetalhesPage() {
 
                     <div style={{ marginBottom: '1.5rem', backgroundColor: 'var(--bg-primary)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                            <h3 style={{ fontSize: '0.9375rem', fontWeight: '800', margin: 0 }}>Define o Agendamento</h3>
-                            <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto' }} onClick={addHorario}>+ Adicionar Horário</button>
+                            <h3 style={{ fontSize: '0.9375rem', fontWeight: '800', margin: 0 }}>Preenchimento Automático (Sugestão)</h3>
+                        </div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Marque os dias e clique em "Gerar Horários" para preencher a lista abaixo automaticamente.</p>
+
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+                            {[
+                                { id: 1, label: 'Seg' }, { id: 2, label: 'Ter' }, { id: 3, label: 'Qua' },
+                                { id: 4, label: 'Qui' }, { id: 5, label: 'Sex' }, { id: 6, label: 'Sáb' }, { id: 0, label: 'Dom' }
+                            ].map(dia => (
+                                <button
+                                    key={dia.id}
+                                    type="button"
+                                    className={`btn ${formData.horarios.some(h => h.dia_semana === dia.id) ? 'btn-primary' : 'btn-secondary'}`}
+                                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', height: 'auto', minWidth: '50px' }}
+                                    onClick={() => {
+                                        const exists = formData.horarios.some(h => h.dia_semana === dia.id)
+                                        if (exists) {
+                                            if (formData.horarios.length > 1) {
+                                                setFormData({ ...formData, horarios: formData.horarios.filter(h => h.dia_semana !== dia.id) })
+                                            }
+                                        } else {
+                                            // Encontrar a data mais próxima para este dia da semana
+                                            const today = new Date()
+                                            const targetDay = dia.id
+                                            const currentDay = today.getDay()
+                                            const diff = (targetDay - currentDay + 7) % 7
+                                            const nextDate = new Date(today)
+                                            nextDate.setDate(today.getDate() + diff)
+
+                                            setFormData({
+                                                ...formData,
+                                                horarios: [...formData.horarios, {
+                                                    dia_semana: dia.id,
+                                                    hora: '08:00',
+                                                    data_inicio: nextDate.toISOString().split('T')[0]
+                                                }].sort((a, b) => a.dia_semana - b.dia_semana)
+                                            })
+                                        }
+                                    }}
+                                >
+                                    {dia.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '1.5rem', backgroundColor: 'var(--bg-primary)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <h3 style={{ fontSize: '0.9375rem', fontWeight: '800', margin: 0 }}>Lista de Horários Gerados</h3>
+                            <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', height: 'auto' }} onClick={addHorario}>+ Add Manual</button>
                         </div>
                         {formData.horarios.map((horario, index) => (
                             <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: index < formData.horarios.length - 1 ? '1px dashed var(--border)' : 'none' }}>
@@ -532,11 +580,11 @@ export default function AlunoDetalhesPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
                             <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
-                            <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Repetir semanalmente? {formData.recorrente && `(Agendar ${formData.meses_recorrencia * 4} aulas)`}</span>
+                            <span style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Repetir semanalmente por {formData.meses_recorrencia} meses?</span>
                         </label>
                         {formData.recorrente && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '2rem' }}>
-                                <span style={{ fontSize: '0.875rem' }}>Durante:</span>
+                                <span style={{ fontSize: '0.875rem' }}>Duração da recorrência:</span>
                                 <input type="number" className="input" style={{ width: '70px', height: '2.25rem' }} min="1" max="12" value={formData.meses_recorrencia} onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })} />
                                 <span style={{ fontSize: '0.875rem' }}>meses</span>
                             </div>

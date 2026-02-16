@@ -42,7 +42,7 @@ app.set('trust proxy', 1); // Confia no proxy (necessário para cookies seguros 
 const PORT = process.env.PORT || 3000;
 
 // ROTA DE DIAGNÓSTICO (DEBUG DEPLOY)
-app.get('/api/status-deploy', (req, res) => {
+app.get('/status-deploy', (req, res) => {
   res.json({
     status: 'online',
     version: 'v1.1-whatsapp-fix',
@@ -117,7 +117,7 @@ app.use('/notificacoes', notificacoesRoutes);
 app.use('/webhook', webhookRoutes);
 app.use('/perfil', perfilRoutes);
 app.use('/configuracoes', configuracoesRoutes);
-app.use('/api/whatsapp', whatsappRoutes);
+app.use('/whatsapp', whatsappRoutes);
 
 // Error handler
 app.use(errorHandler);

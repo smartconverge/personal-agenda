@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Icons } from './Icons'
 
-export default function BottomNavigation({ notificacoesCount = 0 }) {
+export default function BottomNavigation({ notificacoesCount = 0, onMenuClick }) {
     const pathname = usePathname()
 
     const navItems = [
@@ -12,7 +12,6 @@ export default function BottomNavigation({ notificacoesCount = 0 }) {
         { href: '/dashboard/agenda', label: 'Agenda', icon: 'Calendar' },
         { href: '/dashboard/alunos', label: 'Alunos', icon: 'Students' },
         { href: '/dashboard/notificacoes', label: 'Avisos', icon: 'Notifications', badge: notificacoesCount },
-        { href: '/dashboard/perfil', label: 'Perfil', icon: 'User' },
     ]
 
     return (
@@ -52,6 +51,15 @@ export default function BottomNavigation({ notificacoesCount = 0 }) {
                     </Link>
                 )
             })}
+
+            <button
+                onClick={onMenuClick}
+                className="bottom-nav-item"
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+            >
+                <Icons.Menu size={24} color="var(--text-muted)" />
+                <span>Menu</span>
+            </button>
         </nav>
     )
 }

@@ -22,16 +22,17 @@ class NotificationService {
             return;
         }
 
+        // Normalização agressiva do número
         let cleanNumber = to.replace(/\D/g, '');
 
-        // Se o número for brasileiro (10 ou 11 dígitos) e não tiver o 55, adicionamos
-        if (cleanNumber.length >= 10 && cleanNumber.length <= 11 && !cleanNumber.startsWith('55')) {
+        // Adiciona 55 se o número tiver 10 ou 11 dígitos (formato brasileiro sem DDI)
+        if ((cleanNumber.length === 10 || cleanNumber.length === 11) && !cleanNumber.startsWith('55')) {
             cleanNumber = '55' + cleanNumber;
         }
 
         const url = `${this.apiUrl}/message/sendText/${targetInstance}`;
 
-        console.log(`📤 Tentando enviar WhatsApp para ${cleanNumber}...`);
+        console.log(`📤 Enviando WhatsApp: [${targetInstance}] para ${cleanNumber}`);
 
         try {
             const response = await axios.post(url, {
@@ -47,11 +48,9 @@ class NotificationService {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(`✅ Sucesso ao enviar para ${cleanNumber}:`, response.data);
+            console.log(`✅ Sucesso (${cleanNumber}):`, response.data?.status || 'OK');
         } catch (error) {
-            console.error(`❌ Falha ao enviar para ${cleanNumber}:`);
-            console.error('URL:', url);
-            console.error('Erro:', error.response?.data || error.message);
+            console.error(`❌ Falha ao enviar para ${cleanNumber}:`, error.response?.data?.message || error.message);
         }
     }
 
@@ -61,7 +60,8 @@ class NotificationService {
     async notifyMultipleSchedule(aluno, sessoes, professorInstance = null) {
         if (sessoes.length === 0) return;
 
-        let message = `Olá, ${aluno.nome}! 🏋️‍♂️\n\n`;
+        let message = `🏋️‍♂️ *LEMBRETE ALUNO - ${aluno.nome}*\n\n`;
+        message += `Olá! 🏋️‍♂️\n\n`;
 
         if (sessoes.length === 1) {
             const sessao = sessoes[0];
@@ -115,10 +115,13 @@ class NotificationService {
                 .lte('data_hora_inicio', fimDia)
                 .order('data_hora_inicio', { ascending: true });
 
-            if (error || !sessoes || sessoes.length === 0) return;
+            if (error || !sessoes || sessoes.length === 0) {
+                console.log(`ℹ️ Nenhuma aula para o professor ${professorId} hoje.`);
+                return;
+            }
 
-            let title = isAfternoon ? `🌤️ *Aulas Restantes de Hoje*` : `🚀 *Agenda do Dia - ${new Date().toLocaleDateString('pt-BR')}*`;
-            let message = `${title}\n\n`;
+            let title = isAfternoon ? `🌤️ *Agenda Professor - Aulas Restantes*` : `🚀 *Agenda Professor - ${new Date().toLocaleDateString('pt-BR')}*`;
+            let message = `💼 *RESUMO PROFESSOR*\n${title}\n\n`;
 
             sessoes.forEach(s => {
                 if (s.aluno && s.servico) {
@@ -171,7 +174,7 @@ class NotificationService {
                 .gte('data_hora_inicio', agora.toISOString())
                 .lte('data_hora_inicio', umaSemanaFrente.toISOString());
 
-            let message = `📊 *Resumo Semanal do Personal*\n\n`;
+            let message = `💼 *RESUMO PROFESSOR - SEMANAL*\n\n`;
             message += `✅ *Semana Passada:* ${concluidas?.length || 0} aulas concluídas.\n`;
             message += `📅 *Próxima Semana:* ${agendadas?.length || 0} aulas já agendadas.\n\n`;
             message += `Bora bater as metas! 💪`;
@@ -224,9 +227,9 @@ class NotificationService {
                     let message = '';
 
                     if (mode === 'hourly') {
-                        message = `Olá, ${sessao.aluno.nome}! 👋\n\nPassando para lembrar que sua aula de *${sessao.servico.nome}* começa em 1 hora, às *${hora}*.\n\nAté logo! 💪`;
+                        message = `🏋️‍♂️ *LEMBRETE ALUNO*\n\nOlá, ${sessao.aluno.nome}! 👋\n\nSua aula de *${sessao.servico.nome}* começa em 1 hora, às *${hora}*.\n\nAté logo! 💪`;
                     } else {
-                        message = `Bom dia, ${sessao.aluno.nome}! 👋\n\nConfirmando nossa aula de hoje:\n💪 *${sessao.servico.nome}*\n⏰ às *${hora}*.\n\nVamo pra cima! 🔥`;
+                        message = `🏋️‍♂️ *LEMBRETE ALUNO*\n\nBom dia, ${sessao.aluno.nome}! 👋\n\nConfirmando nossa aula de hoje:\n💪 *${sessao.servico.nome}*\n⏰ às *${hora}*.\n\nVamo pra cima! 🔥`;
                     }
 
                     await this.sendMessage(sessao.aluno.telefone_whatsapp, message, sessao.professor?.whatsapp_instance);

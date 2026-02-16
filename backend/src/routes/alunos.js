@@ -103,7 +103,7 @@ router.get('/:id', authenticate, async (req, res) => {
  */
 router.post('/', authenticate, planGuard('create_aluno'), async (req, res) => {
     try {
-        const { nome, email, telefone_whatsapp, notificacoes_ativas, objetivo, plano } = req.body;
+        let { nome, email, telefone_whatsapp, notificacoes_ativas, objetivo, plano } = req.body;
 
         if (!nome || !telefone_whatsapp) {
             return res.status(400).json({
@@ -111,6 +111,9 @@ router.post('/', authenticate, planGuard('create_aluno'), async (req, res) => {
                 error: 'Nome e telefone são obrigatórios'
             });
         }
+
+        // Normalização de telefone
+        telefone_whatsapp = telefone_whatsapp.replace(/\D/g, '');
 
         const { data, error } = await supabaseAdmin
             .from('alunos')
@@ -165,7 +168,9 @@ router.put('/:id', authenticate, async (req, res) => {
         const updateData = {};
         if (nome !== undefined) updateData.nome = nome.trim();
         if (email !== undefined) updateData.email = email ? email.trim() : null;
-        if (telefone_whatsapp !== undefined) updateData.telefone_whatsapp = telefone_whatsapp.trim();
+        if (telefone_whatsapp !== undefined) {
+            updateData.telefone_whatsapp = telefone_whatsapp.replace(/\D/g, '');
+        }
         if (notificacoes_ativas !== undefined) updateData.notificacoes_ativas = notificacoes_ativas;
         if (objetivo !== undefined) updateData.objetivo = objetivo ? objetivo.trim() : null;
         if (plano !== undefined) updateData.plano = plano;

@@ -54,7 +54,9 @@ router.put('/', authenticate, async (req, res) => {
 
         const updateData = {};
         if (nome !== undefined) updateData.nome = nome;
-        if (telefone_whatsapp !== undefined) updateData.telefone_whatsapp = telefone_whatsapp;
+        if (telefone_whatsapp !== undefined) {
+            updateData.telefone_whatsapp = telefone_whatsapp.replace(/\D/g, '');
+        }
         if (data_nascimento !== undefined) updateData.data_nascimento = data_nascimento;
         if (cref !== undefined) updateData.cref = cref;
         if (especialidade !== undefined) updateData.especialidade = especialidade;
@@ -164,6 +166,28 @@ router.post('/upload-foto', authenticate, upload.single('foto'), async (req, res
         res.status(500).json({
             success: false,
             error: 'Erro ao processar upload da foto'
+        });
+    }
+});
+
+/**
+ * POST /api/perfil/teste-notificacao
+ * Dispara um resumo diário de teste para o professor logado
+ */
+router.post('/teste-notificacao', authenticate, async (req, res) => {
+    try {
+        const notificationService = require('../services/notificationService');
+        await notificationService.sendDailySummary(req.professorId);
+
+        res.json({
+            success: true,
+            message: 'Resumo de teste enviado para seu WhatsApp!'
+        });
+    } catch (error) {
+        console.error('Erro ao disparar notificação de teste:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao disparar notificação de teste'
         });
     }
 });

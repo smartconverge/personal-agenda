@@ -8,13 +8,18 @@ const { supabase, supabaseAdmin } = require('../config/supabase');
  */
 router.post('/register', async (req, res) => {
     try {
-        const { nome, email, senha, telefone_whatsapp } = req.body;
+        let { nome, email, senha, telefone_whatsapp } = req.body;
 
         if (!nome || !email || !senha) {
             return res.status(400).json({
                 success: false,
                 error: 'Nome, email e senha são obrigatórios'
             });
+        }
+
+        // Normalização de telefone
+        if (telefone_whatsapp) {
+            telefone_whatsapp = telefone_whatsapp.replace(/\D/g, '');
         }
 
         // 1. Criar usuário no Supabase Auth

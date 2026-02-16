@@ -212,26 +212,25 @@ router.delete('/:id', authenticate, async (req, res) => {
         let sessoesAfetadas = 0;
 
         if (excluir === 'true') {
-            // Excluir permanentemente as sessões futuras do serviço do contrato
+            // Excluir permanentemente TODAS as sessões futuras do serviço do contrato (independente do status)
             const { data: deletadas, error: erroDelecao } = await supabaseAdmin
                 .from('sessoes')
                 .delete()
                 .eq('aluno_id', contrato.aluno_id)
                 .eq('servico_id', contrato.servico_id)
-                .eq('status', 'agendada')
                 .gte('data_hora_inicio', agora)
                 .select();
 
             if (erroDelecao) throw erroDelecao;
             sessoesAfetadas = deletadas?.length || 0;
         } else {
-            // Apenas marcar como cancelada
+            // Apenas marcar como cancelada TODAS as sessões futuras (exceto as já concluídas)
             const { data: canceladas, error: erroCancelamento } = await supabaseAdmin
                 .from('sessoes')
                 .update({ status: 'cancelada', observacoes: 'Cancelada automaticamente pelo encerramento do contrato.' })
                 .eq('aluno_id', contrato.aluno_id)
                 .eq('servico_id', contrato.servico_id)
-                .eq('status', 'agendada')
+                .neq('status', 'concluida')
                 .gte('data_hora_inicio', agora)
                 .select();
 

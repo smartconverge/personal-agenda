@@ -11,7 +11,7 @@ export default function PerfilPage() {
     const [professor, setProfessor] = useState({
         nome: '',
         email: '',
-        whatsapp: '',
+        telefone_whatsapp: '',
         data_nascimento: '',
         cref: '',
         especialidade: '',
@@ -140,7 +140,9 @@ export default function PerfilPage() {
                         </div>
                         <div className="plan-badge-inline">
                             <span className="label">Plano Atual:</span>
-                            <span className="badge-premium">PREMIUM</span>
+                            <span className={professor.plano === 'PREMIUM' ? 'badge-premium' : 'badge-starter'}>
+                                {professor.plano?.toUpperCase() || 'STARTER'}
+                            </span>
                         </div>
                     </div>
 
@@ -173,8 +175,8 @@ export default function PerfilPage() {
                                 <label>WhatsApp</label>
                                 <input
                                     type="text"
-                                    name="whatsapp"
-                                    value={professor.whatsapp}
+                                    name="telefone_whatsapp"
+                                    value={professor.telefone_whatsapp}
                                     onChange={handleChange}
                                     placeholder="(00) 0 0000-0000"
                                 />
@@ -335,6 +337,17 @@ export default function PerfilPage() {
                     font-size: 0.7rem;
                     font-weight: 800;
                     letter-spacing: 0.05em;
+                }
+
+                .badge-starter {
+                    background: var(--bg-tertiary);
+                    color: var(--text-secondary);
+                    padding: 0.25rem 0.625rem;
+                    border-radius: 2rem;
+                    font-size: 0.7rem;
+                    font-weight: 800;
+                    letter-spacing: 0.05em;
+                    border: 1px solid var(--border);
                 }
 
                 .label {

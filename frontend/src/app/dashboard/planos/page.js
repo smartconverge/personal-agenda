@@ -85,8 +85,9 @@ export default function PlanosPage() {
 
             <div className="planos-grid">
                 {planos.map((plano) => (
-                    <div key={plano.nome} className={`plano-card card ${plano.popular ? 'popular' : ''}`}>
+                    <div key={plano.nome} className={`plano-card card ${plano.popular ? 'popular' : ''} ${plano.current ? 'current-plan-card' : ''}`}>
                         {plano.popular && <span className="badge-popular">MAIS ESCOLHIDO</span>}
+                        {plano.current && <span className="badge-current">SEU PLANO ATUAL</span>}
 
                         <div className="plano-header">
                             <span className="plano-nome">{plano.nome}</span>
@@ -110,14 +111,39 @@ export default function PlanosPage() {
                         </div>
 
                         <div className="plano-footer">
-                            <button className={`btn ${plano.current ? 'btn-secondary' : (plano.popular ? 'btn-primary' : 'btn-secondary')} ${plano.current ? 'disabled' : ''}`} style={{ width: '100%', height: '3.5rem', fontSize: '1rem', borderRadius: '0.75rem' }}>
-                                {plano.current ? 'Seu Plano Atual' : 'Assinar Agora'}
+                            <button className={`btn ${plano.current ? 'btn-current-active' : (plano.popular ? 'btn-primary' : 'btn-secondary')} ${plano.current ? 'disabled' : ''}`} style={{ width: '100%', height: '3.5rem', fontSize: '1rem', borderRadius: '0.75rem' }}>
+                                {plano.current ? 'Plano Ativo' : 'Assinar Agora'}
                             </button>
                             <span className="plano-limit-info">{plano.limit}</span>
                         </div>
                     </div>
                 ))}
             </div>
+            <style jsx>{`
+                .current-plan-card {
+                    border: 2px solid var(--primary) !important;
+                    position: relative;
+                }
+                .badge-current {
+                    position: absolute;
+                    top: -12px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: var(--primary);
+                    color: white;
+                    padding: 0.25rem 0.75rem;
+                    border-radius: 2rem;
+                    font-size: 0.75rem;
+                    font-weight: 800;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                }
+                .btn-current-active {
+                    background: var(--bg-tertiary);
+                    color: var(--primary);
+                    border: 1px solid var(--primary);
+                    cursor: default;
+                }
+            `}</style>
         </div>
     )
 }

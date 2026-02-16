@@ -1,7 +1,21 @@
 'use client'
+import { createPortal } from 'react-dom'
+import { useEffect, useState } from 'react'
 
 export default function Modal({ isOpen, onClose, title, children, size = 'md' }) {
-    if (!isOpen) return null
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+        if (isOpen) {
+            document.body.style.overflow = 'hidden'
+        }
+        return () => {
+            document.body.style.overflow = 'unset'
+        }
+    }, [isOpen])
+
+    if (!isOpen || !mounted) return null
 
     const sizes = {
         sm: '400px',
@@ -10,7 +24,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
         xl: '1000px'
     }
 
-    return (
+    const modalContent = (
         <div
             style={{
                 position: 'fixed',
@@ -18,12 +32,13 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                backgroundColor: 'rgba(0, 0, 0, 0.65)',
                 display: 'grid',
                 placeItems: 'center',
-                zIndex: 1000,
+                zIndex: 9999,
                 padding: '2rem 1rem',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                backdropFilter: 'blur(4px)'
             }}
             onClick={onClose}
         >
@@ -33,7 +48,9 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
                     maxWidth: sizes[size],
                     width: '100%',
                     margin: 'auto',
-                    position: 'relative'
+                    position: 'relative',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                    animation: 'scale-up 0.2s ease-out'
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
@@ -41,20 +58,28 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '1.5rem'
+                    marginBottom: '1.5rem',
+                    paddingBottom: '1rem',
+                    borderBottom: '1px solid var(--border)'
                 }}>
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0, color: 'var(--primary)' }}>
                         {title}
                     </h2>
                     <button
                         onClick={onClose}
                         style={{
-                            background: 'none',
+                            background: 'var(--bg-tertiary)',
                             border: 'none',
+                            width: '2.5rem',
+                            height: '2.5rem',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             fontSize: '1.5rem',
                             cursor: 'pointer',
-                            padding: '0.25rem',
-                            color: 'var(--text-muted)'
+                            color: 'var(--text-muted)',
+                            transition: 'all 0.2s'
                         }}
                     >
                         ×
@@ -62,6 +87,14 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
                 </div>
                 {children}
             </div>
+            <style jsx>{`
+                @keyframes scale-up {
+                    from { opacity: 0; transform: scale(0.95); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+            `}</style>
         </div>
     )
+
+    return createPortal(modalContent, document.body)
 }

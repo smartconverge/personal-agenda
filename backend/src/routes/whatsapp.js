@@ -93,24 +93,32 @@ router.post('/criar-instancia', authenticate, async (req, res) => {
 
         // 1. Criar instância na Evolution API
         try {
+            console.log(`🔌 Tentando criar instância na Evolution: ${EVOLUTION_API_URL}/instance/create`);
+            const payload = {
+                instanceName: instanceName,
+                token: process.env.EVOLUTION_API_TOKEN,
+                qrcode: true,
+                integration: "WHATSAPP-BAILEYS" // Padrão v2
+            };
+
             await axios.post(
                 `${EVOLUTION_API_URL}/instance/create`,
-                {
-                    instanceName: instanceName,
-                    token: process.env.EVOLUTION_API_TOKEN, // Usar mesmo token ou gerar um novo por user? Por simplificacao, usamos GLOBAL ou API KEY
-                    qrcode: true
-                },
+                payload,
                 { headers: evolutionHeaders }
             );
         } catch (evoError) {
-            // Se erro for "instance already exists", tudo bem, prosseguimos
-            if (evoError.response?.data?.error === 'Instance already exists') {
-                // ok, continua
+            console.error('❌ Erro Evolution:', evoError.response?.status, evoError.response?.data);
+
+            // Se erro for "instance already exists" (409 ou 400), tudo bem
+            if (evoError.response?.status === 409 || evoError.response?.data?.error === 'Instance already exists' || (evoError.response?.data?.response?.message || []).includes('already exists')) {
+                console.log('ℹ️ Instância já existe, prosseguindo...');
             } else {
-                console.error('Erro ao criar instância Evolution:', evoError.response?.data || evoError.message);
-                return res.status(500).json({
+                // Retorna o erro exato da Evolution para o frontend
+                const status = evoError.response?.status || 500;
+                const msg = evoError.response?.data?.message || evoError.message;
+                return res.status(status).json({
                     success: false,
-                    error: 'Falha ao criar instância no provedor de mensagens'
+                    error: `Falha na Evolution (${status}): ${msg}`
                 });
             }
         }

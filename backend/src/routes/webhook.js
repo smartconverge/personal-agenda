@@ -202,7 +202,7 @@ async function processarComando(professorId, comando) {
  */
 router.post('/whatsapp', async (req, res) => {
     try {
-        const { data } = req.body;
+        const { data, instance: instanceReceived } = req.body;
 
         // Validar estrutura do webhook
         if (!data || !data.key || !data.key.remoteJid || !data.message) {
@@ -255,9 +255,12 @@ router.post('/whatsapp', async (req, res) => {
         // Processar comando
         const resposta = await processarComando(professor.id, messageText);
 
-        // Enviar resposta pela instância do professor (se cadastrada)
+        // Enviar responder pela mesma instância que recebeu (Simetria)
+        // Se não tiver a info da instância vinda no webhook, cai no fallback da instância do professor ou central
+        const instanceToReply = instanceReceived || professor.whatsapp_instance;
+
         const { enviarMensagem } = require('../config/evolution');
-        await enviarMensagem(from, resposta, professor.whatsapp_instance);
+        await enviarMensagem(from, resposta, instanceToReply);
 
         // Registrar log
         await supabaseAdmin

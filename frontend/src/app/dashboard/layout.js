@@ -255,7 +255,26 @@ export default function DashboardLayout({ children }) {
                                     <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                                         <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
                                     </span>
-                                    {sidebarOpen && <span>{item.label}</span>}
+                                    {sidebarOpen && (
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                            <span>{item.label}</span>
+                                            {item.label === 'WhatsApp' && (
+                                                <span style={{
+                                                    fontSize: '0.625rem',
+                                                    fontWeight: '800',
+                                                    padding: '0.125rem 0.375rem',
+                                                    borderRadius: '1rem',
+                                                    background: whatsappConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.1)',
+                                                    color: whatsappConnected ? '#10b981' : '#ef4444',
+                                                    border: `1px solid ${whatsappConnected ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.2)'}`,
+                                                    marginLeft: '0.4rem',
+                                                    whiteSpace: 'nowrap'
+                                                }}>
+                                                    {whatsappConnected ? 'ATIVO' : 'OFFLINE'}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                 </Link>
                             )
                         })}

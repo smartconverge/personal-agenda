@@ -17,6 +17,7 @@ export default function DashboardLayout({ children }) {
     const [notificacoesCount, setNotificacoesCount] = useState(0)
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [whatsappConnected, setWhatsappConnected] = useState(false)
 
     useEffect(() => {
         const professorData = localStorage.getItem('professor')
@@ -39,6 +40,10 @@ export default function DashboardLayout({ children }) {
         // Se falhar com 401, o api.js redireciona para login
         loadProfile()
         loadNotificacoesCount()
+        checkWhatsAppStatus()
+
+        // Polling de status do WhatsApp a cada 30s
+        const wsInterval = setInterval(checkWhatsAppStatus, 30000)
 
         // Se estiver na página de notificações, marca como lidas
         if (pathname === '/dashboard/notificacoes') {
@@ -88,6 +93,15 @@ export default function DashboardLayout({ children }) {
             setNotificacoesCount(unread)
         } catch (error) {
             console.error('Erro ao buscar contador de notificações:', error)
+        }
+    }
+
+    const checkWhatsAppStatus = async () => {
+        try {
+            const res = await api.get('/whatsapp/status')
+            setWhatsappConnected(!!res.data.connected)
+        } catch (error) {
+            setWhatsappConnected(false)
         }
     }
 

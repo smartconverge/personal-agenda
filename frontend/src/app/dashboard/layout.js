@@ -109,6 +109,7 @@ export default function DashboardLayout({ children }) {
         { href: '/dashboard/meus-servicos', label: 'Serviços', icon: 'Services' },
         { href: '/dashboard/contratos', label: 'Contratos', icon: 'Contracts' },
         { href: '/dashboard/agenda', label: 'Agenda', icon: 'Calendar' },
+        { href: '/dashboard/whatsapp', label: 'WhatsApp', icon: 'Dashboard' },
         { href: '/dashboard/notificacoes', label: 'Notificações', icon: 'Notifications' },
     ]
 

@@ -86,9 +86,6 @@ export default function ConfiguracoesPage() {
 
 
             <div className="config-grid">
-                {/* WhatsApp Connection */}
-                <WhatsAppConnect />
-
                 {/* Segurança */}
                 <div className="config-card card">
                     <h3 className="card-title">

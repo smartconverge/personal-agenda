@@ -169,14 +169,14 @@ export default function DashboardLayout({ children }) {
                             width: '2.5rem',
                             height: '2.5rem',
                             borderRadius: '0.625rem',
-                            background: 'rgba(31, 43, 55, 0.08)', // Navy com transparência
+                            background: 'rgba(255, 255, 255, 0.08)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexShrink: 0,
-                            border: '1px solid rgba(31, 43, 55, 0.1)'
+                            border: '1px solid rgba(255, 255, 255, 0.1)'
                         }}>
-                            <Icons.Fitness size={20} color="var(--primary)" /> {/* Logo Verde */}
+                            <Icons.Fitness size={20} color="white" />
                         </div>
                         {sidebarOpen && (
                             <div style={{ display: 'flex', flexDirection: 'column' }}>

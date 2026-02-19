@@ -188,13 +188,18 @@ h6 {
 }
 
 .card-highlight {
-  background: var(--primary);
-  border: none;
-  border-radius: var(--radius);
-  box-shadow: 0 10px 25px -5px hsla(155, 72%, 32%, 0.25);
+  background: var(--primary) !important;
+  border: none !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 10px 25px -5px hsla(155, 72%, 32%, 0.25) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: white;
+  color: white !important;
   cursor: pointer;
+}
+
+.card-highlight .finebank-label,
+.card-highlight .finebank-value {
+  color: white !important;
 }
 
 .card-highlight:hover {

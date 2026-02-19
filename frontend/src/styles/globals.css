@@ -18,12 +18,14 @@
   --bg-secondary: hsl(0, 0%, 100%);
   --bg-tertiary: hsl(150, 20%, 95%);
 
-  /* Sidebar Green - Matching Application Theme */
-  --sidebar-bg: hsl(155, 72%, 12%);
-  --sidebar-bg-dark: hsl(155, 72%, 10%);
-  --sidebar-text: hsl(155, 20%, 90%);
-  --sidebar-accent: hsla(158, 65%, 42%, 0.15);
-  --sidebar-border: hsla(155, 72%, 18%, 1);
+  /* Sidebar Navy - Premium Finebank Style */
+  --sidebar-bg: #1F2B37;
+  /* Navy Profundo */
+  --sidebar-bg-dark: #111827;
+  --sidebar-text: #E2E8F0;
+  --sidebar-accent: rgba(119, 242, 161, 0.15);
+  /* Menta Glow */
+  --sidebar-border: rgba(255, 255, 255, 0.05);
 
   /* Textos */
   --text-primary: hsl(160, 25%, 12%);
@@ -146,6 +148,18 @@ h6 {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
+}
+
+/* Utility to Hide Scrollbar but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* Cards Premium */

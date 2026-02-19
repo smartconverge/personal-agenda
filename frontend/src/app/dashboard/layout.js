@@ -204,12 +204,10 @@ export default function DashboardLayout({ children }) {
                     </div>
 
                     {/* Main Navigation - Scrollable Area */}
-                    <nav style={{
+                    <nav className="no-scrollbar" style={{
                         padding: '1.5rem 0.75rem',
                         flex: 1,
-                        overflowY: 'auto',
-                        scrollbarWidth: 'thin',
-                        scrollbarColor: 'var(--border) transparent'
+                        overflowY: 'auto'
                     }}>
                         {/* Section: MENU */}
                         {sidebarOpen && (

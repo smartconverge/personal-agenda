@@ -523,7 +523,8 @@ export default function DashboardLayout({ children }) {
                     {/* Trial Banner */}
                     {professor?.plano_expira_em && (new Date(professor.plano_expira_em) > new Date()) && (
                         <div style={{
-                            background: 'linear-gradient(90deg, var(--primary), var(--primary-dark))',
+                            background: 'var(--sidebar-bg)', // Navy Premium (Consistente)
+                            borderBottom: '1px solid var(--border)',
                             color: 'white',
                             padding: '0.5rem 1rem',
                             textAlign: 'center',
@@ -535,9 +536,9 @@ export default function DashboardLayout({ children }) {
                             gap: '0.5rem',
                             zIndex: 100
                         }}>
-                            <Icons.Dashboard size={14} />
+                            <Icons.Dashboard size={14} color="var(--primary)" /> {/* Ícone Menta */}
                             <span>
-                                Você esta usando o plano <strong>STARTER (Degustação)</strong>.
+                                Você esta usando o plano <strong style={{ color: 'var(--primary)' }}>STARTER (Degustação)</strong>.
                                 Restam <strong>{(() => {
                                     const diff = new Date(professor.plano_expira_em) - new Date();
                                     const dias = Math.ceil(diff / (1000 * 60 * 60 * 24));
@@ -545,7 +546,7 @@ export default function DashboardLayout({ children }) {
                                 })()}</strong> de acesso total.
                             </span>
                             <Link href="/dashboard/planos" style={{
-                                color: 'white',
+                                color: 'var(--primary)',
                                 textDecoration: 'underline',
                                 marginLeft: '1rem',
                                 opacity: 0.9
@@ -609,7 +610,7 @@ export default function DashboardLayout({ children }) {
                                 <h1 style={{
                                     fontSize: '1.25rem',
                                     fontWeight: '800',
-                                    color: 'var(--primary)',
+                                    color: 'var(--text-primary)', // Preto/Cinza (Sóbrio)
                                     margin: 0,
                                     lineHeight: 1.2,
                                     letterSpacing: '-0.02em'

@@ -18,14 +18,17 @@
   --bg-secondary: hsl(0, 0%, 100%);
   --bg-tertiary: hsl(150, 20%, 95%);
 
-  /* Sidebar Navy - Premium Finebank Style */
-  --sidebar-bg: #1F2B37;
-  /* Navy Profundo */
-  --sidebar-bg-dark: #111827;
-  --sidebar-text: #E2E8F0;
-  --sidebar-accent: rgba(119, 242, 161, 0.15);
-  /* Menta Glow */
-  --sidebar-border: rgba(255, 255, 255, 0.05);
+  /* Sidebar Silver (Light Premium) - Professional & Clean */
+  --sidebar-bg: #F8FAFC;
+  /* Slate 50 (Quase Branco, mas Cinza) */
+  --sidebar-bg-dark: #F1F5F9;
+  /* Slate 100 */
+  --sidebar-text: #64748B;
+  /* Slate 500 (Texto visível em fundo claro) */
+  --sidebar-accent: rgba(119, 242, 161, 0.4);
+  /* Menta mais forte para contraste */
+  --sidebar-border: #E2E8F0;
+  /* Borda sutil */
 
   /* Textos */
   --text-primary: hsl(160, 25%, 12%);

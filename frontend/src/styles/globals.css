@@ -268,8 +268,74 @@ h6 {
   color: var(--success);
 }
 
-.stat-change.negative {
-  color: var(--danger);
+/* Dashboard Grid System (Finebank Style) */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* 4 colunas estritas para KPIs */
+  gap: 2rem;
+  /* Espaço generoso (32px) */
+  margin-bottom: 3rem;
+}
+
+.finebank-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  /* 20px - Arredondado moderno */
+  padding: 2rem;
+  /* 32px - Respiro interno */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+}
+
+.finebank-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+}
+
+.finebank-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.5rem;
+  /* 40px - KPI Grande */
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin: 1rem 0 0.5rem 0;
+  letter-spacing: -0.03em;
+}
+
+.finebank-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .finebank-card {
+    padding: 1.5rem;
+  }
+
+  .finebank-value {
+    font-size: 2rem;
+  }
 }
 
 /* Buttons Premium */

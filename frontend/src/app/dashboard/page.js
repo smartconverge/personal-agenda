@@ -155,74 +155,62 @@ export default function DashboardPage() {
         <div>
 
             {/* Stats Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                gap: '1.25rem',
-                marginBottom: '2rem'
-            }}>
+            {/* Finebank Stats Grid */}
+            <div className="dashboard-grid">
                 {statCards.map((stat, index) => {
                     const IconComponent = stat.iconComponent
 
                     return (
                         <div
                             key={index}
-                            className={stat.highlight ? "card-highlight" : "card-premium"}
+                            className={stat.highlight ? "card-highlight finebank-card" : "finebank-card"}
                             style={{
-                                padding: '1.25rem',
-                                position: 'relative',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '0.5rem',
                                 border: stat.highlight ? 'none' : '1px solid var(--border)',
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                padding: '2rem' // Forçando o padding do Finebank
                             }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                <p className="stat-label" style={{
-                                    color: stat.highlight ? 'rgba(255, 255, 255, 0.85)' : 'var(--text-secondary)',
-                                    fontSize: '0.8125rem',
-                                    fontWeight: '600'
+                                <p className="finebank-label" style={{
+                                    color: stat.highlight ? 'rgba(255, 255, 255, 0.9)' : 'var(--text-secondary)'
                                 }}>
                                     {stat.label}
                                 </p>
                                 <div style={{
-                                    width: '2.5rem',
-                                    height: '2.5rem',
-                                    borderRadius: '0.75rem',
-                                    background: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'hsla(155, 72%, 32%, 0.1)',
+                                    width: '3rem',
+                                    height: '3rem',
+                                    borderRadius: '1rem', // Arredondamento suave
+                                    background: stat.highlight ? 'rgba(255, 255, 255, 0.25)' : 'var(--bg-tertiary)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     color: stat.highlight ? 'white' : 'var(--primary)'
                                 }}>
-                                    <IconComponent size={20} />
+                                    <IconComponent size={24} />
                                 </div>
                             </div>
 
-                            <p className="stat-value" style={{
-                                fontSize: '1.75rem',
-                                fontWeight: '800',
-                                color: stat.highlight ? 'white' : 'var(--text-primary)',
-                                margin: '0.25rem 0'
-                            }}>
-                                {stat.value}
-                            </p>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                                <div style={{
-                                    fontSize: '0.75rem',
-                                    fontWeight: '600',
-                                    color: stat.highlight ? 'white' : 'var(--success)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.25rem',
-                                    padding: '0.125rem 0.5rem',
-                                    backgroundColor: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'hsla(155, 72%, 32%, 0.1)',
-                                    borderRadius: '0.5rem'
+                            <div>
+                                <p className="finebank-value" style={{
+                                    color: stat.highlight ? 'white' : 'var(--text-primary)'
                                 }}>
-                                    <Icons.TrendingUp size={12} />
-                                    {stat.change}
+                                    {stat.value}
+                                </p>
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <div style={{
+                                        fontSize: '0.75rem',
+                                        fontWeight: '700',
+                                        color: stat.highlight ? 'white' : 'var(--success)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem',
+                                        padding: '0.25rem 0.75rem',
+                                        backgroundColor: stat.highlight ? 'rgba(255, 255, 255, 0.2)' : 'rgba(119, 242, 161, 0.15)',
+                                        borderRadius: '999px'
+                                    }}>
+                                        <Icons.TrendingUp size={14} />
+                                        {stat.change}
+                                    </div>
                                 </div>
                             </div>
                         </div>

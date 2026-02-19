@@ -70,11 +70,11 @@ app.use(cors({
 
 // Rate Limiting Security
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 100,
+  windowMs: 1 * 60 * 1000, // 1 minuto (antes era 15m)
+  limit: 1000, // 1000 requisições por IP (antes era 100)
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  skip: (req) => req.path === '/health' || req.path === '/', // Não limita pings de saúde
+  skip: (req) => req.path === '/health' || req.path === '/',
   message: {
     status: 429,
     error: 'Muitas requisições, tente novamente em breve'

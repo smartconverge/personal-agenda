@@ -523,20 +523,20 @@ export default function DashboardLayout({ children }) {
                     {/* Trial Banner */}
                     {professor?.plano_expira_em && (new Date(professor.plano_expira_em) > new Date()) && (
                         <div style={{
-                            background: 'var(--sidebar-bg)', // Navy Premium (Consistente)
-                            borderBottom: '1px solid var(--border)',
-                            color: 'white',
+                            background: 'var(--bg-secondary)', // Fundo Branco
+                            borderBottom: '1px solid var(--primary)', // Borda Verde
+                            color: 'var(--text-primary)',
                             padding: '0.5rem 1rem',
                             textAlign: 'center',
                             fontSize: '0.8125rem',
-                            fontWeight: '700',
+                            fontWeight: '600',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '0.5rem',
                             zIndex: 100
                         }}>
-                            <Icons.Dashboard size={14} color="var(--primary)" /> {/* Ícone Menta */}
+                            <Icons.Dashboard size={14} color="var(--primary)" />
                             <span>
                                 Você esta usando o plano <strong style={{ color: 'var(--primary)' }}>STARTER (Degustação)</strong>.
                                 Restam <strong>{(() => {

@@ -183,10 +183,7 @@ export default function DashboardLayout({ children }) {
                                 <h2 style={{
                                     fontSize: '1rem',
                                     fontWeight: '800',
-                                    fontSize: '1rem',
-                                    fontWeight: '800',
-                                    color: 'var(--text-primary)', // Texto Escuro
-                                    lineHeight: 1.2,
+                                    color: 'white',
                                     lineHeight: 1.2,
                                     letterSpacing: '-0.02em'
                                 }}>

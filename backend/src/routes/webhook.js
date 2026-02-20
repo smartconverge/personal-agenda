@@ -203,7 +203,8 @@ async function processarComando(professorId, comando) {
 router.post('/whatsapp', async (req, res) => {
     try {
         // Validação de segurança: Verifica se a apikey enviada bate com a nossa WEBHOOK_SECRET
-        const apiKey = req.headers['apikey'] || req.headers['webhook-token'];
+        // Aceita via Header ou via Query Parameter (?secret=...) por facilidade de configuração
+        const apiKey = req.headers['apikey'] || req.headers['webhook-token'] || req.query.secret;
         const secret = process.env.WEBHOOK_SECRET;
 
         if (secret && apiKey !== secret) {

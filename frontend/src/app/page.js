@@ -16,7 +16,7 @@ export default function HomePage() {
     }, [router])
 
     return (
-        <main className="flex-center min-vh-100 bg-secondary">
+        <main className="flex-center min-h-screen bg-secondary">
             <div className="spinner !w-12 !h-12" />
         </main>
     )

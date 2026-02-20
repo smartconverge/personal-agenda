@@ -140,7 +140,7 @@ export default function DashboardLayout({ children }) {
     if (!professor) {
         return (
             <div className="loading-overlay">
-                <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
+                <div className="spinner !w-12 !h-12" />
             </div>
         )
     }
@@ -590,6 +590,6 @@ export default function DashboardLayout({ children }) {
                 </>
             )}
             <BottomNavigation notificacoesCount={notificacoesCount} onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
-        </ToastProvider >
+        </ToastProvider>
     )
 }

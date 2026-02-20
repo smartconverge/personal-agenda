@@ -70,7 +70,7 @@ export default function RegisterPage() {
             <div className="auth-bg-icon" style={{ top: '25%', right: '15%', animationDelay: '2.5s' }}><Icons.Money size={56} /></div>
             <div className="auth-bg-icon" style={{ top: '65%', right: '12%', animationDelay: '3.5s' }}><Icons.Calendar size={52} /></div>
 
-            <div className="auth-card" style={{ maxWidth: '480px' }}>
+            <div className="auth-card !max-w-[480px]">
                 <div className="auth-brand">
                     <h1 className="text-xl">Crie sua Conta</h1>
                     <p>Junte-se ao time Personal Agenda</p>
@@ -131,7 +131,7 @@ export default function RegisterPage() {
                                 disabled={loading}
                             />
                             <div className="auth-input-icon">
-                                <Icons.Fitness size={18} />
+                                <Icons.WhatsApp size={18} />
                             </div>
                         </div>
                     </div>
@@ -149,7 +149,7 @@ export default function RegisterPage() {
                                 disabled={loading}
                             />
                             <div className="auth-input-icon">
-                                <Icons.Fitness size={18} />
+                                <Icons.Lock size={18} />
                             </div>
                         </div>
                         <p className="text-xs text-muted mt-2 opacity-70">
@@ -170,7 +170,7 @@ export default function RegisterPage() {
                                 disabled={loading}
                             />
                             <div className="auth-input-icon">
-                                <Icons.Plus size={18} />
+                                <Icons.Lock size={18} />
                             </div>
                         </div>
                     </div>
@@ -182,7 +182,7 @@ export default function RegisterPage() {
                     >
                         {loading ? (
                             <>
-                                <div className="spinner !w-5 !h-5 !border-t-white mr-2" />
+                                <div className="spinner !w-5 !h-5 !border-t-white" />
                                 <span>Criando sua conta...</span>
                             </>
                         ) : (

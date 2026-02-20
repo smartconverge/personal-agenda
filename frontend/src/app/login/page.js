@@ -105,33 +105,13 @@ export default function LoginPage() {
                 </div>
 
                 {error && (
-                    <div style={{
-                        padding: '1rem',
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid rgba(239, 68, 68, 0.2)',
-                        borderRadius: '0.75rem',
-                        marginBottom: '1.5rem',
-                        color: '#f87171',
-                        fontSize: '0.8125rem',
-                        textAlign: 'center',
-                        fontWeight: '600'
-                    }}>
+                    <div className="card-flat p-4 !bg-red-500/10 border-red-500/20 text-red-500 text-xs text-center font-bold mb-6">
                         {error}
                     </div>
                 )}
 
                 {successMsg && (
-                    <div style={{
-                        padding: '1rem',
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.2)',
-                        borderRadius: '0.75rem',
-                        marginBottom: '1.5rem',
-                        color: '#34d399',
-                        fontSize: '0.8125rem',
-                        textAlign: 'center',
-                        fontWeight: '600'
-                    }}>
+                    <div className="card-flat p-4 !bg-green-500/10 border-green-500/20 text-green-500 text-xs text-center font-bold mb-6">
                         {successMsg}
                     </div>
                 )}
@@ -175,24 +155,19 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.8125rem', color: '#94a3b8', fontWeight: '600' }}>
+                    <div className="flex-between mb-6 text-xs text-muted font-bold">
+                        <label className="flex items-center gap-2 cursor-pointer">
                             <input
                                 type="checkbox"
                                 checked={lembrar}
                                 onChange={(e) => setLembrar(e.target.checked)}
-                                style={{
-                                    accentColor: '#10b981',
-                                    width: '1rem',
-                                    height: '1rem'
-                                }}
+                                className="accent-primary w-4 h-4"
                             />
                             Lembrar meu email
                         </label>
                         <a
                             href="#"
-                            className="text-secondary font-bold"
-                            style={{ fontSize: '0.8125rem', textDecoration: 'none' }}
+                            className="text-primary hover:underline"
                             onClick={(e) => {
                                 e.preventDefault()
                                 handleRecuperarSenha()
@@ -209,7 +184,7 @@ export default function LoginPage() {
                     >
                         {loading ? (
                             <>
-                                <div className="spinner" style={{ width: '1.25rem', height: '1.25rem', borderTopColor: 'white' }} />
+                                <div className="spinner !w-5 !h-5 !border-white" />
                                 Processando...
                             </>
                         ) : (
@@ -222,13 +197,13 @@ export default function LoginPage() {
                 </form>
 
                 <div className="auth-footer">
-                    <a href="/register" className="text-secondary font-bold" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Icons.Plus size={16} color="#10b981" />
+                    <a href="/register" className="flex items-center gap-2 text-primary font-bold hover:underline">
+                        <Icons.Plus size={16} />
                         Criar conta gratuita
                     </a>
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <div style={{ width: '1px', height: '12px', background: 'rgba(255,255,255,0.1)' }} />
-                        <span style={{ color: '#475569', fontSize: '0.75rem', fontWeight: '700' }}>v1.2.0</span>
+                    <div className="flex items-center gap-4 py-2 opacity-50">
+                        <div className="w-px h-3 bg-white/10" />
+                        <span className="text-[0.65rem] font-black uppercase tracking-tighter">v1.2.0</span>
                     </div>
                 </div>
             </div>

@@ -147,11 +147,7 @@ export default function DashboardLayout({ children }) {
 
     return (
         <ToastProvider>
-            <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)', position: 'relative', overflow: 'hidden' }}>
-                {/* Background Blobs para efeito Glassmorphism */}
-                <div className="bg-blob" style={{ top: '-10%', left: '-5%' }}></div>
-                <div className="bg-blob" style={{ bottom: '10%', right: '-5%', background: 'radial-gradient(circle, hsla(215, 85%, 55%, 0.1) 0%, transparent 70%)' }}></div>
-
+            <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
                 {/* Sidebar Verde Escura - Desktop Only */}
                 <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'} sidebar-glass`} style={{
                     width: sidebarOpen ? '16rem' : '5rem',

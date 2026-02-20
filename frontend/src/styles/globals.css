@@ -20,14 +20,14 @@
   --bg-tertiary: hsl(150, 20%, 95%);
 
   /* Sidebar Green - Brand Standard (User Request) */
-  --sidebar-bg: hsla(155, 72%, 12%, 0.75);
-  /* Mais transparente para revelar o fundo */
-  --sidebar-bg-dark: hsla(155, 72%, 8%, 0.85);
+  --sidebar-bg: hsl(155, 72%, 14%);
+  /* Verde Profundo Padrão */
+  --sidebar-bg-dark: hsl(155, 72%, 10%);
   --sidebar-text: hsl(155, 20%, 90%);
   /* Branco Suave */
-  --sidebar-accent: hsla(158, 65%, 42%, 0.2);
-  --sidebar-border: hsla(155, 72%, 25%, 0.3);
-  /* Borda mais brilhante */
+  --sidebar-accent: hsla(158, 65%, 42%, 0.15);
+  --sidebar-border: hsla(155, 72%, 18%, 1);
+  /* Borda sutil */
 
   /* Textos */
   --text-primary: hsl(160, 25%, 12%);
@@ -56,10 +56,10 @@
   --radius-sm: 0.5rem;
   --radius-lg: 1rem;
 
-  /* Glassmorphism */
-  --glass-bg: hsla(0, 0%, 100%, 0.6);
-  --glass-border: hsla(0, 0%, 100%, 0.2);
-  --glass-blur: 16px;
+  /* Glassmorphism (Fallbacks) */
+  --glass-bg: var(--bg-secondary);
+  --glass-border: var(--border);
+  --glass-blur: 0px;
 }
 
 /* Dark Mode */
@@ -179,31 +179,7 @@ h6 {
 
 .sidebar-glass {
   background-color: var(--sidebar-bg) !important;
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   border-right: 1px solid var(--sidebar-border);
-}
-
-/* Background Decoration Blobs */
-.bg-blob {
-  position: fixed;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, hsla(155, 72%, 32%, 0.15) 0%, transparent 70%);
-  filter: blur(80px);
-  z-index: -1;
-  pointer-events: none;
-  animation: float 20s infinite alternate;
-}
-
-@keyframes float {
-  from {
-    transform: translate(0, 0);
-  }
-
-  to {
-    transform: translate(100px, 100px);
-  }
 }
 
 /* Cards Premium */

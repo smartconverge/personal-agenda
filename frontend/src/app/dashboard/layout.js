@@ -19,52 +19,6 @@ export default function DashboardLayout({ children }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [whatsappConnected, setWhatsappConnected] = useState(false)
 
-    useEffect(() => {
-        const professorData = localStorage.getItem('professor')
-
-        // Carregar tema salvo
-        const savedTheme = localStorage.getItem('theme') || 'light'
-        document.documentElement.setAttribute('data-theme', savedTheme)
-
-        // Se tiver dados em cache, exibe instantaneamente (Optimistic UI)
-        if (professorData) {
-            try {
-                const parsed = JSON.parse(professorData)
-                setProfessor(parsed)
-            } catch (error) {
-                console.error('Erro ao ler dados do professor:', error)
-            }
-        }
-
-        // Sempre busca dados atualizados e verifica sessão (Cookie)
-        // Se falhar com 401, o api.js redireciona para login
-        loadProfile()
-        loadNotificacoesCount()
-        checkWhatsAppStatus()
-
-        // Polling de status do WhatsApp a cada 30s
-        const wsInterval = setInterval(checkWhatsAppStatus, 30000)
-
-        // Se estiver na página de notificações, marca como lidas no banco
-        if (pathname === '/dashboard/notificacoes') {
-            marcarTodasComoLidas();
-        }
-
-        // Listener para atualização de perfil em tempo real
-        const handleProfileUpdate = () => {
-            const updatedData = localStorage.getItem('professor')
-            if (updatedData) {
-                setProfessor(JSON.parse(updatedData))
-            }
-        }
-
-        window.addEventListener('user-profile-updated', handleProfileUpdate)
-
-        return () => {
-            window.removeEventListener('user-profile-updated', handleProfileUpdate)
-        }
-    }, [router, pathname])
-
     const loadProfile = async () => {
         try {
             const response = await api.get('/perfil')
@@ -80,14 +34,9 @@ export default function DashboardLayout({ children }) {
 
     const loadNotificacoesCount = async () => {
         try {
-            // Buscamos todas as notificações (o backend poderia ter um endpoint /unread-count, 
-            // mas vamos filtrar aqui no front por enquanto ou usar o total filtrado)
             const response = await api.get('/notificacoes?status=enviado&limit=100')
             const data = response.data.data || []
-
-            // Filtramos as que não foram lidas no banco
             const unread = data.filter(n => n.lida === false).length
-
             setNotificacoesCount(unread)
         } catch (error) {
             console.error('Erro ao buscar contador de notificações:', error)
@@ -118,11 +67,57 @@ export default function DashboardLayout({ children }) {
         } catch (error) {
             console.error('Erro ao fazer logout na API', error)
         } finally {
-            localStorage.removeItem('token') // Limpeza redundante
+            localStorage.removeItem('token')
             localStorage.removeItem('professor')
             router.push('/login')
         }
     }
+
+    useEffect(() => {
+        const professorData = localStorage.getItem('professor')
+
+        // Carregar tema salvo
+        const savedTheme = localStorage.getItem('theme') || 'light'
+        document.documentElement.setAttribute('data-theme', savedTheme)
+
+        // Se tiver dados em cache, exibe instantaneamente (Optimistic UI)
+        if (professorData) {
+            try {
+                const parsed = JSON.parse(professorData)
+                setProfessor(parsed)
+            } catch (error) {
+                console.error('Erro ao ler dados do professor:', error)
+            }
+        }
+
+        // Buscas iniciais
+        loadProfile()
+        loadNotificacoesCount()
+        checkWhatsAppStatus()
+
+        // Polling de status do WhatsApp a cada 30s
+        const wsInterval = setInterval(checkWhatsAppStatus, 30000)
+
+        // Se estiver na página de notificações, marca como lidas no banco
+        if (pathname === '/dashboard/notificacoes') {
+            marcarTodasComoLidas();
+        }
+
+        // Listener para atualização de perfil em tempo real
+        const handleProfileUpdate = () => {
+            const updatedData = localStorage.getItem('professor')
+            if (updatedData) {
+                setProfessor(JSON.parse(updatedData))
+            }
+        }
+
+        window.addEventListener('user-profile-updated', handleProfileUpdate)
+
+        return () => {
+            window.removeEventListener('user-profile-updated', handleProfileUpdate)
+            clearInterval(wsInterval)
+        }
+    }, [router, pathname])
 
     const menuItems = [
         { href: '/dashboard', label: 'Dashboard', icon: 'Dashboard' },

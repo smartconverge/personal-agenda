@@ -547,7 +547,7 @@ export default function AlunoDetalhesPage() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                             <h3 style={{ fontSize: '0.9375rem', fontWeight: '800', margin: 0 }}>Preenchimento Automático (Sugestão)</h3>
                         </div>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Marque os dias e clique em "Gerar Horários" para preencher a lista abaixo automaticamente.</p>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Marque os dias e clique em &quot;Gerar Horários&quot; para preencher a lista abaixo automaticamente.</p>
 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
                             {[
@@ -655,7 +655,7 @@ export default function AlunoDetalhesPage() {
                                 <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
                                     Marque esta opção **SOMENTE** para agendamentos avulsos ou modificações pontuais.
                                     <br />
-                                    Para agendar o mês inteiro, **deixe desmarcado** e use o botão <strong style={{ color: 'var(--primary)' }}>"Avisar Agendamentos"</strong> na tela anterior para enviar um único resumo e evitar spam.
+                                    Para agendar o mês inteiro, **deixe desmarcado** e use o botão <strong style={{ color: 'var(--primary)' }}>&quot;Avisar Agendamentos&quot;</strong> na tela anterior para enviar um único resumo e evitar spam.
                                 </p>
                             </div>
                         </div>

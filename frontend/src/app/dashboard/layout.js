@@ -45,10 +45,9 @@ export default function DashboardLayout({ children }) {
         // Polling de status do WhatsApp a cada 30s
         const wsInterval = setInterval(checkWhatsAppStatus, 30000)
 
-        // Se estiver na página de notificações, marca como lidas
+        // Se estiver na página de notificações, marca como lidas no banco
         if (pathname === '/dashboard/notificacoes') {
-            localStorage.setItem('last_notifications_view', Date.now().toString())
-            setNotificacoesCount(0)
+            marcarTodasComoLidas();
         }
 
         // Listener para atualização de perfil em tempo real
@@ -81,18 +80,26 @@ export default function DashboardLayout({ children }) {
 
     const loadNotificacoesCount = async () => {
         try {
-            const response = await api.get('/notificacoes')
+            // Buscamos todas as notificações (o backend poderia ter um endpoint /unread-count, 
+            // mas vamos filtrar aqui no front por enquanto ou usar o total filtrado)
+            const response = await api.get('/notificacoes?status=enviado&limit=100')
             const data = response.data.data || []
 
-            // Lógica simples: contar notificações dos últimos 3 dias ou as que o usuário ainda não "limpou"
-            // Para ser real, precisaríamos de um campo 'lida' no banco. 
-            // Como estamos implementando agora, vamos considerar notificações novas ou uma lógica de localStorage
-            const lastViewed = localStorage.getItem('last_notifications_view') || 0
-            const unread = data.filter(n => new Date(n.created_at).getTime() > parseInt(lastViewed)).length
+            // Filtramos as que não foram lidas no banco
+            const unread = data.filter(n => n.lida === false).length
 
             setNotificacoesCount(unread)
         } catch (error) {
             console.error('Erro ao buscar contador de notificações:', error)
+        }
+    }
+
+    const marcarTodasComoLidas = async () => {
+        try {
+            await api.patch('/notificacoes/ler-todas')
+            setNotificacoesCount(0)
+        } catch (error) {
+            console.error('Erro ao marcar notificações como lidas:', error)
         }
     }
 

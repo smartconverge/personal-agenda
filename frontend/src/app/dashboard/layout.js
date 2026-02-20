@@ -147,7 +147,7 @@ export default function DashboardLayout({ children }) {
 
     return (
         <ToastProvider>
-            <div className="flex min-h-screen bg-primary-dark">
+            <div className="flex min-h-screen bg-primary-deep">
                 {/* Sidebar Verde Escura - Desktop Only */}
                 <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'} sidebar-glass flex flex-col fixed h-screen z-40 transition-all duration-300`}
                     style={{ width: sidebarOpen ? '16rem' : '5rem' }}>

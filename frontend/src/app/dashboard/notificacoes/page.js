@@ -52,28 +52,28 @@ export default function NotificacoesPage() {
 
     if (loading && notificacoes.length === 0) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-                <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
+            <div className="flex-center p-12">
+                <div className="spinner !w-12 !h-12" />
             </div>
         )
     }
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div className="card-premium" style={{ padding: '0', overflow: 'hidden', background: 'var(--bg-secondary)' }}>
-                <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
+        <div className="max-w-[1000px] mx-auto">
+            <div className="card-premium p-0 overflow-hidden !bg-secondary">
+                <div className="p-6 border-b border-border flex justify-end">
                     <span className="badge badge-secondary">
                         {totalItems} total
                     </span>
                 </div>
 
                 {notificacoes.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-                        <Icons.Notifications size={48} color="var(--text-muted)" style={{ opacity: 0.3, marginBottom: '1rem' }} />
-                        <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Nenhuma notificação registrada</p>
+                    <div className="text-center py-16 px-8">
+                        <Icons.Notifications size={48} className="text-muted opacity-30 mb-4 mx-auto" />
+                        <p className="text-muted font-medium">Nenhuma notificação registrada</p>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="flex flex-col">
                         {notificacoes.map((notif, index) => {
                             const IconComponent = getNotificationIcon(notif.status, Icons)
                             const iconColor = getNotificationColor(notif.status)
@@ -82,58 +82,38 @@ export default function NotificacoesPage() {
                             return (
                                 <div
                                     key={notif.id}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'flex-start',
-                                        gap: '1.25rem',
-                                        padding: '1.25rem 1.5rem',
-                                        borderBottom: index === notificacoes.length - 1 ? 'none' : '1px solid var(--border)',
-                                        transition: 'background-color 0.2s',
-                                        cursor: 'default'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-primary)'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    className={`flex items-start gap-5 px-6 py-5 border-b transition-colors duration-200 cursor-default hover:bg-primary-light ${index === notificacoes.length - 1 ? '!border-none' : 'border-border'
+                                        }`}
                                 >
-                                    <div style={{
-                                        width: '2.5rem',
-                                        height: '2.5rem',
-                                        borderRadius: '50%',
-                                        backgroundColor: iconBg,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        flexShrink: 0
-                                    }}>
+                                    <div
+                                        className="w-10 h-10 rounded-full flex-center flex-shrink-0"
+                                        style={{ backgroundColor: iconBg }}
+                                    >
                                         <IconComponent size={20} color={iconColor} />
                                     </div>
 
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', gap: '1rem' }}>
-                                            <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex-between mb-1 gap-4">
+                                            <h3 className="text-base font-bold text-primary truncate m-0">
                                                 {notif.tipo.charAt(0).toUpperCase() + notif.tipo.slice(1)}
                                             </h3>
-                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                                            <span className="text-xs text-muted whitespace-nowrap">
                                                 {formatDate(notif.created_at)} {formatTime(notif.created_at)}
                                             </span>
                                         </div>
 
-                                        <p style={{
-                                            fontSize: '0.875rem',
-                                            color: 'var(--text-secondary)',
-                                            marginBottom: '0.75rem',
-                                            lineHeight: '1.5'
-                                        }}>
+                                        <p className="text-sm text-secondary mb-3 leading-relaxed">
                                             {notif.mensagem}
                                         </p>
 
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                <Icons.Students size={14} color="var(--text-muted)" />
-                                                <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: '500' }}>
+                                        <div className="flex-between">
+                                            <div className="flex items-center gap-2">
+                                                <Icons.Students size={14} className="text-muted" />
+                                                <span className="text-[0.8rem] text-muted font-medium">
                                                     {notif.telefone_destino}
                                                 </span>
                                             </div>
-                                            <span className={`badge ${getStatusBadge(notif.status)}`} style={{ fontSize: '0.625rem' }}>
+                                            <span className={`badge ${getStatusBadge(notif.status)} text-[0.625rem]`}>
                                                 {getStatusText(notif.status)}
                                             </span>
                                         </div>

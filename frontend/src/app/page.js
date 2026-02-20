@@ -16,8 +16,8 @@ export default function HomePage() {
     }, [router])
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-            <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
-        </div>
+        <main className="flex-center min-vh-100 bg-secondary">
+            <div className="spinner !w-12 !h-12" />
+        </main>
     )
 }

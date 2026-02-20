@@ -191,7 +191,8 @@ export default function AgendaPage() {
 
     return (
         <div className="page-enter">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
+            <div className="flex-between mb-6">
+                <div />
                 <button
                     className="btn btn-primary"
                     onClick={() => { resetForm(); setShowModal(true); }}
@@ -202,10 +203,10 @@ export default function AgendaPage() {
             </div>
 
             {/* View Controls & Navigation */}
-            <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+            <div className="card-flat mb-6 p-4">
+                <div className="agenda-controls">
+                    <div className="flex-center gap-4">
+                        <div className="flex gap-2">
                             <button
                                 className="btn-icon btn-icon-primary"
                                 onClick={() => navigateDate(-1)}
@@ -222,10 +223,11 @@ export default function AgendaPage() {
                             </button>
                         </div>
 
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <div className="datepicker-wrapper">
                             <input
                                 type="date"
                                 id="agenda-datepicker"
+                                className="datepicker-input"
                                 value={currentDate.toISOString().split('T')[0]}
                                 onChange={(e) => {
                                     if (e.target.value) {
@@ -233,55 +235,21 @@ export default function AgendaPage() {
                                         setCurrentDate(new Date(y, m - 1, d));
                                     }
                                 }}
-                                style={{
-                                    position: 'absolute',
-                                    opacity: 0,
-                                    width: '100%',
-                                    height: '100%',
-                                    cursor: 'pointer',
-                                    zIndex: 10
-                                }}
                             />
-                            <h2 style={{
-                                fontSize: '1.25rem',
-                                fontWeight: '800',
-                                margin: 0,
-                                color: 'var(--text-primary)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                cursor: 'pointer',
-                                padding: '0.4rem 0.8rem',
-                                borderRadius: '0.5rem',
-                                transition: 'background 0.2s'
-                            }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-primary)'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                            >
+                            <h2 className="month-display">
                                 {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
                                 <Icons.ChevronDown size={16} color="var(--text-muted)" />
                             </h2>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ display: 'flex', background: 'var(--bg-primary)', padding: '0.2rem', borderRadius: '0.6rem', border: '1px solid var(--border)' }}>
+                    <div className="flex-center gap-3">
+                        <div className="view-switcher">
                             {['semana', 'mes'].map((v) => (
                                 <button
                                     key={v}
                                     onClick={() => setViewMode(v)}
-                                    style={{
-                                        padding: '0.4rem 1.25rem',
-                                        fontSize: '0.75rem',
-                                        fontWeight: '700',
-                                        borderRadius: '0.4rem',
-                                        border: 'none',
-                                        background: viewMode === v ? 'white' : 'transparent',
-                                        color: viewMode === v ? 'var(--primary)' : 'var(--text-muted)',
-                                        boxShadow: viewMode === v ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s'
-                                    }}
+                                    className={`view-switcher-btn ${viewMode === v ? 'active' : ''}`}
                                 >
                                     {v === 'semana' ? 'Semana' : 'Mês'}
                                 </button>
@@ -299,20 +267,11 @@ export default function AgendaPage() {
 
             {/* Calendar Content */}
             {loading ? (
-                <div className="card-flat" style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
-                    <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
+                <div className="card-flat flex-center py-20">
+                    <div className="spinner !w-12 !h-12" />
                 </div>
             ) : viewMode === 'semana' ? (
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(7, 1fr)',
-                    gap: '1px',
-                    backgroundColor: 'var(--border)',
-                    borderRadius: 'var(--radius)',
-                    overflow: 'hidden',
-                    border: '1px solid var(--border)',
-                    boxShadow: 'var(--shadow-sm)'
-                }}>
+                <div className="calendar-grid calendar-grid-7">
                     {/* Day Headers (Week View) */}
                     {(() => {
                         const days = []
@@ -327,36 +286,12 @@ export default function AgendaPage() {
                             const isToday = date.toDateString() === new Date().toDateString()
 
                             days.push(
-                                <div key={i} style={{
-                                    backgroundColor: 'var(--bg-secondary)',
-                                    padding: '1.25rem 0.5rem',
-                                    textAlign: 'center',
-                                    borderBottom: '1px solid var(--border)'
-                                }}>
-                                    <p style={{
-                                        fontSize: '0.7rem',
-                                        fontWeight: '700',
-                                        color: 'var(--text-muted)',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.05em',
-                                        marginBottom: '0.5rem'
-                                    }}>
+                                <div key={i} className="calendar-header-cell">
+                                    <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
                                         {date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '').toUpperCase()}
                                     </p>
-                                    <div style={{
-                                        width: '2.25rem',
-                                        height: '2.25rem',
-                                        margin: '0 auto',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        borderRadius: '50%',
-                                        backgroundColor: isToday ? 'var(--primary)' : 'transparent',
-                                        color: isToday ? 'white' : 'var(--text-primary)',
-                                        fontSize: '1rem',
-                                        fontWeight: '800'
-                                    }}>
-                                        {date.getDate()}
+                                    <div className={`calendar-day-number mx-auto flex-center w-9 h-9 rounded-full text-base font-extrabold ${isToday ? 'today' : ''}`}>
+                                        <span className={isToday ? 'calendar-today-badge' : ''}>{date.getDate()}</span>
                                     </div>
                                 </div>
                             )
@@ -382,88 +317,23 @@ export default function AgendaPage() {
                             )
 
                             columns.push(
-                                <div key={i} style={{
-                                    backgroundColor: 'white',
-                                    minHeight: '600px',
-                                    padding: '0.75rem',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '0.75rem'
-                                }}>
+                                <div key={i} className="calendar-day-cell">
                                     {daySessoes.length === 0 ? (
-                                        <div style={{
-                                            height: '100%',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            opacity: 0.1
-                                        }}>
-                                            <Icons.Calendar size={32} color="var(--text-muted)" />
+                                        <div className="flex-center h-full opacity-10">
+                                            <Icons.Calendar size={32} className="text-muted" />
                                         </div>
                                     ) : (
                                         daySessoes.map(sessao => (
                                             <div
                                                 key={sessao.id}
-                                                className="card-premium"
+                                                className={`session-card-mini ${sessao.status === 'agendada' ? 'agendada' : sessao.status === 'concluida' ? 'concluida' : 'warning'}`}
                                                 onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
-                                                style={{
-                                                    padding: '0.875rem',
-                                                    cursor: 'pointer',
-                                                    borderLeft: `3px solid ${sessao.status === 'concluida' ? 'var(--success)' : sessao.status === 'agendada' ? 'var(--primary)' : 'var(--warning)'}`,
-                                                    borderRadius: '0.5rem',
-                                                    background: 'white',
-                                                    position: 'relative'
-                                                }}
+                                                title={`${new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} - ${sessao.aluno?.nome}`}
                                             >
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
-                                                    <div style={{
-                                                        width: '6px',
-                                                        height: '6px',
-                                                        borderRadius: '50%',
-                                                        backgroundColor: sessao.status === 'concluida' ? 'var(--success)' : 'var(--primary)'
-                                                    }} />
-                                                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-primary)' }}>
-                                                        {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                    </span>
-                                                </div>
-
-                                                <h4 style={{
-                                                    fontSize: '0.8125rem',
-                                                    fontWeight: '700',
-                                                    color: 'black',
-                                                    marginBottom: '0.2rem',
-                                                    whiteSpace: 'nowrap',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis'
-                                                }}>
-                                                    {sessao.aluno?.nome}
-                                                </h4>
-
-                                                <p style={{
-                                                    fontSize: '0.7rem',
-                                                    color: 'var(--text-muted)',
-                                                    marginBottom: '0.6rem',
-                                                    whiteSpace: 'nowrap',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis'
-                                                }}>
-                                                    {sessao.servico?.nome}
-                                                </p>
-
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                                                        {sessao.servico?.duracao_minutos} min
-                                                    </span>
-                                                    <span style={{
-                                                        fontSize: '0.6rem',
-                                                        fontWeight: '800',
-                                                        color: sessao.status === 'concluida' ? 'var(--success)' : 'var(--primary)',
-                                                        textTransform: 'uppercase',
-                                                        letterSpacing: '0.02em'
-                                                    }}>
-                                                        {sessao.status === 'agendada' ? 'CONFIRMADA' : sessao.status.toUpperCase()}
-                                                    </span>
-                                                </div>
+                                                <span className="font-bold mr-1">
+                                                    {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                                <span className="truncate">{sessao.aluno?.nome}</span>
                                             </div>
                                         ))
                                     )}
@@ -475,27 +345,10 @@ export default function AgendaPage() {
                 </div>
             ) : viewMode === 'mes' ? (
                 /* Monthly View Grid */
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(7, 1fr)',
-                    gap: '1px',
-                    backgroundColor: 'var(--border)',
-                    borderRadius: 'var(--radius)',
-                    overflow: 'hidden',
-                    border: '1px solid var(--border)',
-                    boxShadow: 'var(--shadow-sm)'
-                }}>
+                <div className="calendar-grid calendar-grid-7">
                     {/* Headers */}
                     {['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM'].map((day, i) => (
-                        <div key={i} style={{
-                            backgroundColor: 'white',
-                            padding: '0.75rem',
-                            textAlign: 'center',
-                            fontSize: '0.75rem',
-                            fontWeight: '700',
-                            color: 'var(--text-muted)',
-                            borderBottom: '1px solid var(--border)'
-                        }}>
+                        <div key={i} className="calendar-header-cell font-bold text-muted text-xs">
                             {day}
                         </div>
                     ))}
@@ -516,7 +369,7 @@ export default function AgendaPage() {
 
                         // Previous month padding
                         for (let i = 0; i < startDay; i++) {
-                            cells.push(<div key={`pad-${i}`} style={{ backgroundColor: 'var(--bg-secondary)', minHeight: '120px' }}></div>)
+                            cells.push(<div key={`pad-${i}`} className="!bg-secondary/5 min-h-[120px]"></div>)
                         }
 
                         // Days
@@ -526,43 +379,22 @@ export default function AgendaPage() {
                             const isToday = new Date().toISOString().split('T')[0] === dateStr
 
                             cells.push(
-                                <div key={d} style={{
-                                    backgroundColor: 'white',
-                                    minHeight: '120px',
-                                    padding: '0.5rem',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '0.25rem'
-                                }}>
-                                    <div style={{
-                                        textAlign: 'right',
-                                        fontWeight: '700',
-                                        fontSize: '0.875rem',
-                                        color: isToday ? 'var(--primary)' : 'var(--text-secondary)',
-                                        marginBottom: '0.25rem'
-                                    }}>
-                                        {isToday ? <span style={{ background: 'var(--primary)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '0.25rem' }}>{d}</span> : d}
+                                <div key={d} className="calendar-day-cell">
+                                    <div className={`calendar-day-number ${isToday ? 'today' : ''}`}>
+                                        {isToday ? <span className="calendar-today-badge">{d}</span> : d}
                                     </div>
 
                                     {daySessoes.map(sessao => (
                                         <div
                                             key={sessao.id}
                                             onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
-                                            style={{
-                                                fontSize: '0.7rem',
-                                                padding: '0.25rem 0.5rem',
-                                                borderRadius: '0.25rem',
-                                                background: sessao.status === 'concluida' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-                                                color: sessao.status === 'concluida' ? 'var(--success)' : 'var(--primary)',
-                                                borderLeft: `2px solid ${sessao.status === 'concluida' ? 'var(--success)' : 'var(--primary)'}`,
-                                                cursor: 'pointer',
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }}
+                                            className={`session-card-mini ${sessao.status === 'concluida' ? 'concluida' : 'agendada'}`}
                                             title={`${new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} - ${sessao.aluno?.nome}`}
                                         >
-                                            <span style={{ fontWeight: '700' }}>{new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span> {sessao.aluno?.nome}
+                                            <span className="font-bold mr-1">
+                                                {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                            <span className="truncate">{sessao.aluno?.nome}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -573,45 +405,41 @@ export default function AgendaPage() {
                 </div>
             ) : (
                 /* Day View (Simple List) */
-                <div className="card-flat" style={{ padding: '0', overflow: 'hidden' }}>
+                <div className="card-flat p-0 overflow-hidden">
                     {filteredSessoes.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '5rem 2rem' }}>
-                            <div style={{ width: '4rem', height: '4rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-                                <Icons.Calendar size={32} color="var(--text-muted)" />
+                        <div className="text-center py-20 px-8">
+                            <div className="w-16 h-16 !bg-secondary rounded-full flex-center mx-auto mb-6">
+                                <Icons.Calendar size={32} className="text-muted" />
                             </div>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>Dia livre!</h3>
-                            <p style={{ color: 'var(--text-muted)' }}>Nenhuma sessão agendada para esta data.</p>
+                            <h3 className="text-xl font-bold mb-2">Dia livre!</h3>
+                            <p className="text-muted">Nenhuma sessão agendada para esta data.</p>
                         </div>
                     ) : (
-                        <div style={{ display: 'grid', gap: '1rem', padding: '1.5rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
                             {filteredSessoes.map((sessao) => (
                                 <div
                                     key={sessao.id}
-                                    className="card-premium"
+                                    className={`card-premium p-5 cursor-pointer border-l-4 !bg-white hover:shadow-md transition-shadow group ${sessao.status === 'concluida' ? 'border-success' :
+                                            sessao.status === 'agendada' ? 'border-primary' : 'border-warning'
+                                        }`}
                                     onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
-                                    style={{
-                                        padding: '1.25rem',
-                                        cursor: 'pointer',
-                                        borderLeft: `3px solid ${sessao.status === 'concluida' ? 'var(--success)' : sessao.status === 'agendada' ? 'var(--primary)' : 'var(--warning)'}`,
-                                        background: 'white'
-                                    }}
                                 >
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                        <div>
-                                            <h4 style={{ fontSize: '1rem', fontWeight: '800', marginBottom: '0.25rem' }}>{sessao.aluno?.nome}</h4>
-                                            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{sessao.servico?.nome}</p>
+                                    <div className="flex-between items-start mb-4">
+                                        <div className="min-w-0">
+                                            <h4 className="text-base font-extrabold mb-1 truncate">{sessao.aluno?.nome}</h4>
+                                            <p className="text-sm text-secondary truncate">{sessao.servico?.nome}</p>
                                         </div>
-                                        <div style={{ textAlign: 'right' }}>
-                                            <p style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)' }}>
+                                        <div className="text-right flex-shrink-0">
+                                            <p className="text-xl font-extrabold text-primary mb-1">
                                                 {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                             </p>
-                                            <span className={`badge ${getStatusBadge(sessao.status)}`} style={{ fontSize: '0.7rem' }}>
+                                            <span className={`badge ${getStatusBadge(sessao.status)} !text-[0.65rem] !px-2`}>
                                                 {sessao.status.toUpperCase()}
                                             </span>
                                         </div>
                                     </div>
-                                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                    <div className="flex items-center gap-4 text-sm text-muted">
+                                        <div className="flex items-center gap-1.5">
                                             <Icons.Clock size={14} />
                                             <span>{sessao.servico?.duracao_minutos} min</span>
                                         </div>
@@ -623,9 +451,10 @@ export default function AgendaPage() {
                 </div>
             )}
 
+            {/* Modals and Dialogs */}
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Agendar Sessões" size="lg">
                 <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
+                    <div className="grid grid-cols-2 gap-5 mb-6">
                         <div>
                             <label className="label">Aluno</label>
                             <select className="input" value={formData.aluno_id} onChange={(e) => setFormData({ ...formData, aluno_id: e.target.value })} required>
@@ -642,19 +471,19 @@ export default function AgendaPage() {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '2rem', padding: '1.25rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                            <h3 style={{ fontSize: '1rem', fontWeight: '800', margin: 0 }}>Horários da Sessão</h3>
-                            <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }} onClick={addHorario}>+ Add Horário</button>
+                    <div className="bg-primary-light p-5 rounded-lg border border-border mb-8">
+                        <div className="flex-between mb-5">
+                            <h3 className="text-base font-extrabold m-0">Horários da Sessão</h3>
+                            <button type="button" className="btn btn-secondary text-xs px-3 py-1.5" onClick={addHorario}>+ Add Horário</button>
                         </div>
                         {formData.horarios.map((horario, index) => (
-                            <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: index < formData.horarios.length - 1 ? '1px dashed var(--border)' : 'none' }}>
-                                <div style={{ flex: 1 }}>
-                                    <label className="label" style={{ fontSize: '0.7rem' }}>Data</label>
+                            <div key={index} className={`flex gap-4 items-end mb-4 ${index < formData.horarios.length - 1 ? 'pb-4 border-b border-dashed border-border' : ''}`}>
+                                <div className="flex-1">
+                                    <label className="label text-[0.7rem]">Data</label>
                                     <input type="date" className="input" value={horario.data_inicio} onChange={(e) => updateHorario(index, 'data_inicio', e.target.value)} required />
                                 </div>
-                                <div style={{ width: '120px' }}>
-                                    <label className="label" style={{ fontSize: '0.7rem' }}>Hora</label>
+                                <div className="w-[120px]">
+                                    <label className="label text-[0.7rem]">Hora</label>
                                     <input type="time" className="input" value={horario.hora} onChange={(e) => updateHorario(index, 'hora', e.target.value)} required />
                                 </div>
                                 {formData.horarios.length > 1 && (
@@ -666,44 +495,34 @@ export default function AgendaPage() {
                         ))}
                     </div>
 
-                    <div style={{ padding: '1.25rem', backgroundColor: 'var(--sidebar-bg)', color: 'white', borderRadius: 'var(--radius-md)', marginBottom: '2rem' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }}>
-                            <div style={{
-                                width: '2.5rem',
-                                height: '2.5rem',
-                                borderRadius: '50%',
-                                backgroundColor: formData.recorrente ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                transition: 'all 0.2s'
-                            }}>
+                    <div className="bg-sidebar p-5 text-white rounded-lg mb-8">
+                        <label className="flex items-center gap-4 cursor-pointer">
+                            <div className={`w-10 h-10 rounded-full flex-center transition-all ${formData.recorrente ? 'bg-primary' : 'bg-white/10'}`}>
                                 <Icons.TrendingUp size={18} color="white" />
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <p style={{ fontWeight: '700', fontSize: '0.9375rem', marginBottom: '0.1rem' }}>Recorrência Semanal</p>
-                                <p style={{ fontSize: '0.75rem', opacity: 0.7 }}>Agendar automaticamente para as próximas semanas</p>
+                            <div className="flex-1">
+                                <p className="font-bold text-[0.9375rem] mb-0.5">Recorrência Semanal</p>
+                                <p className="text-xs opacity-70">Agendar automaticamente para as próximas semanas</p>
                             </div>
-                            <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--primary)' }} />
+                            <input type="checkbox" checked={formData.recorrente} onChange={(e) => setFormData({ ...formData, recorrente: e.target.checked })} className="w-5 h-5 accent-primary" />
                         </label>
 
                         {formData.recorrente && (
-                            <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <span style={{ fontSize: '0.875rem' }}>Repetir por:</span>
+                            <div className="mt-5 pt-5 border-t border-white/10 flex items-center gap-4">
+                                <span className="text-sm">Repetir por:</span>
                                 <input
                                     type="number"
-                                    className="input"
-                                    style={{ width: '80px', background: 'rgba(0,0,0,0.2)', border: 'none', color: 'white' }}
+                                    className="input !w-20 !bg-black/20 !border-none !text-white"
                                     min="1" max="12"
                                     value={formData.meses_recorrencia}
                                     onChange={(e) => setFormData({ ...formData, meses_recorrencia: parseInt(e.target.value) })}
                                 />
-                                <span style={{ fontSize: '0.875rem' }}>meses</span>
+                                <span className="text-sm">meses</span>
                             </div>
                         )}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                    <div className="flex justify-end gap-3">
                         <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
                         <button type="submit" className="btn btn-primary">Agendar Sessões</button>
                     </div>
@@ -713,43 +532,53 @@ export default function AgendaPage() {
             {/* Modal Detalhes */}
             <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="Detalhes da Sessão">
                 {selectedSessao && (
-                    <div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <div className="avatar" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--primary)' }}>
-                                    {selectedSessao.aluno?.nome?.substring(0, 2).toUpperCase()}
-                                </div>
-                                <div>
-                                    <h3 style={{ fontSize: '1.125rem', fontWeight: '800' }}>{selectedSessao.aluno?.nome}</h3>
-                                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Status: <span className={`badge ${getStatusBadge(selectedSessao.status)}`}>{selectedSessao.status}</span></p>
-                                </div>
+                    <div className="flex flex-col gap-6">
+                        <div className="flex items-center gap-4">
+                            <div className="avatar bg-secondary-light text-primary">
+                                {selectedSessao.aluno?.nome?.substring(0, 2).toUpperCase()}
                             </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                <div className="card-flat" style={{ padding: '0.75rem' }}>
-                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Serviço</p>
-                                    <p style={{ fontSize: '0.9375rem', fontWeight: '700' }}>{selectedSessao.servico?.nome}</p>
-                                </div>
-                                <div className="card-flat" style={{ padding: '0.75rem' }}>
-                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Duração</p>
-                                    <p style={{ fontSize: '0.9375rem', fontWeight: '700' }}>{selectedSessao.servico?.duracao_minutos} min</p>
-                                </div>
-                                <div className="card-flat" style={{ padding: '0.75rem', gridColumn: 'span 2' }}>
-                                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Data e Horário</p>
-                                    <p style={{ fontSize: '0.9375rem', fontWeight: '700' }}>
-                                        {new Date(selectedSessao.data_hora_inicio).toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' })}
-                                    </p>
-                                </div>
+                            <div>
+                                <h3 className="text-lg font-extrabold">{selectedSessao.aluno?.nome}</h3>
+                                <p className="text-sm text-secondary">
+                                    Status: <span className={`badge ${getStatusBadge(selectedSessao.status)}`}>{selectedSessao.status}</span>
+                                </p>
                             </div>
+                        </div>
 
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="card-flat p-3">
+                                <p className="text-[0.7rem] text-muted uppercase mb-1">Serviço</p>
+                                <p className="text-sm font-bold">{selectedSessao.servico?.nome}</p>
+                            </div>
+                            <div className="card-flat p-3">
+                                <p className="text-[0.7rem] text-muted uppercase mb-1">Duração</p>
+                                <p className="text-sm font-bold">{selectedSessao.servico?.duracao_minutos} min</p>
+                            </div>
+                            <div className="card-flat p-3 col-span-2">
+                                <p className="text-[0.7rem] text-muted uppercase mb-1">Data e Horário</p>
+                                <p className="text-sm font-bold">
+                                    {new Date(selectedSessao.data_hora_inicio).toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' })}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-2">
                             <button
-                                className="btn btn-primary"
-                                style={{ width: '100%', height: '3rem', marginTop: '1rem' }}
+                                className="btn btn-primary flex-1 h-12"
                                 onClick={() => router.push(`/dashboard/alunos/${selectedSessao.aluno_id}`)}
                             >
-                                <Icons.Students size={18} style={{ marginRight: '0.5rem' }} />
-                                Ver Perfil do Aluno
+                                <Icons.Students size={18} className="mr-2" />
+                                Ver Perfil
                             </button>
+                            {selectedSessao.status === 'agendada' && (
+                                <button
+                                    className="btn btn-success h-12 px-4"
+                                    onClick={() => setShowConcluirDialog(true)}
+                                    title="Concluir Aula"
+                                >
+                                    <Icons.CheckCircle size={20} />
+                                </button>
+                            )}
                         </div>
                     </div>
                 )}
@@ -760,9 +589,9 @@ export default function AgendaPage() {
                 onClose={() => setShowConcluirDialog(false)}
                 onConfirm={handleConcluir}
                 title="Concluir Sessão"
-                message={`Deseja marcar a aula de ${selectedSessao?.aluno?.nome} como concluída? Isso enviará uma notificação de confirmação.`}
-                confirmText="Sim, Concluir"
+                message={`Deseja marcar a aula de ${selectedSessao?.aluno?.nome} como concluída?`}
+                confirmText="Concluir"
             />
-        </div >
+        </div>
     )
 }

@@ -111,7 +111,7 @@ export default function PlanosPage() {
                         </div>
 
                         <div className="plano-footer">
-                            <button className={`btn ${plano.current ? 'btn-current-active' : (plano.popular ? 'btn-primary' : 'btn-secondary')} ${plano.current ? 'disabled' : ''}`} style={{ width: '100%', height: '3.5rem', fontSize: '1rem', borderRadius: '0.75rem' }}>
+                            <button className={`btn ${plano.current ? 'btn-current-active' : (plano.popular ? 'btn-primary' : 'btn-secondary')} ${plano.current ? 'disabled' : ''} !w-full !h-14 !text-base !rounded-xl`}>
                                 {plano.current ? 'Plano Ativo' : 'Assinar Agora'}
                             </button>
                             <span className="plano-limit-info">{plano.limit}</span>

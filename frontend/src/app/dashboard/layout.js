@@ -139,7 +139,7 @@ export default function DashboardLayout({ children }) {
 
     if (!professor) {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+            <div className="loading-overlay">
                 <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
             </div>
         )
@@ -147,81 +147,33 @@ export default function DashboardLayout({ children }) {
 
     return (
         <ToastProvider>
-            <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
+            <div className="flex min-h-screen bg-primary-dark">
                 {/* Sidebar Verde Escura - Desktop Only */}
-                <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'} sidebar-glass`} style={{
-                    width: sidebarOpen ? '16rem' : '5rem',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    position: 'fixed',
-                    height: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    zIndex: 40
-                }}>
+                <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'} sidebar-glass flex flex-col fixed h-screen z-40 transition-all duration-300`}
+                    style={{ width: sidebarOpen ? '16rem' : '5rem' }}>
+
                     {/* Logo/Header */}
-                    <div style={{
-                        padding: '1.5rem',
-                        borderBottom: '1px solid var(--sidebar-border)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.75rem'
-                    }}>
-                        <div style={{
-                            width: '2.5rem',
-                            height: '2.5rem',
-                            borderRadius: '0.625rem',
-                            background: 'rgba(255, 255, 255, 0.08)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                            border: '1px solid rgba(255, 255, 255, 0.1)'
-                        }}>
-                            <Icons.Fitness size={20} color="white" />
+                    <div className="p-6 flex items-center gap-3 border-b border-white/5">
+                        <div className="flex-center w-10 h-10 rounded-lg bg-white/10 flex-shrink-0 border border-white/10">
+                            <Icons.Fitness size={20} className="text-white" />
                         </div>
                         {sidebarOpen && (
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <h2 style={{
-                                    fontSize: '1rem',
-                                    fontWeight: '800',
-                                    color: 'white',
-                                    lineHeight: 1.2,
-                                    letterSpacing: '-0.02em'
-                                }}>
+                            <div className="flex flex-col">
+                                <h2 className="text-sm font-extrabold text-white leading-tight tracking-tight">
                                     Personal Agenda
                                 </h2>
-                                <p style={{
-                                    fontSize: '0.6875rem',
-                                    color: 'var(--sidebar-text)',
-                                    opacity: 0.6,
-                                    fontWeight: '500',
-                                    letterSpacing: '0.01em',
-                                    marginTop: '0.125rem'
-                                }}>
-                                    Trainer Management
+                                <p className="text-[0.65rem] font-bold mt-1 text-white/50 tracking-wider">
+                                    TRAINER MANAGEMENT
                                 </p>
                             </div>
                         )}
                     </div>
 
                     {/* Main Navigation - Scrollable Area */}
-                    <nav className="no-scrollbar" style={{
-                        padding: '1.5rem 0.75rem',
-                        flex: 1,
-                        overflowY: 'auto'
-                    }}>
+                    <nav className="no-scrollbar flex-1 overflow-y-auto py-6 px-3">
                         {/* Section: MENU */}
                         {sidebarOpen && (
-                            <p style={{
-                                fontSize: '0.625rem',
-                                fontWeight: '800',
-                                color: 'var(--sidebar-text)',
-                                opacity: 0.4,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.1em',
-                                marginBottom: '1rem',
-                                paddingLeft: '1rem'
-                            }}>
+                            <p className="text-[0.65rem] font-extrabold text-white/40 mb-4 px-4 uppercase tracking-[0.1em]">
                                 Menu
                             </p>
                         )}
@@ -235,40 +187,20 @@ export default function DashboardLayout({ children }) {
                                     href={item.href}
                                     onMouseEnter={() => setHoveredPath(item.href)}
                                     onMouseLeave={() => setHoveredPath(null)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.875rem',
-                                        padding: '0.75rem 1rem',
-                                        borderRadius: '0.625rem',
-                                        marginBottom: '0.25rem',
-                                        textDecoration: 'none',
-                                        color: (isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)',
-                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : (hoveredPath === item.href ? 'rgba(255, 255, 255, 0.05)' : 'transparent'),
-                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        cursor: 'pointer',
-                                        fontWeight: isActive ? '700' : '500',
-                                        fontSize: '0.875rem'
-                                    }}
+                                    className={`flex items-center gap-4 px-4 py-3 rounded-lg mb-1 transition-all duration-200 cursor-pointer text-sm ${isActive || hoveredPath === item.href ? 'bg-white/10 text-white font-bold' : 'text-white/60 font-medium'
+                                        }`}
                                 >
-                                    <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                                        <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
+                                    <span className="flex-shrink-0">
+                                        <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                        <div className="flex-between w-full">
                                             <span>{item.label}</span>
                                             {item.label === 'WhatsApp' && (
-                                                <span style={{
-                                                    fontSize: '0.625rem',
-                                                    fontWeight: '800',
-                                                    padding: '0.125rem 0.375rem',
-                                                    borderRadius: '1rem',
-                                                    background: whatsappConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.1)',
-                                                    color: whatsappConnected ? '#10b981' : '#ef4444',
-                                                    border: `1px solid ${whatsappConnected ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.2)'}`,
-                                                    marginLeft: '0.4rem',
-                                                    whiteSpace: 'nowrap'
-                                                }}>
+                                                <span className={`text-[0.6rem] font-extrabold px-1.5 py-0.5 rounded-full border ml-2 ${whatsappConnected
+                                                    ? 'bg-success/20 text-success border-success/30'
+                                                    : 'bg-red-500/10 text-red-400 border-red-500/20'
+                                                    }`}>
                                                     {whatsappConnected ? 'ATIVO' : 'OFFLINE'}
                                                 </span>
                                             )}
@@ -280,23 +212,10 @@ export default function DashboardLayout({ children }) {
 
                         {/* Section: PLANOS */}
                         {sidebarOpen && (
-                            <div style={{
-                                height: '1px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                margin: '1.5rem 1rem 1rem 1rem'
-                            }} />
+                            <div className="my-6 mx-4 h-px bg-white/10" />
                         )}
                         {sidebarOpen && (
-                            <p style={{
-                                fontSize: '0.625rem',
-                                fontWeight: '800',
-                                color: 'var(--sidebar-text)',
-                                opacity: 0.4,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.1em',
-                                marginBottom: '1rem',
-                                paddingLeft: '1rem'
-                            }}>
+                            <p className="text-[0.65rem] font-extrabold text-white/40 mb-4 px-4 uppercase tracking-[0.1em]">
                                 Planos
                             </p>
                         )}
@@ -310,38 +229,18 @@ export default function DashboardLayout({ children }) {
                                     href={item.href}
                                     onMouseEnter={() => setHoveredPath(item.href)}
                                     onMouseLeave={() => setHoveredPath(null)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.875rem',
-                                        padding: '0.75rem 1rem',
-                                        borderRadius: '0.625rem',
-                                        marginBottom: '0.25rem',
-                                        textDecoration: 'none',
-                                        color: (isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)',
-                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : (hoveredPath === item.href ? 'rgba(255, 255, 255, 0.05)' : 'transparent'),
-                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        cursor: 'pointer',
-                                        fontWeight: isActive ? '700' : '500',
-                                        fontSize: '0.875rem'
-                                    }}
+                                    className={`flex items-center gap-4 px-4 py-3 rounded-lg mb-1 transition-all duration-200 cursor-pointer text-sm ${isActive || hoveredPath === item.href ? 'bg-white/10 text-white font-bold' : 'text-white/60 font-medium'
+                                        }`}
                                 >
-                                    <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                                        <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
+                                    <span className="flex-shrink-0">
+                                        <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                        <div className="flex-between w-full">
                                             <span>{item.label}</span>
                                             {item.label === 'Meus Planos' && professor?.plano && (
-                                                <span style={{
-                                                    fontSize: '0.625rem',
-                                                    fontWeight: '800',
-                                                    padding: '0.125rem 0.375rem',
-                                                    borderRadius: '1rem',
-                                                    background: professor.plano === 'PREMIUM' ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(255, 255, 255, 0.1)',
-                                                    color: 'white',
-                                                    marginLeft: '0.4rem'
-                                                }}>
+                                                <span className={`text-[0.6rem] font-extrabold px-1.5 py-0.5 rounded-full ml-2 ${professor.plano === 'PREMIUM' ? 'bg-amber-500 text-white' : 'bg-white/10 text-white'
+                                                    }`}>
                                                     {professor.plano.toUpperCase()}
                                                 </span>
                                             )}
@@ -353,23 +252,10 @@ export default function DashboardLayout({ children }) {
 
                         {/* Section: SISTEMA */}
                         {sidebarOpen && (
-                            <div style={{
-                                height: '1px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                margin: '1.5rem 1rem 1rem 1rem'
-                            }} />
+                            <div className="my-6 mx-4 h-px bg-white/10" />
                         )}
                         {sidebarOpen && (
-                            <p style={{
-                                fontSize: '0.625rem',
-                                fontWeight: '800',
-                                color: 'var(--sidebar-text)',
-                                opacity: 0.4,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.1em',
-                                marginBottom: '1rem',
-                                paddingLeft: '1rem'
-                            }}>
+                            <p className="text-[0.65rem] font-extrabold text-white/40 mb-4 px-4 uppercase tracking-[0.1em]">
                                 Sistema
                             </p>
                         )}
@@ -383,24 +269,11 @@ export default function DashboardLayout({ children }) {
                                     href={item.href}
                                     onMouseEnter={() => setHoveredPath(item.href)}
                                     onMouseLeave={() => setHoveredPath(null)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.875rem',
-                                        padding: '0.75rem 1rem',
-                                        borderRadius: '0.625rem',
-                                        marginBottom: '0.25rem',
-                                        textDecoration: 'none',
-                                        color: (isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)',
-                                        backgroundColor: isActive ? 'var(--sidebar-accent)' : (hoveredPath === item.href ? 'rgba(255, 255, 255, 0.05)' : 'transparent'),
-                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        cursor: 'pointer',
-                                        fontWeight: isActive ? '700' : '500',
-                                        fontSize: '0.875rem'
-                                    }}
+                                    className={`flex items-center gap-4 px-4 py-3 rounded-lg mb-1 transition-all duration-200 cursor-pointer text-sm ${isActive || hoveredPath === item.href ? 'bg-white/10 text-white font-bold' : 'text-white/60 font-medium'
+                                        }`}
                                 >
-                                    <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                                        <IconComponent size={20} color={(isActive || hoveredPath === item.href) ? 'white' : 'var(--sidebar-text)'} />
+                                    <span className="flex-shrink-0">
+                                        <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && <span>{item.label}</span>}
                                 </Link>
@@ -409,211 +282,80 @@ export default function DashboardLayout({ children }) {
                     </nav>
 
                     {/* User Profile + Logout - Fixed at Bottom */}
-                    <div style={{
-                        marginTop: 'auto',
-                        padding: '1rem',
-                        borderTop: '1px solid var(--sidebar-border)',
-                        background: 'rgba(0, 0, 0, 0.15)',
-                        flexShrink: 0
-                    }}>
+                    <div className="mt-auto p-4 flex flex-col border-t border-white/5 bg-black/20 flex-shrink-0">
                         {sidebarOpen && (
                             <Link
                                 href="/dashboard/perfil"
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.75rem',
-                                    marginBottom: '1rem',
-                                    padding: '0.75rem',
-                                    borderRadius: '0.75rem',
-                                    background: pathname === '/dashboard/perfil' ? 'var(--sidebar-accent)' : 'rgba(255, 255, 255, 0.04)',
-                                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                                    textDecoration: 'none',
-                                    transition: 'all 0.2s',
-                                    cursor: 'pointer'
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (pathname !== '/dashboard/perfil') {
-                                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (pathname !== '/dashboard/perfil') {
-                                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'
-                                    }
-                                }}
+                                className={`flex items-center gap-3 p-4 mb-4 rounded-xl border transition-all duration-200 ${pathname === '/dashboard/perfil'
+                                    ? 'bg-primary-light border-white/10'
+                                    : 'bg-white/5 border-white/5 hover:bg-white/10'
+                                    }`}
                             >
-                                <div className="avatar avatar-sm" style={{
-                                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    flexShrink: 0
-                                }}>
+                                <div className="avatar avatar-sm bg-gradient-to-br from-primary to-primary-light border border-white/10 flex-shrink-0">
                                     {professor.foto_url ? (
-                                        <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                        <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
                                     ) : (
                                         professor.nome.charAt(0)
                                     )}
                                 </div>
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <p style={{
-                                        fontSize: '0.875rem',
-                                        fontWeight: '600',
-                                        color: 'white',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        margin: 0
-                                    }}>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold text-white truncate m-0">
                                         {professor.nome}
                                     </p>
-                                    <p style={{
-                                        fontSize: '0.7rem',
-                                        color: 'var(--sidebar-text)',
-                                        opacity: 0.7,
-                                        margin: 0,
-                                        marginTop: '2px'
-                                    }}>
+                                    <p className="text-[0.65rem] font-medium text-white/50 m-0 mt-0.5">
                                         Personal Trainer
                                     </p>
                                 </div>
-                                <Icons.ChevronRight size={14} color="var(--sidebar-text)" style={{ opacity: 0.5 }} />
+                                <Icons.ChevronRight size={14} className="text-white/30" />
                             </Link>
                         )}
                         <button
                             onClick={handleLogout}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                background: 'rgba(239, 68, 68, 0.08)',
-                                color: '#ff8a8a',
-                                border: '1px solid rgba(239, 68, 68, 0.15)',
-                                borderRadius: '0.75rem',
-                                fontSize: '0.8125rem',
-                                fontWeight: '700',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '0.625rem'
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)'
-                                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.25)'
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'
-                                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.15)'
-                            }}
+                            className="w-full p-4 flex-center gap-3 font-bold text-[0.8rem] rounded-xl cursor-pointer transition-all duration-200 bg-red-500/10 text-red-400 border border-red-500/15 hover:bg-red-500/20 hover:border-red-500/25"
                         >
-                            <Icons.Logout size={16} color="#ff8a8a" />
+                            <Icons.Logout size={16} />
                             {sidebarOpen && <span>Sair da Conta</span>}
                         </button>
                     </div>
                 </aside>
 
                 {/* Main Content */}
-                <div className="main-content" style={{
-                    marginLeft: sidebarOpen ? '16rem' : '5rem',
-                    flex: 1,
-                    transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}>
+                <div className="main-content flex flex-col flex-1 transition-all duration-300 min-h-screen"
+                    style={{ marginLeft: sidebarOpen ? '16rem' : '5rem' }}>
+
                     {/* Trial Banner */}
                     {professor?.plano_expira_em && (new Date(professor.plano_expira_em) > new Date()) && (
-                        <div style={{
-                            background: 'var(--bg-secondary)', // Fundo Branco
-                            borderBottom: '1px solid var(--primary)', // Borda Verde
-                            color: 'var(--text-primary)',
-                            padding: '0.5rem 1rem',
-                            textAlign: 'center',
-                            fontSize: '0.8125rem',
-                            fontWeight: '600',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            zIndex: 100
-                        }}>
-                            <Icons.Dashboard size={14} color="var(--primary)" />
+                        <div className="bg-secondary border-b border-primary text-primary px-4 py-2 text-center text-[0.8rem] font-semibold flex items-center justify-center gap-2 z-[100]">
+                            <Icons.Dashboard size={14} className="text-primary" />
                             <span>
-                                Você esta usando o plano <strong style={{ color: 'var(--primary)' }}>STARTER (Degustação)</strong>.
+                                Você esta usando o plano <strong className="text-primary">STARTER (Degustação)</strong>.
                                 Restam <strong>{(() => {
                                     const diff = new Date(professor.plano_expira_em) - new Date();
                                     const dias = Math.ceil(diff / (1000 * 60 * 60 * 24));
                                     return `${dias} ${dias === 1 ? 'dia' : 'dias'}`;
                                 })()}</strong> de acesso total.
                             </span>
-                            <Link href="/dashboard/planos" style={{
-                                color: 'var(--primary)',
-                                textDecoration: 'underline',
-                                marginLeft: '1rem',
-                                opacity: 0.9
-                            }}>
+                            <Link href="/dashboard/planos" className="text-primary underline opacity-90 ml-4">
                                 Ver Planos
                             </Link>
                         </div>
                     )}
+
                     {/* Header */}
-                    <header className="glass-effect" style={{
-                        padding: '1rem 1.5rem',
-                        position: 'sticky',
-                        top: 0,
-                        zIndex: 30,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        minHeight: '4.5rem'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <header className="glass-effect flex-between px-6 py-4 sticky top-0 z-30 min-h-[4.5rem]">
+                        <div className="flex items-center gap-4">
                             <button
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                                style={{
-                                    padding: '0.55rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    background: 'transparent',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    color: 'var(--text-secondary)',
-                                    borderRadius: '0.5rem',
-                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
-                                    e.currentTarget.style.boxShadow = 'var(--shadow)'
-                                    e.currentTarget.style.transform = 'translateY(-1px)'
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent'
-                                    e.currentTarget.style.boxShadow = 'none'
-                                    e.currentTarget.style.transform = 'translateY(0)'
-                                }}
-                                className="desktop-only"
+                                className="btn-ghost-nav desktop-only p-2"
                             >
                                 <Icons.SidebarToggle size={20} />
                             </button>
 
                             {/* Vertical Separator */}
-                            <div className="desktop-only" style={{
-                                width: '1px',
-                                height: '1.5rem',
-                                backgroundColor: 'var(--border)',
-                                margin: '0 0.5rem'
-                            }} />
+                            <div className="desktop-only w-px h-6 bg-border mx-2" />
 
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <h1 style={{
-                                    fontSize: '1.25rem',
-                                    fontWeight: '800',
-                                    color: 'var(--text-primary)', // Preto/Cinza (Sóbrio)
-                                    margin: 0,
-                                    lineHeight: 1.2,
-                                    letterSpacing: '-0.02em'
-                                }}>
+                            <div className="header-title-container">
+                                <h1 className="header-title">
                                     {pathname === '/dashboard' ? 'Dashboard' :
                                         pathname.includes('/alunos') ? 'Alunos' :
                                             pathname.includes('servicos') ? 'Serviços' :
@@ -625,130 +367,78 @@ export default function DashboardLayout({ children }) {
                                                                     pathname.includes('/planos') ? 'Planos' : 'Personal Agenda'}
                                 </h1>
                                 {pathname === '/dashboard' && professor?.nome && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle truncate max-w-[300px] md:max-w-none">
                                         Bem-vindo de volta, {professor.nome.split(' ')[0]}. Aqui está sua visão geral.
                                     </p>
                                 )}
                                 {pathname.includes('/alunos') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Gerencie seus alunos cadastrados e seus progressos.
                                     </p>
                                 )}
                                 {pathname.includes('servicos') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Configure suas modalidades e durações de treino.
                                     </p>
                                 )}
                                 {pathname.includes('/contratos') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Gerencie planos ativos e faturamento mensal.
                                     </p>
                                 )}
                                 {pathname.includes('/agenda') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Acompanhe sua agenda de treinos diária e semanal.
                                     </p>
                                 )}
                                 {pathname.includes('/notificacoes') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Histórico de mensagens enviadas aos seus alunos.
                                     </p>
                                 )}
                                 {pathname.includes('/perfil') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Gerencie suas informações pessoais e profissionais.
                                     </p>
                                 )}
                                 {pathname.includes('/configuracoes') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Gerencie as preferências e segurança da conta.
                                     </p>
                                 )}
                                 {pathname.includes('/planos') && (
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                    <p className="header-subtitle">
                                         Evolua sua gestão com recursos Premium.
                                     </p>
                                 )}
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                        <div className="flex items-center gap-5">
                             <Link
                                 href="/dashboard/notificacoes"
                                 onClick={() => {
                                     localStorage.setItem('last_notifications_view', Date.now().toString())
                                     setNotificacoesCount(0)
                                 }}
-                                style={{
-                                    position: 'relative',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    textDecoration: 'none',
-                                    padding: '0.625rem',
-                                    borderRadius: '0.75rem',
-                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    background: 'transparent'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'var(--bg-tertiary)'
-                                    e.currentTarget.style.boxShadow = 'var(--shadow-sm)'
-                                    e.currentTarget.style.transform = 'translateY(-1px)'
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'transparent'
-                                    e.currentTarget.style.boxShadow = 'none'
-                                    e.currentTarget.style.transform = 'translateY(0)'
-                                }}
+                                className="btn-ghost-nav p-2 relative text-decoration-none"
                             >
-                                <Icons.Notifications size={22} color="var(--text-secondary)" />
+                                <Icons.Notifications size={22} className="text-secondary" />
                                 {notificacoesCount > 0 && (
-                                    <span style={{
-                                        position: 'absolute',
-                                        top: '4px',
-                                        right: '4px',
-                                        backgroundColor: '#ef4444',
-                                        color: 'white',
-                                        fontSize: '0.625rem',
-                                        fontWeight: '800',
-                                        padding: '2px 5px',
-                                        borderRadius: '10px',
-                                        border: '2px solid var(--bg-secondary)',
-                                        minWidth: '18px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        lineHeight: 1
-                                    }}>
+                                    <span className="absolute top-1 right-1 bg-red-500 text-white text-[0.625rem] font-extrabold px-1.5 py-0.5 rounded-full border-2 border-secondary min-w-[18px] flex items-center justify-center leading-none">
                                         {notificacoesCount > 10 ? '10+' : notificacoesCount}
                                     </span>
                                 )}
                             </Link>
 
                             {/* Profile Dropdown */}
-                            <div style={{ position: 'relative' }}>
+                            <div className="relative">
                                 <button
                                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                                    className="avatar avatar-sm"
-                                    style={{
-                                        background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                                        border: '1px solid var(--border)',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s',
-                                        transform: profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform = 'scale(1.05) translateY(-1px)'
-                                        e.currentTarget.style.boxShadow = 'var(--shadow)'
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = profileDropdownOpen ? 'scale(0.95)' : 'scale(1)'
-                                        e.currentTarget.style.boxShadow = 'none'
-                                    }}
+                                    className={`avatar avatar-sm bg-gradient-to-br from-primary to-primary-light border border-border cursor-pointer transition-all duration-200 ${profileDropdownOpen ? 'scale-95' : 'hover:scale-105 hover:-translate-y-px hover:shadow'}`}
                                 >
                                     {professor.foto_url ? (
-                                        <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                        <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
                                     ) : (
                                         professor.nome.charAt(0)
                                     )}
@@ -760,99 +450,35 @@ export default function DashboardLayout({ children }) {
                                         {/* Backdrop para fechar ao clicar fora */}
                                         <div
                                             onClick={() => setProfileDropdownOpen(false)}
-                                            style={{
-                                                position: 'fixed',
-                                                top: 0,
-                                                left: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                zIndex: 40
-                                            }}
+                                            className="backdrop-invisible"
                                         />
 
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: 'calc(100% + 0.75rem)',
-                                            right: 0,
-                                            width: '16rem',
-                                            backgroundColor: 'var(--bg-secondary)',
-                                            border: '1px solid var(--border)',
-                                            borderRadius: '0.75rem',
-                                            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-                                            zIndex: 50,
-                                            overflow: 'hidden',
-                                            animation: 'slideDown 0.2s ease-out'
-                                        }}>
+                                        <div className="dropdown-menu">
                                             {/* User Info */}
-                                            <div style={{
-                                                padding: '1rem',
-                                                borderBottom: '1px solid var(--border)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.75rem'
-                                            }}>
-                                                <div className="avatar avatar-sm" style={{
-                                                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                                                    border: '1px solid var(--border)'
-                                                }}>
+                                            <div className="p-4 flex items-center gap-3 border-b border-border">
+                                                <div className="avatar avatar-sm bg-gradient-to-br from-primary to-primary-light border border-border">
                                                     {professor.foto_url ? (
-                                                        <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                                        <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
                                                     ) : (
                                                         professor.nome.charAt(0)
                                                     )}
                                                 </div>
-                                                <div style={{ flex: 1, minWidth: 0 }}>
-                                                    <p style={{
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: '600',
-                                                        color: 'var(--text-primary)',
-                                                        whiteSpace: 'nowrap',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        margin: 0
-                                                    }}>
+                                                <div className="flex flex-col flex-1 min-w-0">
+                                                    <p className="text-sm font-bold text-primary truncate m-0">
                                                         {professor.nome}
                                                     </p>
-                                                    <p style={{
-                                                        fontSize: '0.75rem',
-                                                        color: 'var(--text-muted)',
-                                                        margin: 0,
-                                                        marginTop: '2px',
-                                                        whiteSpace: 'nowrap',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis'
-                                                    }}>
+                                                    <p className="text-xs text-muted truncate m-0 mt-1">
                                                         {professor.email}
                                                     </p>
                                                 </div>
                                             </div>
 
                                             {/* Menu Items */}
-                                            <div style={{ padding: '0.5rem' }}>
+                                            <div className="p-2">
                                                 <Link
                                                     href="/dashboard/perfil"
                                                     onClick={() => setProfileDropdownOpen(false)}
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '0.75rem',
-                                                        padding: '0.625rem 0.75rem',
-                                                        borderRadius: '0.5rem',
-                                                        textDecoration: 'none',
-                                                        color: 'var(--text-primary)',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: '500',
-                                                        transition: 'all 0.2s',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'
-                                                        e.currentTarget.style.color = 'var(--primary)'
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'transparent'
-                                                        e.currentTarget.style.color = 'var(--text-primary)'
-                                                    }}
+                                                    className="dropdown-item"
                                                 >
                                                     <Icons.User size={18} />
                                                     <span>Meu Perfil</span>
@@ -860,34 +486,13 @@ export default function DashboardLayout({ children }) {
                                             </div>
 
                                             {/* Logout */}
-                                            <div style={{ padding: '0.5rem', borderTop: '1px solid var(--border)' }}>
+                                            <div className="p-2 border-t border-border">
                                                 <button
                                                     onClick={() => {
                                                         setProfileDropdownOpen(false)
                                                         handleLogout()
                                                     }}
-                                                    style={{
-                                                        width: '100%',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '0.75rem',
-                                                        padding: '0.625rem 0.75rem',
-                                                        borderRadius: '0.5rem',
-                                                        background: 'transparent',
-                                                        border: 'none',
-                                                        color: '#ef4444',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: '500',
-                                                        transition: 'all 0.2s',
-                                                        cursor: 'pointer',
-                                                        textAlign: 'left'
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.08)'
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.currentTarget.style.backgroundColor = 'transparent'
-                                                    }}
+                                                    className="dropdown-item dropdown-item-danger w-full text-left"
                                                 >
                                                     <Icons.Logout size={18} />
                                                     <span>Sair</span>
@@ -901,7 +506,7 @@ export default function DashboardLayout({ children }) {
                     </header>
 
                     {/* Page Content */}
-                    <main style={{ padding: '1.5rem', flex: 1 }} className="page-enter">
+                    <main className="p-6 flex-1 page-enter">
                         {children}
                     </main>
                 </div>
@@ -912,106 +517,35 @@ export default function DashboardLayout({ children }) {
                 <>
                     <div
                         onClick={() => setMobileMenuOpen(false)}
-                        style={{
-                            position: 'fixed',
-                            inset: 0,
-                            background: 'rgba(0, 0, 0, 0.6)',
-                            backdropFilter: 'blur(8px)',
-                            zIndex: 110,
-                            animation: 'fade-in 0.2s'
-                        }}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] animate-fade-in"
                     />
-                    <div style={{
-                        position: 'fixed',
-                        bottom: '5.5rem',
-                        left: '1rem',
-                        right: '1rem',
-                        backgroundColor: 'var(--bg-secondary)',
-                        borderRadius: '1.5rem',
-                        padding: '1.25rem',
-                        zIndex: 120,
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                        animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                        border: '1px solid var(--border)',
-                        maxHeight: '80vh',
-                        overflowY: 'auto'
-                    }}>
-                        <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
-                            <div style={{
-                                width: '3rem',
-                                height: '4px',
-                                background: 'var(--border)',
-                                borderRadius: '2px',
-                                margin: '0 auto 1.25rem auto',
-                                opacity: 0.5
-                            }} />
-                            <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: '800', color: 'var(--primary)' }}>Navegação</h3>
+                    <div className="fixed bottom-[5.5rem] left-4 right-4 bg-secondary rounded-[1.5rem] p-5 z-[120] shadow-2xl border border-border max-h-[80vh] overflow-y-auto animate-slide-up">
+                        <div className="mb-6 text-center">
+                            <div className="w-12 h-1 bg-border rounded-full mx-auto mb-5 opacity-50" />
+                            <h3 className="m-0 text-lg font-extrabold text-primary">Navegação</h3>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
-                            {[...menuItems, ...planoItems, ...sistemaItems].map((item) => {
+                        <div className="mobile-nav-grid">
+                            {menuItems.concat(planoItems).map((item) => {
                                 const IconComponent = Icons[item.icon]
                                 const isActive = pathname === item.href
-
-                                // Cores baseadas no ícone/setor
-                                let iconBg = 'rgba(16, 185, 129, 0.1)';
-                                let iconColor = 'var(--primary)';
-                                if (item.icon === 'Notifications') { iconBg = 'rgba(59, 130, 246, 0.1)'; iconColor = '#3b82f6'; }
-                                if (item.icon === 'Star') { iconBg = 'rgba(245, 158, 11, 0.1)'; iconColor = '#f59e0b'; }
-                                if (item.icon === 'Settings') { iconBg = 'rgba(107, 114, 128, 0.1)'; iconColor = 'var(--text-muted)'; }
+                                const iconBg = isActive ? 'bg-primary' : 'bg-primary-light'
+                                const iconColor = isActive ? 'text-white' : 'text-secondary'
 
                                 return (
                                     <Link
                                         key={item.href}
                                         href={item.href}
                                         onClick={() => setMobileMenuOpen(false)}
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            gap: '0.5rem',
-                                            padding: '0.75rem 0.25rem',
-                                            borderRadius: '1rem',
-                                            backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
-                                            textDecoration: 'none',
-                                            transition: 'all 0.2s',
-                                            border: isActive ? '1px solid var(--border)' : '1px solid transparent'
-                                        }}
+                                        className={`mobile-nav-item ${isActive ? 'active' : ''}`}
                                     >
-                                        <div style={{
-                                            width: '2.75rem',
-                                            height: '2.75rem',
-                                            borderRadius: '0.75rem',
-                                            background: isActive ? 'var(--primary)' : iconBg,
-                                            color: isActive ? 'white' : iconColor,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
+                                        <div className={`mobile-nav-icon ${isActive ? 'active' : ''} ${iconBg} ${iconColor}`}>
                                             <IconComponent size={22} />
                                         </div>
-                                        <span style={{
-                                            fontSize: '0.7rem',
-                                            fontWeight: '600',
-                                            color: isActive ? 'var(--primary)' : 'var(--text-primary)',
-                                            textAlign: 'center',
-                                            lineHeight: 1.1,
-                                            position: 'relative'
-                                        }}>
+                                        <span className={`text-xs font-bold leading-tight relative text-center ${isActive ? 'text-primary' : 'text-secondary'}`}>
                                             {item.label}
                                             {item.label === 'Meus Planos' && professor?.plano && (
-                                                <span style={{
-                                                    position: 'absolute',
-                                                    top: '-3.2rem',
-                                                    right: '-0.5rem',
-                                                    fontSize: '0.55rem',
-                                                    fontWeight: '900',
-                                                    padding: '0.1rem 0.3rem',
-                                                    borderRadius: '0.5rem',
-                                                    background: professor.plano === 'PREMIUM' ? '#f59e0b' : 'var(--primary)',
-                                                    color: 'white',
-                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                                                }}>
+                                                <span className="badge badge-primary absolute -top-12 -right-2 text-[0.55rem] px-1.5 py-0.5">
                                                     {professor.plano.toUpperCase()}
                                                 </span>
                                             )}
@@ -1021,44 +555,24 @@ export default function DashboardLayout({ children }) {
                             })}
                         </div>
 
-                        <div style={{
-                            borderTop: '1px solid var(--border)',
-                            paddingTop: '1.25rem',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '0.75rem'
-                        }}>
+                        <div className="mobile-footer-section">
                             <Link
                                 href="/dashboard/perfil"
                                 onClick={() => setMobileMenuOpen(false)}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '1rem',
-                                    padding: '1rem',
-                                    borderRadius: '1rem',
-                                    backgroundColor: 'var(--bg-tertiary)',
-                                    textDecoration: 'none',
-                                    color: 'var(--text-primary)',
-                                    border: '1px solid var(--border)'
-                                }}
+                                className="flex items-center gap-4 p-4 card-flat rounded-2xl"
                             >
-                                <div className="avatar avatar-md" style={{
-                                    background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                                    width: '2.5rem',
-                                    height: '2.5rem'
-                                }}>
+                                <div className="avatar avatar-md bg-gradient-to-br from-primary to-primary-light overflow-hidden">
                                     {professor.foto_url ? (
-                                        <img src={professor.foto_url} alt={professor.nome} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                        <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
                                     ) : (
                                         professor.nome.charAt(0)
                                     )}
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '700' }}>{professor.nome}</p>
-                                    <p style={{ margin: 0, fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Meu Perfil • Editar dados</p>
+                                <div className="flex flex-col flex-1">
+                                    <p className="text-sm font-bold m-0">{professor.nome}</p>
+                                    <p className="text-xs text-muted m-0">Meu Perfil • Editar dados</p>
                                 </div>
-                                <Icons.ChevronRight size={18} color="var(--text-muted)" />
+                                <Icons.ChevronRight size={18} className="text-muted" />
                             </Link>
 
                             <button
@@ -1066,21 +580,7 @@ export default function DashboardLayout({ children }) {
                                     setMobileMenuOpen(false)
                                     handleLogout()
                                 }}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '0.75rem',
-                                    padding: '1rem',
-                                    borderRadius: '1rem',
-                                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                                    border: '1px solid rgba(239, 68, 68, 0.15)',
-                                    color: '#ef4444',
-                                    fontSize: '0.875rem',
-                                    fontWeight: '700',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s'
-                                }}
+                                className="flex-center gap-3 p-4 font-bold text-sm rounded-2xl cursor-pointer transition-all duration-200 bg-red-500/10 border border-red-500/15 text-red-500"
                             >
                                 <Icons.Logout size={20} />
                                 <span>Sair da Conta</span>

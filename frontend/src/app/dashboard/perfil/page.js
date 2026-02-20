@@ -132,7 +132,7 @@ export default function PerfilPage() {
                                 ref={fileInputRef}
                                 onChange={handlePhotoChange}
                                 accept="image/*"
-                                style={{ display: 'none' }}
+                                className="hidden"
                             />
                             <button type="button" className="btn btn-secondary" onClick={handlePhotoClick} disabled={loading}>
                                 <Icons.Edit size={16} /> Alterar Foto

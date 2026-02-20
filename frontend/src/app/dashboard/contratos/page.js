@@ -143,19 +143,18 @@ export default function ContratosPage() {
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-                <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
+            <div className="flex-center p-12">
+                <div className="spinner !w-12 !h-12" />
             </div>
         )
     }
 
     return (
         <div className="page-enter">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
+            <div className="flex justify-end mb-6">
                 <button
                     className="btn btn-primary"
                     onClick={openNewModal}
-                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
                 >
                     <Icons.Plus size={18} />
                     <span>Novo Contrato</span>
@@ -163,24 +162,19 @@ export default function ContratosPage() {
             </div>
 
             {/* Filters */}
-            <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '0.75rem' }}>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="card-flat mb-6 p-3">
+                <div className="flex gap-2 flex-wrap">
                     {[
                         { id: 'todos', label: 'Todos', count: contratos.length },
-                        { id: 'ativo', label: 'Ativos', color: 'var(--success)' },
-                        { id: 'vencido', label: 'Vencidos', color: 'var(--warning)' },
-                        { id: 'cancelado', label: 'Cancelados', color: 'var(--danger)' },
+                        { id: 'ativo', label: 'Ativos', color: 'border-l-success' },
+                        { id: 'vencido', label: 'Vencidos', color: 'border-l-warning' },
+                        { id: 'cancelado', label: 'Cancelados', color: 'border-l-danger' },
                     ].map((f) => (
                         <button
                             key={f.id}
-                            className={`btn ${filterStatus === f.id ? 'btn-primary' : 'btn-secondary'}`}
+                            className={`btn ${filterStatus === f.id ? 'btn-primary' : 'btn-secondary'} !h-auto !py-2.5 !px-5 text-sm ${filterStatus === f.id ? '' : `border-l-4 ${f.color || ''}`
+                                }`}
                             onClick={() => setFilterStatus(f.id)}
-                            style={{
-                                fontSize: '0.8125rem',
-                                padding: '0.5rem 1rem',
-                                height: 'auto',
-                                borderLeft: filterStatus === f.id ? 'none' : `3px solid ${f.color || 'transparent'}`
-                            }}
                         >
                             {f.label}
                         </button>
@@ -189,106 +183,68 @@ export default function ContratosPage() {
             </div>
 
             {/* Contracts Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: '1.5rem',
-                padding: '0.5rem'
-            }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2">
                 {filteredContratos.length === 0 ? (
-                    <div className="card-flat" style={{ textAlign: 'center', padding: '4rem 2rem', gridColumn: '1 / -1' }}>
-                        <Icons.Contracts size={48} color="var(--text-muted)" style={{ opacity: 0.3, marginBottom: '1rem' }} />
-                        <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Nenhum contrato encontrado</p>
+                    <div className="card-flat text-center py-16 px-8 col-span-full">
+                        <Icons.Contracts size={48} className="text-muted opacity-30 mb-4 mx-auto" />
+                        <p className="text-muted font-medium">Nenhum contrato encontrado</p>
                     </div>
                 ) : (
                     filteredContratos.map((contrato) => (
                         <div
                             key={contrato.id}
-                            className="card-premium"
-                            style={{
-                                padding: '1.75rem',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                position: 'relative',
-                                background: 'var(--bg-secondary)'
-                            }}
+                            className="card-premium p-7 flex flex-col relative !bg-secondary"
                         >
                             {/* Header: Student + Status */}
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-                                <div style={{ minWidth: 0 }}>
-                                    <h3 style={{
-                                        fontSize: '1.125rem',
-                                        fontWeight: '800',
-                                        color: 'var(--text-primary)',
-                                        marginBottom: '0.25rem'
-                                    }}>
+                            <div className="flex-between items-start mb-6">
+                                <div className="min-w-0">
+                                    <h3 className="text-lg font-extrabold text-primary mb-1 truncate">
                                         {contrato.aluno?.nome || 'N/A'}
                                     </h3>
-                                    <span style={{
-                                        fontSize: '0.75rem',
-                                        color: 'var(--text-secondary)',
-                                        fontWeight: '600'
-                                    }}>
+                                    <span className="text-sm text-secondary font-semibold">
                                         {contrato.servico?.nome || 'N/A'}
                                     </span>
                                 </div>
-                                <span className={`badge ${getStatusBadge(contrato.status)}`} style={{
-                                    fontSize: '0.625rem',
-                                    padding: '0.375rem 0.75rem'
-                                }}>
+                                <span className={`badge ${getStatusBadge(contrato.status)} !text-[0.65rem] !px-3 font-extrabold`}>
                                     {contrato.status.toUpperCase()}
                                 </span>
                             </div>
 
                             {/* Billing Info Box */}
-                            <div style={{
-                                background: 'var(--bg-primary)',
-                                padding: '1.25rem',
-                                borderRadius: '0.875rem',
-                                marginBottom: '1.5rem',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}>
+                            <div className="!bg-primary/5 p-5 rounded-2xl mb-6 flex-between">
                                 <div>
-                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '800', marginBottom: '0.125rem' }}>Valor Mensal</p>
-                                    <p style={{ fontSize: '1.25rem', fontWeight: '900', color: 'var(--primary)' }}>
+                                    <p className="text-[0.6rem] text-muted uppercase font-extrabold mb-1 tracking-wider">Valor Mensal</p>
+                                    <p className="text-xl font-black text-primary">
                                         R$ {parseFloat(contrato.valor_mensal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                     </p>
                                 </div>
-                                <div style={{ textAlign: 'right' }}>
-                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '800', marginBottom: '0.125rem' }}>Prox. Venc.</p>
-                                    <p style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                                <div className="text-right">
+                                    <p className="text-[0.6rem] text-muted uppercase font-extrabold mb-1 tracking-wider">Prox. Venc.</p>
+                                    <p className="text-sm font-bold text-primary">
                                         {new Date(contrato.data_vencimento).toLocaleDateString('pt-BR')}
                                     </p>
                                 </div>
                             </div>
 
                             {/* Timeline/Dates */}
-                            <div style={{
-                                display: 'flex',
-                                gap: '1.5rem',
-                                marginBottom: '1.75rem',
-                                fontSize: '0.75rem',
-                                color: 'var(--text-muted)'
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <div className="flex gap-6 mb-7 text-[0.8rem] text-muted">
+                                <div className="flex items-center gap-1.5">
                                     <Icons.Calendar size={14} />
                                     <span>Início: {new Date(contrato.data_inicio).toLocaleDateString('pt-BR')}</span>
                                 </div>
                             </div>
 
                             {/* Actions Group */}
-                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
+                            <div className="flex gap-3 mt-auto">
                                 <button
-                                    className="btn btn-icon btn-icon-primary"
+                                    className="btn-icon btn-icon-primary"
                                     onClick={() => openEditModal(contrato)}
                                     title="Editar"
                                 >
                                     <Icons.Edit size={18} />
                                 </button>
                                 <button
-                                    className="btn btn-icon btn-icon-danger"
+                                    className="btn-icon btn-icon-danger"
                                     onClick={() => {
                                         setSelectedContrato(contrato);
                                         setShowDeleteDialog(true);
@@ -309,7 +265,7 @@ export default function ContratosPage() {
                 title={selectedContrato ? 'Editar Contrato' : 'Novo Contrato'}
             >
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
+                    <div className="mb-4">
                         <label className="label">Aluno</label>
                         <select
                             className="input"
@@ -324,7 +280,7 @@ export default function ContratosPage() {
                         </select>
                     </div>
 
-                    <div style={{ marginBottom: '1rem' }}>
+                    <div className="mb-4">
                         <label className="label">Serviço</label>
                         <select
                             className="input"
@@ -339,7 +295,7 @@ export default function ContratosPage() {
                         </select>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
                             <label className="label">Data de Início</label>
                             <input
@@ -365,11 +321,11 @@ export default function ContratosPage() {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
+                    <div className="flex justify-end gap-3 mt-8">
                         <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
                             Cancelar
                         </button>
-                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>
+                        <button type="submit" className="btn btn-primary !px-8">
                             {selectedContrato ? 'Salvar Contrato' : 'Criar Contrato'}
                         </button>
                     </div>
@@ -382,69 +338,44 @@ export default function ContratosPage() {
                 onClose={() => setShowDeleteDialog(false)}
                 title="Gerenciar Contrato"
             >
-                <div>
-                    <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                        <div style={{
-                            width: '4rem',
-                            height: '4rem',
-                            borderRadius: '50%',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 1rem',
-                            color: 'var(--danger)'
-                        }}>
-                            <Icons.Alert size={32} />
-                        </div>
-                        <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '0.5rem' }}>O que deseja fazer?</h3>
-                        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                            Contrato de <strong>{selectedContrato?.aluno?.nome}</strong>
-                        </p>
+                <div className="text-center py-4">
+                    <div className="w-16 h-16 rounded-full bg-red-500/10 flex-center mx-auto mb-6 text-red-500">
+                        <Icons.Alert size={32} />
+                    </div>
+                    <h3 className="text-xl font-extrabold mb-2">O que deseja fazer?</h3>
+                    <p className="text-sm text-secondary mb-8">
+                        Contrato de <strong className="text-primary">{selectedContrato?.aluno?.nome}</strong>
+                    </p>
+
+                    <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl mb-8 flex gap-3 text-left">
+                        <Icons.Info size={20} className="text-yellow-600 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-yellow-800 font-medium">Aulas futuras agendadas para este contrato serão <strong className="font-extrabold uppercase">canceladas automaticamente</strong>.</p>
                     </div>
 
-                    <div style={{
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        border: '1px solid rgba(245, 158, 11, 0.2)',
-                        padding: '1rem',
-                        borderRadius: 'var(--radius-sm)',
-                        marginBottom: '1.5rem',
-                        fontSize: '0.8125rem',
-                        color: 'hsl(35, 92%, 35%)',
-                        display: 'flex',
-                        gap: '0.75rem'
-                    }}>
-                        <Icons.Info size={18} style={{ flexShrink: 0 }} />
-                        <p>Aulas futuras agendadas para este contrato serão <strong>canceladas automaticamente</strong>.</p>
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div className="flex flex-col gap-3">
                         <button
-                            className="btn btn-secondary"
+                            className="btn btn-secondary !h-14 !justify-center border-yellow-500 text-yellow-600 hover:bg-yellow-50"
                             onClick={() => handleDelete(false)}
-                            style={{ justifyContent: 'center', border: '1px solid var(--warning)', color: 'var(--warning)', height: '3.5rem' }}
                         >
-                            <div style={{ textAlign: 'left' }}>
-                                <p style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Apenas Cancelar</p>
-                                <p style={{ fontSize: '0.7rem', opacity: 0.8 }}>Mantém o registro histórico no sistema</p>
+                            <div className="text-center">
+                                <p className="font-extrabold text-sm mb-0.5">Apenas Cancelar</p>
+                                <p className="text-[0.65rem] opacity-70">Mantém o registro histórico no sistema</p>
                             </div>
                         </button>
 
                         <button
-                            className="btn btn-danger"
+                            className="btn btn-danger !h-14 !justify-center shadow-lg shadow-red-500/20"
                             onClick={() => handleDelete(true)}
-                            style={{ justifyContent: 'center', height: '3.5rem' }}
                         >
-                            <div style={{ textAlign: 'left' }}>
-                                <p style={{ fontWeight: '700', fontSize: '0.9375rem' }}>Excluir Definitivamente</p>
-                                <p style={{ fontSize: '0.7rem', opacity: 0.8 }}>Remove completamente do banco de dados</p>
+                            <div className="text-center">
+                                <p className="font-extrabold text-sm mb-0.5">Excluir Definitivamente</p>
+                                <p className="text-[0.65rem] opacity-80 text-white/70">Remove completamente do banco de dados</p>
                             </div>
                         </button>
 
                         <button
-                            className="btn btn-secondary"
+                            className="btn btn-secondary !mt-4 !justify-center"
                             onClick={() => setShowDeleteDialog(false)}
-                            style={{ marginTop: '0.5rem', justifyContent: 'center' }}
                         >
                             Voltar
                         </button>

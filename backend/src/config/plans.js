@@ -19,8 +19,8 @@ const PLANS = {
         }
     },
     PRO: {
-        name: 'Pro (Gestão Unificada)',
-        description: 'Tudo o que você precisa para gerenciar seu negócio solo em um único lugar (estilo MITpersonal).',
+        name: 'Pro (Automação)',
+        description: 'Focado em automatizar sua gestão: Financeiro, Lembretes e Agenda Recorrente.',
         features: {
             agenda_recorrente: true,
             financeiro_aluno: true,
@@ -28,16 +28,15 @@ const PLANS = {
             importacao_alunos: true,
             alunos_ilimitados: true,
             servicos_ilimitados: true,
-            app_centralizado: true, // App único para todos os profissionais PRO
-            prescricao_treinos: true, // Disponível na Onda 3
-            anamnese_digital: true, // Disponível na Onda 3
+            prescricao_treinos: false,
+            anamnese_digital: false,
             app_nativo: false,
             ia_assistant: false
         }
     },
     PREMIUM: {
-        name: 'Premium (Exclusividade)',
-        description: 'Para profissionais de elite que buscam autoridade máxima com seu próprio App exclusivo.',
+        name: 'Premium (Elite)',
+        description: 'A experiência completa: Prescrição de treinos, App Nativo e IA.',
         features: {
             agenda_recorrente: true,
             financeiro_aluno: true,
@@ -45,11 +44,10 @@ const PLANS = {
             importacao_alunos: true,
             alunos_ilimitados: true,
             servicos_ilimitados: true,
-            app_centralizado: true,
-            prescricao_treinos: true,
-            anamnese_digital: true,
-            ia_assistant: true,
-            app_nativo: true // App White Label exclusivo na Apple/Google
+            prescricao_treinos: true, // Diferencial Elite
+            anamnese_digital: true,   // Diferencial Elite
+            app_nativo: true,         // Diferencial Elite (Onda 4)
+            ia_assistant: true        // Diferencial Elite (Onda 4)
         }
     }
 };

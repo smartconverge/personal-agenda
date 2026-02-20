@@ -19,7 +19,7 @@ export default function DashboardLayout({ children }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [whatsappConnected, setWhatsappConnected] = useState(false)
 
-    const loadProfile = async () => {
+    async function loadProfile() {
         try {
             const response = await api.get('/perfil')
             if (response.data.success) {
@@ -32,7 +32,7 @@ export default function DashboardLayout({ children }) {
         }
     }
 
-    const loadNotificacoesCount = async () => {
+    async function loadNotificacoesCount() {
         try {
             const response = await api.get('/notificacoes?status=enviado&limit=100')
             const data = response.data.data || []
@@ -43,7 +43,7 @@ export default function DashboardLayout({ children }) {
         }
     }
 
-    const marcarTodasComoLidas = async () => {
+    async function marcarTodasComoLidas() {
         try {
             await api.patch('/notificacoes/ler-todas')
             setNotificacoesCount(0)
@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }) {
         }
     }
 
-    const checkWhatsAppStatus = async () => {
+    async function checkWhatsAppStatus() {
         try {
             const res = await api.get('/whatsapp/status')
             setWhatsappConnected(!!res.data.connected)
@@ -61,7 +61,7 @@ export default function DashboardLayout({ children }) {
         }
     }
 
-    const handleLogout = async () => {
+    async function handleLogout() {
         try {
             await api.post('/auth/logout')
         } catch (error) {
@@ -80,7 +80,7 @@ export default function DashboardLayout({ children }) {
         const savedTheme = localStorage.getItem('theme') || 'light'
         document.documentElement.setAttribute('data-theme', savedTheme)
 
-        // Se tiver dados em cache, exibe instantaneamente (Optimistic UI)
+        // Se tiver dados em cache, exibe instantaneamente
         if (professorData) {
             try {
                 const parsed = JSON.parse(professorData)

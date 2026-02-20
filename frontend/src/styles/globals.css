@@ -20,9 +20,9 @@
   --bg-tertiary: hsl(150, 20%, 95%);
 
   /* Sidebar Green - Brand Standard (User Request) */
-  --sidebar-bg: hsl(155, 72%, 14%);
-  /* Verde Profundo Padrão */
-  --sidebar-bg-dark: hsl(155, 72%, 10%);
+  --sidebar-bg: hsla(155, 72%, 14%, 0.95);
+  /* Verde Profundo Padrão com Transparência */
+  --sidebar-bg-dark: hsla(155, 72%, 10%, 0.98);
   --sidebar-text: hsl(155, 20%, 90%);
   /* Branco Suave */
   --sidebar-accent: hsla(158, 65%, 42%, 0.15);
@@ -55,6 +55,11 @@
   --radius: 0.75rem;
   --radius-sm: 0.5rem;
   --radius-lg: 1rem;
+
+  /* Glassmorphism */
+  --glass-bg: hsla(0, 0%, 100%, 0.7);
+  --glass-border: hsla(0, 0%, 100%, 0.1);
+  --glass-blur: 12px;
 }
 
 /* Dark Mode */
@@ -162,6 +167,21 @@ h6 {
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+}
+
+/* Glassmorphism Effect */
+.glass-effect {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-glass {
+  background-color: var(--sidebar-bg) !important;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-right: 1px solid var(--sidebar-border);
 }
 
 /* Cards Premium */

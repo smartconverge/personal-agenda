@@ -149,15 +149,14 @@ export default function DashboardLayout({ children }) {
         <ToastProvider>
             <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
                 {/* Sidebar Verde Escura - Desktop Only */}
-                <aside className="sidebar gradient-sidebar" style={{
+                <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'} sidebar-glass`} style={{
                     width: sidebarOpen ? '16rem' : '5rem',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     position: 'fixed',
                     height: '100vh',
                     display: 'flex',
                     flexDirection: 'column',
-                    zIndex: 40,
-                    borderRight: '1px solid var(--sidebar-border)'
+                    zIndex: 40
                 }}>
                     {/* Logo/Header */}
                     <div style={{
@@ -414,7 +413,7 @@ export default function DashboardLayout({ children }) {
                         marginTop: 'auto',
                         padding: '1rem',
                         borderTop: '1px solid var(--sidebar-border)',
-                        background: 'var(--sidebar-bg-dark)',
+                        background: 'rgba(0, 0, 0, 0.15)',
                         flexShrink: 0
                     }}>
                         {sidebarOpen && (
@@ -558,9 +557,7 @@ export default function DashboardLayout({ children }) {
                         </div>
                     )}
                     {/* Header */}
-                    <header style={{
-                        backgroundColor: 'var(--bg-secondary)',
-                        borderBottom: '1px solid var(--border)',
+                    <header className="glass-effect" style={{
                         padding: '1rem 1.5rem',
                         position: 'sticky',
                         top: 0,

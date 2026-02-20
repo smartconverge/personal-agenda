@@ -10,10 +10,8 @@ const PLANS = {
             financeiro_aluno: false,
             lembretes_automaticos: false,
             importacao_alunos: true,
-            alunos_ilimitados: true
-        },
-        limits: {
-            max_servicos: 5
+            alunos_ilimitados: true,
+            servicos_ilimitados: true
         }
     },
     PRO: {
@@ -23,10 +21,9 @@ const PLANS = {
             financeiro_aluno: true,
             lembretes_automaticos: true,
             importacao_alunos: true,
-            alunos_ilimitados: true
-        },
-        limits: {
-            max_servicos: 50
+            alunos_ilimitados: true,
+            servicos_ilimitados: true,
+            app_centralizado: true // Estilo MITpersonal (Tudo em uma conta)
         }
     },
     PREMIUM: {
@@ -37,11 +34,10 @@ const PLANS = {
             lembretes_automaticos: true,
             importacao_alunos: true,
             alunos_ilimitados: true,
+            servicos_ilimitados: true,
+            app_centralizado: true,
             ia_assistant: true,
-            app_nativo: true
-        },
-        limits: {
-            max_servicos: 999
+            app_nativo: true // App Exclusivo/White Label
         }
     }
 };

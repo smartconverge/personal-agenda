@@ -202,6 +202,15 @@ async function processarComando(professorId, comando) {
  */
 router.post('/whatsapp', async (req, res) => {
     try {
+        // Validação de segurança: Verifica se a apikey enviada bate com a nossa WEBHOOK_SECRET
+        const apiKey = req.headers['apikey'] || req.headers['webhook-token'];
+        const secret = process.env.WEBHOOK_SECRET;
+
+        if (secret && apiKey !== secret) {
+            console.warn('⚠️ Tentativa de acesso não autorizado ao Webhook. Token inválido.');
+            return res.status(401).json({ success: false, error: 'Unauthorized' });
+        }
+
         const { data, instance: instanceReceived } = req.body;
 
         // Validar estrutura do webhook

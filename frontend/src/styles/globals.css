@@ -65,9 +65,9 @@
   --radius-lg: 1rem;
 
   /* Glassmorphism (Fallbacks) */
-  --glass-bg: var(--bg-secondary);
-  --glass-border: var(--border);
-  --glass-blur: 0px;
+  --glass-bg: hsla(0, 0%, 100%, 0.8);
+  --glass-border: hsla(0, 0%, 100%, 0.1);
+  --glass-blur: 12px;
 }
 
 /* Dark Mode */
@@ -902,6 +902,35 @@ h6 {
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+}
+
+.premium-banner {
+  background: linear-gradient(90deg, var(--sidebar-bg) 0%, var(--primary) 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-banner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 200%;
+  }
 }
 
 .sidebar-glass {

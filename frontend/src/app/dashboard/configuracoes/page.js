@@ -82,265 +82,137 @@ export default function ConfiguracoesPage() {
     }
 
     return (
-        <div className="config-container">
-
-
-            <div className="config-grid">
+        <div className="max-w-[800px] mx-auto page-enter">
+            <div className="grid grid-cols-1 gap-6">
                 {/* Segurança */}
-                <div className="config-card card">
-                    <h3 className="card-title">
-                        <Icons.Dashboard size={18} /> Segurança
-                    </h3>
-                    <form onSubmit={handleAlterarSenha} className="config-form">
-                        <div className="input-field">
-                            <label>Senha Atual</label>
+                <div className="card-premium p-7 !bg-secondary">
+                    <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border">
+                        <div className="w-10 h-10 rounded-xl bg-primary-light flex-center text-primary">
+                            <Icons.Lock size={20} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-extrabold text-primary m-0">Segurança</h3>
+                            <p className="text-xs text-muted m-0">Gerencie sua senha e proteção de conta</p>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleAlterarSenha} className="max-w-[450px]">
+                        <div className="mb-5">
+                            <label className="label">Senha Atual</label>
                             <input
                                 type="password"
                                 name="senhaAtual"
+                                className="input"
                                 value={senhaData.senhaAtual}
                                 onChange={handleSenhaChange}
-                                placeholder="Senha atual"
+                                placeholder="Sua senha atual"
                                 required
                             />
                         </div>
-                        <div className="input-field">
-                            <label>Nova Senha</label>
+                        <div className="mb-5">
+                            <label className="label">Nova Senha</label>
                             <input
                                 type="password"
                                 name="novaSenha"
+                                className="input"
                                 value={senhaData.novaSenha}
                                 onChange={handleSenhaChange}
                                 placeholder="Mínimo 6 caracteres"
                                 required
                             />
                         </div>
-                        <div className="input-field">
-                            <label>Confirmar Nova Senha</label>
+                        <div className="mb-8">
+                            <label className="label">Confirmar Nova Senha</label>
                             <input
                                 type="password"
                                 name="confirmarSenha"
+                                className="input"
                                 value={senhaData.confirmarSenha}
                                 onChange={handleSenhaChange}
                                 placeholder="Repita a nova senha"
                                 required
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary" disabled={loading}>
-                            {loading ? 'Processando...' : 'Atualizar Senha'}
+                        <button type="submit" className="btn btn-primary !h-12 !px-8" disabled={loading}>
+                            {loading ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="spinner !w-4 !h-4 !border-white" />
+                                    <span>Processando...</span>
+                                </div>
+                            ) : (
+                                'Atualizar Minha Senha'
+                            )}
                         </button>
                     </form>
                 </div>
 
                 {/* Preferências */}
-                <div className="config-card card">
-                    <h3 className="card-title">
-                        <Icons.Dashboard size={18} /> Preferências do Sistema
-                    </h3>
-                    <div className="settings-list">
-                        <div className="setting-item">
-                            <div className="setting-info">
-                                <strong>Tema do Sistema</strong>
-                                <p>Alternar entre modo claro e escuro.</p>
+                <div className="card-premium p-7 !bg-secondary">
+                    <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border">
+                        <div className="w-10 h-10 rounded-xl bg-primary-light flex-center text-primary">
+                            <Icons.Settings size={20} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-extrabold text-primary m-0">Preferências do Sistema</h3>
+                            <p className="text-xs text-muted m-0">Personalize sua experiência de uso</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="flex-between p-4 card-flat">
+                            <div>
+                                <strong className="text-sm font-bold block mb-1">Tema Visual</strong>
+                                <p className="text-xs text-muted m-0">Alterne entre o visual claro ou escuro.</p>
                             </div>
-                            <button onClick={toggleTema} className="btn btn-secondary">
+                            <button onClick={toggleTema} className="btn btn-secondary !py-2 !px-4">
                                 {preferencias.tema === 'light' ? (
-                                    <><Icons.Dashboard size={16} /> Modo Escuro</>
+                                    <><Icons.Moon size={16} /> Modo Escuro</>
                                 ) : (
-                                    <><Icons.Dashboard size={16} /> Modo Claro</>
+                                    <><Icons.Sun size={16} /> Modo Claro</>
                                 )}
                             </button>
                         </div>
 
-                        <div className="setting-item">
-                            <div className="setting-info">
-                                <strong>Notificações WhatsApp</strong>
-                                <p>Receber alertas de novos agendamentos.</p>
+                        <div className="flex-between p-4 card-flat">
+                            <div>
+                                <strong className="text-sm font-bold block mb-1">Alertas via WhatsApp</strong>
+                                <p className="text-xs text-muted m-0">Receba avisos de novos agendamentos vinculados.</p>
                             </div>
-                            <label className="switch">
+                            <label className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
+                                    className="sr-only peer"
                                     checked={preferencias.notificacoes_whatsapp}
                                     onChange={() => setPreferencias(p => ({ ...p, notificacoes_whatsapp: !p.notificacoes_whatsapp }))}
                                 />
-                                <span className="slider round"></span>
+                                <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                             </label>
                         </div>
                     </div>
                 </div>
 
                 {/* Zona de Perigo */}
-                <div className="config-card card danger-zone">
-                    <h3 className="card-title">Gestão de Dados</h3>
-                    <p className="danger-text">Ao excluir sua conta, você perderá acesso a todos os seus alunos, contratos, serviços e histórico de agendamentos. Esta ação não pode ser desfeita.</p>
-                    <button onClick={handleExcluirConta} className="btn btn-danger">
-                        Excluir Minha Conta
+                <div className="card-premium p-7 !bg-red-500/5 border-red-500/20">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-xl bg-red-500/10 flex-center text-red-500">
+                            <Icons.Delete size={20} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-extrabold text-red-500 m-0">Gestão de Dados Sensíveis</h3>
+                            <p className="text-xs text-red-500/60 m-0">Ações críticas e irreversíveis</p>
+                        </div>
+                    </div>
+
+                    <p className="text-sm text-muted mb-6">
+                        Ao excluir sua conta, todos os seus dados (alunos, contratos e histórico) serão
+                        <strong> apagados permanentemente</strong>. Não há como desfazer esta ação.
+                    </p>
+
+                    <button onClick={handleExcluirConta} className="btn btn-danger !btn-sm !px-6">
+                        Desativar Minha Conta
                     </button>
                 </div>
             </div>
-
-            <style jsx>{`
-                .config-container {
-                    max-width: 1000px;
-                    margin: 0 auto;
-                }
-
-                .header-config {
-                    margin-bottom: 2rem;
-                }
-
-                .title-section {
-                    font-size: 1.75rem;
-                    color: var(--primary);
-                    margin-bottom: 0.5rem;
-                }
-
-                .subtitle-section {
-                    color: var(--text-muted);
-                    font-size: 0.9375rem;
-                }
-
-                .config-grid {
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    gap: 1.5rem;
-                }
-
-                .config-card {
-                    padding: 1.5rem;
-                }
-
-                .card-title {
-                    font-size: 1.125rem;
-                    font-weight: 700;
-                    margin-bottom: 1.5rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.625rem;
-                    color: var(--text-primary);
-                }
-
-                .config-form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                    max-width: 400px;
-                }
-
-                .input-field {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-
-                .input-field label {
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    color: var(--text-secondary);
-                }
-
-                .input-field input {
-                    padding: 0.75rem;
-                    border: 1px solid var(--border);
-                    border-radius: 0.625rem;
-                    font-size: 0.875rem;
-                    background: var(--bg-primary);
-                    color: var(--text-primary);
-                }
-
-                .settings-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                }
-
-                .setting-item {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding-bottom: 1.5rem;
-                    border-bottom: 1px solid var(--border);
-                }
-
-                .setting-item:last-child {
-                    border-bottom: none;
-                    padding-bottom: 0;
-                }
-
-                .setting-info strong {
-                    display: block;
-                    font-size: 0.9375rem;
-                    color: var(--text-primary);
-                }
-
-                .setting-info p {
-                    font-size: 0.8125rem;
-                    color: var(--text-muted);
-                    margin: 0;
-                }
-
-                .danger-zone {
-                    border-color: rgba(239, 68, 68, 0.2);
-                    background: rgba(239, 68, 68, 0.02);
-                }
-
-                .danger-text {
-                    font-size: 0.875rem;
-                    color: var(--text-muted);
-                    margin-bottom: 1.5rem;
-                }
-
-                /* Switch Styles */
-                .switch {
-                    position: relative;
-                    display: inline-block;
-                    width: 44px;
-                    height: 24px;
-                }
-
-                .switch input {
-                    opacity: 0;
-                    width: 0;
-                    height: 0;
-                }
-
-                .slider {
-                    position: absolute;
-                    cursor: pointer;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: var(--border);
-                    transition: .4s;
-                }
-
-                .slider:before {
-                    position: absolute;
-                    content: "";
-                    height: 18px;
-                    width: 18px;
-                    left: 3px;
-                    bottom: 3px;
-                    background-color: white;
-                    transition: .4s;
-                }
-
-                input:checked + .slider {
-                    background-color: var(--primary);
-                }
-
-                input:checked + .slider:before {
-                    transform: translateX(20px);
-                }
-
-                .slider.round {
-                    border-radius: 34px;
-                }
-
-                .slider.round:before {
-                    border-radius: 50%;
-                }
-            `}</style>
         </div>
     )
 }

@@ -194,14 +194,14 @@ export default function DashboardLayout({ children }) {
                                         <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div className="flex-between w-full">
+                                        <div className="flex items-center justify-between w-full">
                                             <span>{item.label}</span>
                                             {item.label === 'WhatsApp' && (
-                                                <span className={`text-[0.6rem] font-extrabold px-1.5 py-0.5 rounded-full border ml-2 ${whatsappConnected
-                                                    ? 'bg-success/20 text-success border-success/30'
+                                                <span className={`text-[0.55rem] font-black px-2 py-0.5 rounded-full border tracking-tighter ml-auto ${whatsappConnected
+                                                    ? 'bg-success/20 text-success border-success/30 animate-pulse'
                                                     : 'bg-red-500/10 text-red-400 border-red-500/20'
                                                     }`}>
-                                                    {whatsappConnected ? 'ATIVO' : 'OFFLINE'}
+                                                    {whatsappConnected ? 'CONECTADO' : 'OFFLINE'}
                                                 </span>
                                             )}
                                         </div>
@@ -236,10 +236,10 @@ export default function DashboardLayout({ children }) {
                                         <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div className="flex-between w-full">
+                                        <div className="flex items-center justify-between w-full">
                                             <span>{item.label}</span>
                                             {item.label === 'Meus Planos' && professor?.plano && (
-                                                <span className={`text-[0.6rem] font-extrabold px-1.5 py-0.5 rounded-full ml-2 ${professor.plano === 'PREMIUM' ? 'bg-amber-500 text-white' : 'bg-white/10 text-white'
+                                                <span className={`text-[0.55rem] font-black px-2 py-0.5 rounded-full ml-auto tracking-tighter ${professor.plano === 'PREMIUM' ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' : 'bg-white/20 text-white border border-white/10'
                                                     }`}>
                                                     {professor.plano.toUpperCase()}
                                                 </span>
@@ -324,20 +324,25 @@ export default function DashboardLayout({ children }) {
                     style={{ marginLeft: sidebarOpen ? '16rem' : '5rem' }}>
 
                     {/* Trial Banner */}
+                    {/* Trial Banner Premium */}
                     {professor?.plano_expira_em && (new Date(professor.plano_expira_em) > new Date()) && (
-                        <div className="bg-secondary border-b border-primary text-primary px-4 py-2 text-center text-[0.8rem] font-semibold flex items-center justify-center gap-2 z-[100]">
-                            <Icons.Dashboard size={14} className="text-primary" />
-                            <span>
-                                Você esta usando o plano <strong className="text-primary">STARTER (Degustação)</strong>.
-                                Restam <strong>{(() => {
-                                    const diff = new Date(professor.plano_expira_em) - new Date();
-                                    const dias = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                                    return `${dias} ${dias === 1 ? 'dia' : 'dias'}`;
-                                })()}</strong> de acesso total.
-                            </span>
-                            <Link href="/dashboard/planos" className="text-primary underline opacity-90 ml-4">
-                                Ver Planos
-                            </Link>
+                        <div className="premium-banner px-4 py-2.5 text-center text-[0.75rem] font-bold z-[100] border-b border-white/5 shadow-xl">
+                            <div className="flex items-center justify-center gap-3">
+                                <div className="flex-center w-6 h-6 rounded-md bg-white/20">
+                                    <Icons.Dashboard size={14} className="text-white" />
+                                </div>
+                                <span className="tracking-tight">
+                                    Você está no plano <span className="text-white font-black uppercase underline decoration-2 underline-offset-4 decoration-white/30">{professor.plano || 'STARTER'} (Degustação)</span>.
+                                    Restam <span className="bg-white/20 px-2 py-0.5 rounded-md mx-1">{(() => {
+                                        const diff = new Date(professor.plano_expira_em) - new Date();
+                                        const dias = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                                        return `${dias} ${dias === 1 ? 'dia' : 'dias'}`;
+                                    })()}</span> para o fim do acesso total.
+                                </span>
+                                <Link href="/dashboard/planos" className="bg-white text-primary px-3 py-1 rounded-full text-[0.65rem] font-black uppercase hover:scale-105 transition-transform ml-2 shadow-lg">
+                                    Ver Planos
+                                </Link>
+                            </div>
                         </div>
                     )}
 

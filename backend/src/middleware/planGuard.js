@@ -1,4 +1,5 @@
 const { supabaseAdmin } = require('../config/supabase');
+const { hasFeature, PLANS } = require('../config/plans');
 
 /**
  * Middleware para validar limites e acesso baseado no plano do professor
@@ -28,16 +29,25 @@ const planGuard = (feature) => {
             // Se expirou, rebaixa para STARTER (Free) automaticamente na verificação
             const planoAtivo = (expiraEm && expiraEm > hoje) ? professor.plano : 'STARTER';
 
-            // 3. Validação de limites específicos
-            // Conforme nova estratégia: STARTER tem alunos ilimitados.
-            // Bloqueios futuros (Notificações para Alunos e Financeiro) serão adicionados aqui.
+            // 3. Validação de limites e permissões baseada no config/plans.js
+            if (feature) {
+                // Verificação de Funcionalidade
+                const allowed = hasFeature(planoAtivo, feature);
 
-            if (feature === 'agenda_recorrente') {
-                // Apenas PRO e PREMIUM podem ter agenda recorrente (pela proposta do usuário)
-                if (planoAtivo === 'STARTER' && (req.body.recorrencia === 'semanal' || req.body.recorrente === true)) {
+                // Caso especial: agenda_recorrente só barra se o usuário estiver tentando criar uma recorrente
+                if (feature === 'agenda_recorrente') {
+                    const isTryingRecurrence = req.body.recorrencia === 'semanal' || req.body.recorrente === true;
+                    if (isTryingRecurrence && !allowed) {
+                        return res.status(403).json({
+                            success: false,
+                            error: `A funcionalidade '${feature}' está disponível apenas nos planos PRO e PREMIUM.`
+                        });
+                    }
+                } else if (!allowed) {
+                    // Bloqueio genérico para outras features
                     return res.status(403).json({
                         success: false,
-                        error: 'Agenda recorrente está disponível apenas nos planos PRO e PREMIUM.'
+                        error: `Seu plano atual (${PLANS[planoAtivo].name}) não possui acesso à funcionalidade: ${feature}`
                     });
                 }
             }
@@ -45,6 +55,7 @@ const planGuard = (feature) => {
             // Adicionar info do plano no req para uso posterior se necessário
             req.planoInfo = {
                 nome: planoAtivo,
+                detalhes: PLANS[planoAtivo],
                 status: (expiraEm && expiraEm > hoje) ? 'active' : 'expired',
                 expiraEm
             };

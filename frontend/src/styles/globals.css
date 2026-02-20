@@ -39,17 +39,25 @@
   --border-light: hsl(150, 14%, 89%);
   --input-border: hsl(150, 14%, 89%);
 
-  /* Sombras Premium */
-  --shadow-sm: 0 1px 2px 0 hsl(155, 30%, 20%, 0.03);
-  --shadow: 0 0 0 1px hsl(150, 14%, 91%, 0.5),
-    0 1px 2px 0 hsl(155, 30%, 20%, 0.03),
-    0 4px 12px -2px hsl(155, 30%, 20%, 0.04);
-  --shadow-lg: 0 0 0 1px hsl(155, 72%, 32%, 0.05),
-    0 10px 15px -3px hsl(155, 30%, 20%, 0.05),
-    0 4px 6px -2px hsl(155, 30%, 20%, 0.03);
-  --shadow-hover: 0 0 0 1px hsl(155, 72%, 32%, 0.1),
-    0 10px 25px -5px hsl(155, 30%, 20%, 0.08),
-    0 8px 10px -6px hsl(155, 30%, 20%, 0.05);
+  /* Sombras Elite - Estilo Stripe/Linear (Multi-camadas) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow:
+    0 0 0 1px hsla(155, 72%, 10%, 0.05),
+    0 1px 1px hsla(0, 0%, 0%, 0.02),
+    0 4px 12px -2px hsla(155, 72%, 5%, 0.03),
+    0 8px 16px -4px hsla(155, 72%, 5%, 0.04);
+
+  --shadow-lg:
+    0 0 0 1px hsla(155, 72%, 10%, 0.05),
+    0 10px 20px -5px hsla(155, 72%, 5%, 0.05),
+    0 20px 40px -10px hsla(155, 72%, 5%, 0.1);
+
+  --shadow-hover:
+    0 0 0 1px hsla(155, 72%, 32%, 0.1),
+    0 12px 28px -6px hsla(155, 72%, 5%, 0.1),
+    0 20px 60px -12px hsla(155, 72%, 5%, 0.15);
+
+  --inner-glow: inset 0 1px 0 0 hsla(0, 0%, 100%, 0.5);
 
   /* Raios */
   --radius: 0.75rem;
@@ -203,13 +211,14 @@ h6 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow), var(--inner-glow);
 }
 
 .card-premium:hover {
   box-shadow: var(--shadow-hover) !important;
-  transform: translateY(-4px) !important;
-  border-color: hsla(155, 72%, 32%, 0.2) !important;
+  transform: translateY(-6px) !important;
+  border-color: hsla(155, 72%, 32%, 0.3) !important;
 }
 
 .card-premium:hover .delete-btn-hover {
@@ -332,8 +341,9 @@ h6 {
 }
 
 .finebank-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: hsla(155, 72%, 32%, 0.2);
 }
 
 .finebank-value {

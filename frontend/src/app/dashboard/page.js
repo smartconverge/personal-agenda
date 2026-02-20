@@ -166,7 +166,7 @@ export default function DashboardPage() {
                             className={stat.highlight ? "card-highlight finebank-card" : "finebank-card"}
                             style={{
                                 border: stat.highlight ? 'none' : '1px solid var(--border)',
-                                padding: '2rem' // Forçando o padding do Finebank
+                                boxShadow: stat.highlight ? 'var(--shadow-lg)' : 'var(--shadow)'
                             }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -286,7 +286,8 @@ export default function DashboardPage() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    minHeight: '180px'
+                                    minHeight: '180px',
+                                    boxShadow: 'var(--shadow)'
                                 }}
                             >
                                 {/* Header: Time & Status */}

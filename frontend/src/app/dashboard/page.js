@@ -175,14 +175,8 @@ export default function DashboardPage() {
                                 }}>
                                     {stat.label}
                                 </p>
-                                <div style={{
-                                    width: '3rem',
-                                    height: '3rem',
-                                    borderRadius: '1rem', // Arredondamento suave
+                                <div className="finebank-icon-wrapper" style={{
                                     background: stat.highlight ? 'rgba(255, 255, 255, 0.25)' : 'var(--bg-tertiary)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
                                     color: stat.highlight ? 'white' : 'var(--primary)'
                                 }}>
                                     <IconComponent size={24} />
@@ -220,25 +214,12 @@ export default function DashboardPage() {
 
             {/* Today's Sessions */}
             <div style={{ marginTop: '2rem' }}>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '1.5rem'
-                }}>
+                <div className="dashboard-section-header">
                     <div>
-                        <h2 style={{
-                            fontSize: '1.25rem',
-                            fontWeight: '800',
-                            marginBottom: '0.25rem',
-                            color: 'var(--text-primary)'
-                        }}>
+                        <h2 className="dashboard-title">
                             Sessões de Hoje
                         </h2>
-                        <p style={{
-                            fontSize: '0.875rem',
-                            color: 'var(--text-secondary)'
-                        }}>
+                        <p className="dashboard-subtitle">
                             {sessoes.length} {sessoes.length === 1 ? 'sessão agendada' : 'sessões agendadas'} para hoje
                         </p>
                     </div>
@@ -249,21 +230,8 @@ export default function DashboardPage() {
                 </div>
 
                 {sessoes.length === 0 ? (
-                    <div className="card-flat" style={{
-                        textAlign: 'center',
-                        padding: '4rem 2rem',
-                        color: 'var(--text-muted)'
-                    }}>
-                        <div style={{
-                            width: '4rem',
-                            height: '4rem',
-                            backgroundColor: 'var(--bg-secondary)',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 1.5rem'
-                        }}>
+                    <div className="card-flat empty-state-card">
+                        <div className="empty-state-icon-wrapper">
                             <Icons.Calendar size={32} color="var(--text-muted)" />
                         </div>
                         <h3 style={{ fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>
@@ -274,7 +242,7 @@ export default function DashboardPage() {
                         </p>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+                    <div className="session-card-grid">
                         {sessoes.map((sessao, index) => (
                             <div
                                 key={sessao.id}
@@ -292,14 +260,7 @@ export default function DashboardPage() {
                             >
                                 {/* Header: Time & Status */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.5rem',
-                                        background: 'var(--bg-primary)',
-                                        padding: '0.375rem 0.75rem',
-                                        borderRadius: '0.5rem'
-                                    }}>
+                                    <div className="session-time-badge">
                                         <Icons.Clock size={14} color="var(--primary)" />
                                         <span style={{ fontWeight: '800', fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
                                             {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}

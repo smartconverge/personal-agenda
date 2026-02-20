@@ -147,9 +147,9 @@ export default function DashboardLayout({ children }) {
 
     return (
         <ToastProvider>
-            <div className="flex min-h-screen bg-primary-deep">
+            <div className="min-h-screen relative bg-primary-deep overflow-x-hidden">
                 {/* Sidebar Verde Escura - Desktop Only */}
-                <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'} sidebar-glass flex flex-col fixed h-screen z-40 transition-all duration-300`}
+                <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'} flex flex-col fixed top-0 left-0 h-screen z-50 transition-all duration-300`}
                     style={{ width: sidebarOpen ? '16rem' : '5rem' }}>
 
                     {/* Logo/Header */}
@@ -317,8 +317,12 @@ export default function DashboardLayout({ children }) {
                 </aside>
 
                 {/* Main Content */}
-                <div className="main-content flex flex-col flex-1 transition-all duration-300 min-h-screen"
-                    style={{ marginLeft: sidebarOpen ? '16rem' : '5rem' }}>
+                <div className="main-content"
+                    style={{
+                        marginLeft: sidebarOpen ? '16rem' : '5rem',
+                        width: sidebarOpen ? 'calc(100% - 16rem)' : 'calc(100% - 5rem)',
+                        minHeight: '100vh'
+                    }}>
 
                     {/* Trial Banner */}
                     {/* Trial Banner Premium */}

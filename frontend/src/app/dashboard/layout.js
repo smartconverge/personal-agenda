@@ -187,14 +187,13 @@ export default function DashboardLayout({ children }) {
                                     href={item.href}
                                     onMouseEnter={() => setHoveredPath(item.href)}
                                     onMouseLeave={() => setHoveredPath(null)}
-                                    className={`flex items-center gap-4 px-4 py-3 rounded-lg mb-1 transition-all duration-200 cursor-pointer text-sm ${isActive || hoveredPath === item.href ? 'bg-white/10 text-white font-bold' : 'text-white/60 font-medium'
-                                        }`}
+                                    className={`sidebar-link-full ${isActive || hoveredPath === item.href ? 'bg-white/10 text-white font-bold' : 'text-white/60 font-medium'}`}
                                 >
                                     <span className="flex-shrink-0">
                                         <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div className="sidebar-link-content">
+                                        <div className="sidebar-content-wrapper">
                                             <span className="sidebar-label">{item.label}</span>
                                             {item.label === 'WhatsApp' && (
                                                 <span className={`text-xs font-black px-2 py-0.5 rounded-full border ml-auto animate-pulse ${whatsappConnected
@@ -229,18 +228,16 @@ export default function DashboardLayout({ children }) {
                                     href={item.href}
                                     onMouseEnter={() => setHoveredPath(item.href)}
                                     onMouseLeave={() => setHoveredPath(null)}
-                                    className={`flex items-center gap-4 px-4 py-3 rounded-lg mb-1 transition-all duration-200 cursor-pointer text-sm ${isActive || hoveredPath === item.href ? 'bg-white/10 text-white font-bold' : 'text-white/60 font-medium'
-                                        }`}
+                                    className={`sidebar-link-full ${isActive || hoveredPath === item.href ? 'bg-white/10 text-white font-bold' : 'text-white/60 font-medium'}`}
                                 >
                                     <span className="flex-shrink-0">
                                         <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div className="sidebar-link-content">
+                                        <div className="sidebar-content-wrapper">
                                             <span className="sidebar-label">{item.label}</span>
                                             {item.label === 'Meus Planos' && professor?.plano && (
-                                                <span className={`text-xs font-black px-2 py-0.5 rounded-full ml-auto ${professor.plano === 'PREMIUM' ? 'bg-amber-500 text-white shadow-lg' : 'bg-white/20 text-white border border-white/10'
-                                                    }`}>
+                                                <span className={`text-xs font-black px-2 py-0.5 rounded-full ml-auto ${professor.plano === 'PREMIUM' ? 'bg-amber-500 text-white shadow-lg' : 'bg-white/20 text-white border border-white/10'}`}>
                                                     {professor.plano.toUpperCase()}
                                                 </span>
                                             )}
@@ -515,86 +512,88 @@ export default function DashboardLayout({ children }) {
                         {children}
                     </main>
                 </div>
-            </div>
+            </div >
 
             {/* Mobile Menu Overlay - Unified */}
-            {mobileMenuOpen && (
-                <>
-                    <div
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] animate-fade-in"
-                    />
-                    <div className="fixed bottom-[5.5rem] left-4 right-4 bg-secondary rounded-[1.5rem] p-5 z-[120] shadow-2xl border border-border max-h-[80vh] overflow-y-auto animate-slide-up">
-                        <div className="mb-6 text-center">
-                            <div className="w-12 h-1 bg-border rounded-full mx-auto mb-5 opacity-50" />
-                            <h3 className="m-0 text-lg font-extrabold text-primary">Navegação</h3>
+            {
+                mobileMenuOpen && (
+                    <>
+                        <div
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] animate-fade-in"
+                        />
+                        <div className="fixed bottom-[5.5rem] left-4 right-4 bg-secondary rounded-[1.5rem] p-5 z-[120] shadow-2xl border border-border max-h-[80vh] overflow-y-auto animate-slide-up">
+                            <div className="mb-6 text-center">
+                                <div className="w-12 h-1 bg-border rounded-full mx-auto mb-5 opacity-50" />
+                                <h3 className="m-0 text-lg font-extrabold text-primary">Navegação</h3>
+                            </div>
+
+                            <div className="mobile-nav-grid">
+                                {menuItems.concat(planoItems).map((item) => {
+                                    const IconComponent = Icons[item.icon]
+                                    const isActive = pathname === item.href
+                                    const iconBg = isActive ? 'bg-primary' : 'bg-primary-light'
+                                    const iconColor = isActive ? 'text-white' : 'text-secondary'
+
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+                                        >
+                                            <div className={`mobile-nav-icon ${isActive ? 'active' : ''} ${iconBg} ${iconColor}`}>
+                                                <IconComponent size={22} />
+                                            </div>
+                                            <span className={`text-xs font-bold leading-tight relative text-center ${isActive ? 'text-primary' : 'text-secondary'}`}>
+                                                {item.label}
+                                                {item.label === 'Meus Planos' && professor?.plano && (
+                                                    <span className="badge badge-primary absolute -top-12 -right-2 text-[0.55rem] px-1.5 py-0.5">
+                                                        {professor.plano.toUpperCase()}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </Link>
+                                    )
+                                })}
+                            </div>
+
+                            <div className="mobile-footer-section">
+                                <Link
+                                    href="/dashboard/perfil"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="flex items-center gap-4 p-4 card-flat rounded-2xl"
+                                >
+                                    <div className="avatar avatar-md bg-gradient-to-br from-primary to-primary-light overflow-hidden">
+                                        {professor.foto_url ? (
+                                            <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
+                                        ) : (
+                                            professor.nome.charAt(0)
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col flex-1">
+                                        <p className="text-sm font-bold m-0">{professor.nome}</p>
+                                        <p className="text-xs text-muted m-0">Meu Perfil • Editar dados</p>
+                                    </div>
+                                    <Icons.ChevronRight size={18} className="text-muted" />
+                                </Link>
+
+                                <button
+                                    onClick={() => {
+                                        setMobileMenuOpen(false)
+                                        handleLogout()
+                                    }}
+                                    className="flex-center gap-3 p-4 font-bold text-sm rounded-2xl cursor-pointer transition-all duration-200 bg-red-500/10 border border-red-500/15 text-red-500"
+                                >
+                                    <Icons.Logout size={20} />
+                                    <span>Sair da Conta</span>
+                                </button>
+                            </div>
                         </div>
-
-                        <div className="mobile-nav-grid">
-                            {menuItems.concat(planoItems).map((item) => {
-                                const IconComponent = Icons[item.icon]
-                                const isActive = pathname === item.href
-                                const iconBg = isActive ? 'bg-primary' : 'bg-primary-light'
-                                const iconColor = isActive ? 'text-white' : 'text-secondary'
-
-                                return (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className={`mobile-nav-item ${isActive ? 'active' : ''}`}
-                                    >
-                                        <div className={`mobile-nav-icon ${isActive ? 'active' : ''} ${iconBg} ${iconColor}`}>
-                                            <IconComponent size={22} />
-                                        </div>
-                                        <span className={`text-xs font-bold leading-tight relative text-center ${isActive ? 'text-primary' : 'text-secondary'}`}>
-                                            {item.label}
-                                            {item.label === 'Meus Planos' && professor?.plano && (
-                                                <span className="badge badge-primary absolute -top-12 -right-2 text-[0.55rem] px-1.5 py-0.5">
-                                                    {professor.plano.toUpperCase()}
-                                                </span>
-                                            )}
-                                        </span>
-                                    </Link>
-                                )
-                            })}
-                        </div>
-
-                        <div className="mobile-footer-section">
-                            <Link
-                                href="/dashboard/perfil"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="flex items-center gap-4 p-4 card-flat rounded-2xl"
-                            >
-                                <div className="avatar avatar-md bg-gradient-to-br from-primary to-primary-light overflow-hidden">
-                                    {professor.foto_url ? (
-                                        <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
-                                    ) : (
-                                        professor.nome.charAt(0)
-                                    )}
-                                </div>
-                                <div className="flex flex-col flex-1">
-                                    <p className="text-sm font-bold m-0">{professor.nome}</p>
-                                    <p className="text-xs text-muted m-0">Meu Perfil • Editar dados</p>
-                                </div>
-                                <Icons.ChevronRight size={18} className="text-muted" />
-                            </Link>
-
-                            <button
-                                onClick={() => {
-                                    setMobileMenuOpen(false)
-                                    handleLogout()
-                                }}
-                                className="flex-center gap-3 p-4 font-bold text-sm rounded-2xl cursor-pointer transition-all duration-200 bg-red-500/10 border border-red-500/15 text-red-500"
-                            >
-                                <Icons.Logout size={20} />
-                                <span>Sair da Conta</span>
-                            </button>
-                        </div>
-                    </div>
-                </>
-            )}
+                    </>
+                )
+            }
             <BottomNavigation notificacoesCount={notificacoesCount} onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
-        </ToastProvider>
+        </ToastProvider >
     )
 }

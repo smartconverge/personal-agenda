@@ -82,23 +82,23 @@ export default function ConfiguracoesPage() {
     }
 
     return (
-        <div className="max-w-[800px] mx-auto page-enter">
-            <div className="grid grid-cols-1 gap-6">
+        <div className="max-w-[1000px] mx-auto page-enter">
+            <div className="flex flex-col">
                 {/* Segurança */}
-                <div className="card-premium p-6">
-                    <div className="card-header-premium">
-                        <div className="icon-box-premium">
-                            <Icons.Lock size={22} />
+                <div className="elite-card">
+                    <div className="elite-header">
+                        <div className="elite-icon-box">
+                            <Icons.Lock />
                         </div>
                         <div>
-                            <h3 className="text-lg font-extrabold text-primary m-0">Segurança</h3>
-                            <p className="text-xs text-muted m-0">Gerencie sua senha e proteção de conta</p>
+                            <h3 className="text-lg font-extrabold text-primary m-0">Segurança da Conta</h3>
+                            <p className="text-xs text-muted m-0">Gerencie sua senha e proteção de acesso</p>
                         </div>
                     </div>
 
-                    <form onSubmit={handleAlterarSenha} className="max-w-450">
-                        <div className="mb-5">
-                            <label className="label">Senha Atual</label>
+                    <form onSubmit={handleAlterarSenha}>
+                        <div className="elite-input-wrapper">
+                            <label className="elite-label">Senha Atual</label>
                             <input
                                 type="password"
                                 name="senhaAtual"
@@ -109,8 +109,8 @@ export default function ConfiguracoesPage() {
                                 required
                             />
                         </div>
-                        <div className="mb-5">
-                            <label className="label">Nova Senha</label>
+                        <div className="elite-input-wrapper">
+                            <label className="elite-label">Nova Senha</label>
                             <input
                                 type="password"
                                 name="novaSenha"
@@ -121,8 +121,8 @@ export default function ConfiguracoesPage() {
                                 required
                             />
                         </div>
-                        <div className="mb-8">
-                            <label className="label">Confirmar Nova Senha</label>
+                        <div className="elite-input-wrapper">
+                            <label className="elite-label">Confirmar Nova Senha</label>
                             <input
                                 type="password"
                                 name="confirmarSenha"
@@ -133,7 +133,7 @@ export default function ConfiguracoesPage() {
                                 required
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary !h-12 !px-8" disabled={loading}>
+                        <button type="submit" className="btn btn-primary !h-12 !px-10" disabled={loading}>
                             {loading ? (
                                 <div className="flex items-center gap-2">
                                     <div className="spinner !w-4 !h-4 !border-white" />
@@ -147,24 +147,24 @@ export default function ConfiguracoesPage() {
                 </div>
 
                 {/* Preferências */}
-                <div className="card-premium p-6">
-                    <div className="card-header-premium">
-                        <div className="icon-box-premium">
-                            <Icons.Settings size={22} />
+                <div className="elite-card">
+                    <div className="elite-header">
+                        <div className="elite-icon-box">
+                            <Icons.Settings />
                         </div>
                         <div>
                             <h3 className="text-lg font-extrabold text-primary m-0">Preferências do Sistema</h3>
-                            <p className="text-xs text-muted m-0">Personalize sua experiência de uso</p>
+                            <p className="text-xs text-muted m-0">Personalize sua interface e notificações</p>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-6">
-                        <div className="flex-between p-4 bg-tertiary rounded-xl border border-border">
+                    <div className="flex flex-col">
+                        <div className="elite-item-row flex-row-between">
                             <div>
                                 <strong className="text-sm font-bold block mb-1">Tema Visual</strong>
-                                <p className="text-xs text-muted m-0">Alterne entre o visual claro ou escuro.</p>
+                                <p className="text-xs text-muted m-0">Alterne entre o visual claro ou escuro do dashboard.</p>
                             </div>
-                            <button onClick={toggleTema} className="btn btn-secondary !py-2 !px-4">
+                            <button onClick={toggleTema} className="btn btn-secondary !py-2.5 !px-6">
                                 {preferencias.tema === 'light' ? (
                                     <><Icons.Moon size={16} /> Modo Escuro</>
                                 ) : (
@@ -173,28 +173,28 @@ export default function ConfiguracoesPage() {
                             </button>
                         </div>
 
-                        <div className="flex-between p-4 bg-tertiary rounded-xl border border-border">
+                        <div className="elite-item-row flex-row-between">
                             <div>
                                 <strong className="text-sm font-bold block mb-1">Alertas via WhatsApp</strong>
-                                <p className="text-xs text-muted m-0">Receba avisos de novos agendamentos vinculados.</p>
+                                <p className="text-xs text-muted m-0">Receba avisos automáticos de novos agendamentos.</p>
                             </div>
-                            <label className="switch-premium">
+                            <label className="elite-switch">
                                 <input
                                     type="checkbox"
                                     checked={preferencias.notificacoes_whatsapp}
                                     onChange={() => setPreferencias(p => ({ ...p, notificacoes_whatsapp: !p.notificacoes_whatsapp }))}
                                 />
-                                <span className="slider-premium"></span>
+                                <span className="elite-slider"></span>
                             </label>
                         </div>
                     </div>
                 </div>
 
                 {/* Zona de Perigo */}
-                <div className="card-premium p-6" style={{ background: 'rgba(239, 68, 68, 0.03)', borderColor: 'rgba(239, 68, 68, 0.15)' }}>
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="icon-box-premium" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
-                            <Icons.Delete size={22} />
+                <div className="elite-card elite-card-danger">
+                    <div className="elite-header">
+                        <div className="elite-icon-box elite-icon-box-danger">
+                            <Icons.Delete />
                         </div>
                         <div>
                             <h3 className="text-lg font-extrabold text-red-500 m-0">Gestão de Dados Sensíveis</h3>
@@ -202,13 +202,13 @@ export default function ConfiguracoesPage() {
                         </div>
                     </div>
 
-                    <p className="text-sm text-muted mb-6">
+                    <p className="text-sm text-muted mb-8 leading-relaxed">
                         Ao excluir sua conta, todos os seus dados (alunos, contratos e histórico) serão
-                        <strong> apagados permanentemente</strong>. Não há como desfazer esta ação.
+                        <strong> apagados permanentemente</strong>. Não há como desfazer esta ação após a confirmação.
                     </p>
 
-                    <button onClick={handleExcluirConta} className="btn btn-danger !btn-sm !px-6">
-                        Desativar Minha Conta
+                    <button onClick={handleExcluirConta} className="btn btn-danger !btn-sm !px-10">
+                        Desativar Minha Conta permanentemente
                     </button>
                 </div>
             </div>

@@ -2225,3 +2225,245 @@ h6 {
 .tracking-wider {
   letter-spacing: 0.05em;
 }
+
+/* --- Premium Refinements v1.3 --- */
+
+/* Sidebar Fixes */
+.sidebar-link-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+/* Premium Card */
+.card-premium {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card-premium:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.card-header-premium {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.icon-box-premium {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.875rem;
+  background-color: hsla(155, 72%, 32%, 0.1);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Premium Switch (Toggle) */
+.switch-premium {
+  position: relative;
+  display: inline-block;
+  width: 2.75rem;
+  height: 1.5rem;
+}
+
+.switch-premium input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-premium {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: .4s;
+  border-radius: 2rem;
+}
+
+.slider-premium:before {
+  position: absolute;
+  content: "";
+  height: 1.125rem;
+  width: 1.125rem;
+  left: 0.2rem;
+  bottom: 0.1875rem;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:checked+.slider-premium {
+  background-color: var(--primary);
+}
+
+input:checked+.slider-premium:before {
+  transform: translateX(1.25rem);
+}
+
+/* Utils */
+.ml-auto {
+  margin-left: auto !important;
+}
+
+.font-black {
+  font-weight: 900 !important;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Missing Utils Premium Extra */
+.bg-secondary {
+  background-color: var(--bg-secondary) !important;
+}
+
+.bg-tertiary {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary) !important;
+}
+
+.bg-danger {
+  background-color: #ef4444 !important;
+}
+
+.p-7 {
+  padding: 1.75rem !important;
+}
+
+.p-8 {
+  padding: 2rem !important;
+}
+
+.px-8 {
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+}
+
+.h-12 {
+  height: 3rem !important;
+}
+
+.max-w-450 {
+  max-width: 450px !important;
+}
+
+.opacity-60 {
+  opacity: 0.6 !important;
+}
+
+.flex-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.flex-between {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.header-title-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-title {
+  margin: 0 !important;
+}
+
+.header-subtitle {
+  margin: 0.25rem 0 0 0 !important;
+}
+
+/* Color & Alpha Utilities */
+.text-success {
+  color: var(--success) !important;
+}
+
+.text-red-400 {
+  color: #f87171 !important;
+}
+
+.text-amber-500 {
+  color: #f59e0b !important;
+}
+
+.bg-success\/20 {
+  background-color: hsla(155, 72%, 32%, 0.2) !important;
+}
+
+.bg-red-500\/20 {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.bg-red-500\/10 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.bg-amber-500 {
+  background-color: #f59e0b !important;
+}
+
+.border-success\/30 {
+  border-color: hsla(155, 72%, 32%, 0.3) !important;
+}
+
+.border-red-500\/25 {
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+.border-red-500\/20 {
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.border-red-500\/15 {
+  border-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+.border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.rounded-xl {
+  border-radius: 1rem !important;
+}
+
+.sidebar-label {
+  flex: 1;
+  text-align: left;
+}

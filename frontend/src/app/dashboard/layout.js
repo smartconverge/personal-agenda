@@ -194,11 +194,11 @@ export default function DashboardLayout({ children }) {
                                         <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div className="flex items-center justify-between w-full">
-                                            <span>{item.label}</span>
+                                        <div className="sidebar-link-content">
+                                            <span className="sidebar-label">{item.label}</span>
                                             {item.label === 'WhatsApp' && (
-                                                <span className={`text-[0.55rem] font-black px-2 py-0.5 rounded-full border tracking-tighter ml-auto ${whatsappConnected
-                                                    ? 'bg-success/20 text-success border-success/30 animate-pulse'
+                                                <span className={`text-xs font-black px-2 py-0.5 rounded-full border ml-auto animate-pulse ${whatsappConnected
+                                                    ? 'bg-success/20 text-success border-success/30'
                                                     : 'bg-red-500/10 text-red-400 border-red-500/20'
                                                     }`}>
                                                     {whatsappConnected ? 'CONECTADO' : 'OFFLINE'}
@@ -236,10 +236,10 @@ export default function DashboardLayout({ children }) {
                                         <IconComponent size={20} />
                                     </span>
                                     {sidebarOpen && (
-                                        <div className="flex items-center justify-between w-full">
-                                            <span>{item.label}</span>
+                                        <div className="sidebar-link-content">
+                                            <span className="sidebar-label">{item.label}</span>
                                             {item.label === 'Meus Planos' && professor?.plano && (
-                                                <span className={`text-[0.55rem] font-black px-2 py-0.5 rounded-full ml-auto tracking-tighter ${professor.plano === 'PREMIUM' ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' : 'bg-white/20 text-white border border-white/10'
+                                                <span className={`text-xs font-black px-2 py-0.5 rounded-full ml-auto ${professor.plano === 'PREMIUM' ? 'bg-amber-500 text-white shadow-lg' : 'bg-white/20 text-white border border-white/10'
                                                     }`}>
                                                     {professor.plano.toUpperCase()}
                                                 </span>

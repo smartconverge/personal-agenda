@@ -1,8 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import api from '@/lib/api'
 import { Icons } from '@/components/Icons'
+import {
+    getStatusBadge,
+    getStatusText,
+    formatDate,
+    formatTime,
+    getNotificationIcon,
+    getNotificationColor,
+    getNotificationBg
+} from '@/utils/formatters'
 import Pagination from '@/components/Pagination'
 
 export default function NotificacoesPage() {
@@ -40,43 +50,6 @@ export default function NotificacoesPage() {
         }
     }
 
-    const getNotificationStyle = (status) => {
-        switch (status) {
-            case 'enviado':
-                return {
-                    icon: Icons.CheckCircle,
-                    color: 'var(--success)',
-                    bg: 'hsl(155, 72%, 32%, 0.1)',
-                    statusLabel: 'Enviado',
-                    badgeClass: 'badge-success'
-                }
-            case 'erro':
-                return {
-                    icon: Icons.Error,
-                    color: 'var(--danger)',
-                    bg: 'hsl(0, 72%, 55%, 0.1)',
-                    statusLabel: 'Erro',
-                    badgeClass: 'badge-danger'
-                }
-            case 'pendente':
-                return {
-                    icon: Icons.Alert,
-                    color: 'var(--warning)',
-                    bg: 'hsl(40, 96%, 50%, 0.1)',
-                    statusLabel: 'Pendente',
-                    badgeClass: 'badge-warning'
-                }
-            default:
-                return {
-                    icon: Icons.Info,
-                    color: 'var(--info)',
-                    bg: 'hsl(215, 85%, 55%, 0.1)',
-                    statusLabel: status.toUpperCase(),
-                    badgeClass: 'badge-info'
-                }
-        }
-    }
-
     if (loading && notificacoes.length === 0) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
@@ -102,8 +75,9 @@ export default function NotificacoesPage() {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {notificacoes.map((notif, index) => {
-                            const style = getNotificationStyle(notif.status)
-                            const IconComponent = style.icon
+                            const IconComponent = getNotificationIcon(notif.status, Icons)
+                            const iconColor = getNotificationColor(notif.status)
+                            const iconBg = getNotificationBg(notif.status)
 
                             return (
                                 <div
@@ -124,13 +98,13 @@ export default function NotificacoesPage() {
                                         width: '2.5rem',
                                         height: '2.5rem',
                                         borderRadius: '50%',
-                                        backgroundColor: style.bg,
+                                        backgroundColor: iconBg,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         flexShrink: 0
                                     }}>
-                                        <IconComponent size={20} color={style.color} />
+                                        <IconComponent size={20} color={iconColor} />
                                     </div>
 
                                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -139,13 +113,7 @@ export default function NotificacoesPage() {
                                                 {notif.tipo.charAt(0).toUpperCase() + notif.tipo.slice(1)}
                                             </h3>
                                             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                                                {new Date(notif.created_at).toLocaleString('pt-BR', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
+                                                {formatDate(notif.created_at)} {formatTime(notif.created_at)}
                                             </span>
                                         </div>
 
@@ -165,8 +133,8 @@ export default function NotificacoesPage() {
                                                     {notif.telefone_destino}
                                                 </span>
                                             </div>
-                                            <span className={`badge ${style.badgeClass}`} style={{ fontSize: '0.625rem' }}>
-                                                {style.statusLabel}
+                                            <span className={`badge ${getStatusBadge(notif.status)}`} style={{ fontSize: '0.625rem' }}>
+                                                {getStatusText(notif.status)}
                                             </span>
                                         </div>
                                     </div>

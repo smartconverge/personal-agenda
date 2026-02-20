@@ -4,6 +4,14 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import api from '@/lib/api'
 import { Icons } from '@/components/Icons'
+import {
+    getInitials,
+    getAvatarColor,
+    getStatusBadge,
+    getStatusText,
+    formatCurrency,
+    formatTime
+} from '@/utils/formatters'
 
 export default function DashboardPage() {
     const [stats, setStats] = useState(null)
@@ -69,47 +77,7 @@ export default function DashboardPage() {
         }
     }
 
-    const getStatusBadge = (status) => {
-        const badges = {
-            'agendada': 'badge-info',
-            'confirmada': 'badge-success',
-            'concluida': 'badge-success',
-            'cancelada': 'badge-danger',
-            'pendente': 'badge-warning'
-        }
-        return badges[status] || 'badge-secondary'
-    }
 
-    const getStatusText = (status) => {
-        const texts = {
-            'agendada': 'AGENDADA',
-            'confirmada': 'CONFIRMADA',
-            'concluida': 'CONCLUÍDA',
-            'cancelada': 'CANCELADA',
-            'pendente': 'PENDENTE'
-        }
-        return texts[status] || status.toUpperCase()
-    }
-
-    const getInitials = (name) => {
-        if (!name) return '?'
-        const parts = name.split(' ')
-        if (parts.length >= 2) {
-            return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-        }
-        return name.substring(0, 2).toUpperCase()
-    }
-
-    const getAvatarColor = (index) => {
-        const colors = [
-            'linear-gradient(135deg, #10b981, #059669)',
-            'linear-gradient(135deg, #3b82f6, #2563eb)',
-            'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-            'linear-gradient(135deg, #f59e0b, #d97706)',
-            'linear-gradient(135deg, #ef4444, #dc2626)',
-        ]
-        return colors[index % colors.length]
-    }
 
     if (loading) {
         return (
@@ -136,7 +104,7 @@ export default function DashboardPage() {
         },
         {
             label: 'Receita Mensal',
-            value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.faturamentoMensal || 0),
+            value: formatCurrency(stats?.faturamentoMensal || 0),
             change: stats?.contratosAtivos > 0 ? `${stats.contratosAtivos} contrato${stats.contratosAtivos > 1 ? 's' : ''} ativo${stats.contratosAtivos > 1 ? 's' : ''}` : 'Sem contratos ativos',
             iconComponent: Icons.Money,
             color: 'var(--primary)',
@@ -263,7 +231,7 @@ export default function DashboardPage() {
                                     <div className="session-time-badge">
                                         <Icons.Clock size={14} color="var(--primary)" />
                                         <span style={{ fontWeight: '800', fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
-                                            {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                            {formatTime(sessao.data_hora_inicio)}
                                         </span>
                                     </div>
                                     <span className={`badge ${getStatusBadge(sessao.status)}`}>

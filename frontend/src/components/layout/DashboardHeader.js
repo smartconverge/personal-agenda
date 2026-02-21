@@ -16,10 +16,11 @@ export default function DashboardHeader({
     handleLogout
 }) {
     // Match seguro — suporta rotas dinâmicas como /alunos/123
+    const safePathname = pathname || '';
     const fallbackMeta = { title: 'Personal Agenda', subtitle: '' };
     const metaEntry = Object.entries(dashboardMeta)
         .sort((a, b) => b[0].length - a[0].length)
-        .find(([route]) => pathname.startsWith(route));
+        .find(([route]) => safePathname.startsWith(route));
     const meta = metaEntry ? metaEntry[1] : fallbackMeta;
     const displayTitle = meta.title;
     const displaySubtitle = meta.getSubtitle ? meta.getSubtitle(professor) : meta.subtitle;

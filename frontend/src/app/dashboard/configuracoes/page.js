@@ -8,7 +8,7 @@ import WhatsAppConnect from '@/components/WhatsAppConnect'
 import styles from './Settings.module.css'
 
 export default function ConfiguracoesPage() {
-    const { addToast } = useToast()
+    const { showToast } = useToast()
     const [loading, setLoading] = useState(false)
     const [senhaData, setSenhaData] = useState({
         senhaAtual: '',
@@ -35,10 +35,7 @@ export default function ConfiguracoesPage() {
 
     const handleAlterarSenha = async (e) => {
         e.preventDefault()
-        if (senhaData.novaSenha !== senhaData.confirmarSenha) {
-            addToast('A nova senha e a confirmação não coincidem.', 'error')
-            return
-        }
+        showToast('A nova senha e a confirmação não coincidem.', 'error')
 
         setLoading(true)
         try {
@@ -47,11 +44,11 @@ export default function ConfiguracoesPage() {
                 novaSenha: senhaData.novaSenha
             })
             if (response.data.success) {
-                addToast('Senha alterada com sucesso!', 'success')
+                showToast('Senha atualizada com sucesso!', 'success')
                 setSenhaData({ senhaAtual: '', novaSenha: '', confirmarSenha: '' })
             }
         } catch (error) {
-            addToast(error.response?.data?.error || 'Erro ao alterar senha.', 'error')
+            showToast(error.response?.data?.message || 'Erro ao alterar senha.', 'error')
         } finally {
             setLoading(false)
         }
@@ -62,7 +59,7 @@ export default function ConfiguracoesPage() {
         setPreferencias(prev => ({ ...prev, tema: novoTema }))
         localStorage.setItem('theme', novoTema)
         document.documentElement.setAttribute('data-theme', novoTema)
-        addToast(`Modo ${novoTema === 'light' ? 'claro' : 'escuro'} ativado!`, 'info')
+        showToast(`Modo ${novoTema === 'light' ? 'claro' : 'escuro'} ativado!`, 'info')
     }
 
     const handleExcluirConta = async () => {
@@ -76,7 +73,7 @@ export default function ConfiguracoesPage() {
                         window.location.href = '/login'
                     }
                 } catch (error) {
-                    addToast('Erro ao excluir conta.', 'error')
+                    showToast('Erro ao sair da conta.', 'error')
                 }
             }
         }

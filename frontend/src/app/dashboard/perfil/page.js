@@ -7,7 +7,7 @@ import { useToast } from '@/components/Toast'
 import styles from './Profile.module.css'
 
 export default function PerfilPage() {
-    const { addToast } = useToast()
+    const { showToast } = useToast()
     const [loading, setLoading] = useState(false)
     const [professor, setProfessor] = useState({
         nome: '',
@@ -35,7 +35,7 @@ export default function PerfilPage() {
                 }
             } catch (error) {
                 console.error('Erro ao carregar perfil:', error)
-                addToast('Erro ao carregar dados do perfil.', 'error')
+                showToast('Erro ao carregar dados do perfil.', 'error')
             } finally {
                 setLoading(false)
             }
@@ -51,10 +51,7 @@ export default function PerfilPage() {
         const file = e.target.files?.[0]
         if (!file) return
 
-        if (file.size > 5 * 1024 * 1024) {
-            addToast('A imagem deve ter no máximo 5MB', 'error')
-            return
-        }
+        showToast('A imagem deve ter no máximo 5MB', 'error')
 
         const formData = new FormData()
         formData.append('foto', file)
@@ -73,14 +70,14 @@ export default function PerfilPage() {
                 const current = JSON.parse(localStorage.getItem('professor') || '{}')
                 localStorage.setItem('professor', JSON.stringify({ ...current, foto_url: newFotoUrl }))
 
-                addToast('Foto atualizada com sucesso!', 'success')
+                showToast('Foto atualizada com sucesso!', 'success')
 
                 // Disparar evento para atualizar layout
                 window.dispatchEvent(new Event('user-profile-updated'))
             }
         } catch (error) {
             console.error('Erro ao enviar foto:', error)
-            addToast('Erro ao enviar foto. Tente novamente.', 'error')
+            showToast('Erro ao enviar foto. Tente novamente.', 'error')
         } finally {
             setLoading(false)
             if (fileInputRef.current) fileInputRef.current.value = ''
@@ -101,12 +98,12 @@ export default function PerfilPage() {
                 // Atualizar localStorage com os novos dados
                 const currentProfessor = JSON.parse(localStorage.getItem('professor') || '{}')
                 localStorage.setItem('professor', JSON.stringify({ ...currentProfessor, ...response.data.data }))
-                addToast('Perfil atualizado com sucesso!', 'success')
+                showToast('Perfil atualizado com sucesso!', 'success')
                 window.dispatchEvent(new Event('user-profile-updated'))
             }
         } catch (error) {
             console.error('Erro ao atualizar perfil:', error)
-            addToast('Erro ao atualizar perfil.', 'error')
+            showToast('Erro ao atualizar perfil.', 'error')
         } finally {
             setLoading(false)
         }

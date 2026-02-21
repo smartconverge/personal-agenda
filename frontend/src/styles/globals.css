@@ -5,15 +5,20 @@
 :root {
   /* Brand Colors */
   --color-primary: #0a3325;
+  --color-primary-rgb: 10, 51, 37;
   --color-primary-dark: #071f17;
   --color-primary-light: rgba(10, 51, 37, 0.08);
   --color-primary-glow: rgba(10, 51, 37, 0.4);
 
   /* Semantic Colors */
   --color-success: #16a34a;
+  --color-success-rgb: 22, 163, 74;
   --color-danger: #dc2626;
+  --color-danger-rgb: 220, 38, 38;
   --color-warning: #d97706;
+  --color-warning-rgb: 217, 119, 6;
   --color-info: #0ea5e9;
+  --color-info-rgb: 14, 165, 233;
 
   /* Backgrounds */
   --bg-page: #f4f7f5;

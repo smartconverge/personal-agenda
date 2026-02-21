@@ -51,7 +51,10 @@ export default function PerfilPage() {
         const file = e.target.files?.[0]
         if (!file) return
 
-        showToast('A imagem deve ter no máximo 5MB', 'error')
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('A imagem deve ter no máximo 5MB', 'error')
+            return
+        }
 
         const formData = new FormData()
         formData.append('foto', file)

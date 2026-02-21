@@ -35,7 +35,10 @@ export default function ConfiguracoesPage() {
 
     const handleAlterarSenha = async (e) => {
         e.preventDefault()
-        showToast('A nova senha e a confirmação não coincidem.', 'error')
+        if (senhaData.novaSenha !== senhaData.confirmarSenha) {
+            showToast('A nova senha e a confirmação não coincidem.', 'error')
+            return
+        }
 
         setLoading(true)
         try {

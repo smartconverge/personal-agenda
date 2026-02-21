@@ -6,6 +6,7 @@ import { useToast } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
 import Modal from '@/components/Modal'
 import Pagination from '@/components/Pagination'
+import styles from './Contracts.module.css'
 
 export default function ContratosPage() {
     const { showToast } = useToast()
@@ -137,23 +138,19 @@ export default function ContratosPage() {
         }
     }
 
-    const filteredContratos = contratos.filter(c =>
-        filterStatus === 'todos' || c.status === filterStatus
-    )
-
-    if (loading) {
+    if (loading && contratos.length === 0) {
         return (
-            <div className="flex-center p-12">
+            <div className="flex justify-center p-20">
                 <div className="spinner !w-12 !h-12" />
             </div>
         )
     }
 
     return (
-        <div className="page-enter">
-            <div className="flex justify-end mb-6">
+        <div className={styles.container}>
+            <div className={styles.actionBar}>
                 <button
-                    className="btn btn-primary"
+                    className="btn btn-primary !h-11"
                     onClick={openNewModal}
                 >
                     <Icons.Plus size={18} />
@@ -161,19 +158,18 @@ export default function ContratosPage() {
                 </button>
             </div>
 
-            {/* Filters */}
-            <div className="card-flat mb-6 p-3">
-                <div className="flex gap-2 flex-wrap">
+            {/* Filters Bar */}
+            <div className={styles.filterBar}>
+                <div className={styles.filterList}>
                     {[
-                        { id: 'todos', label: 'Todos', count: contratos.length },
-                        { id: 'ativo', label: 'Ativos', color: 'border-l-success' },
-                        { id: 'vencido', label: 'Vencidos', color: 'border-l-warning' },
-                        { id: 'cancelado', label: 'Cancelados', color: 'border-l-danger' },
+                        { id: 'todos', label: 'Todos' },
+                        { id: 'ativo', label: 'Ativos' },
+                        { id: 'vencido', label: 'Vencidos' },
+                        { id: 'cancelado', label: 'Cancelados' },
                     ].map((f) => (
                         <button
                             key={f.id}
-                            className={`btn ${filterStatus === f.id ? 'btn-primary' : 'btn-secondary'} !h-auto !py-2.5 !px-5 text-sm ${filterStatus === f.id ? '' : `border-l-4 ${f.color || ''}`
-                                }`}
+                            className={`${styles.filterBtn} ${styles[`filterBtn--${f.id}`]} ${filterStatus === f.id ? styles['filterBtn--active'] : ''}`}
                             onClick={() => setFilterStatus(f.id)}
                         >
                             {f.label}
@@ -183,73 +179,73 @@ export default function ContratosPage() {
             </div>
 
             {/* Contracts Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2">
-                {filteredContratos.length === 0 ? (
-                    <div className="card-flat text-center py-16 px-8 col-span-full">
-                        <Icons.Contracts size={48} className="text-muted opacity-30 mb-4 mx-auto" />
-                        <p className="text-muted font-medium">Nenhum contrato encontrado</p>
+            <div className={styles.grid}>
+                {contratos.length === 0 ? (
+                    <div className={styles.emptyState}>
+                        <div className={styles.emptyState__icon}>
+                            <Icons.Contracts size={48} />
+                        </div>
+                        <p className={styles.emptyState__text}>Nenhum contrato encontrado</p>
                     </div>
                 ) : (
-                    filteredContratos.map((contrato) => (
+                    contratos.map((contrato) => (
                         <div
                             key={contrato.id}
-                            className="card-premium p-7 flex flex-col relative !bg-secondary"
+                            className={styles.contractCard}
                         >
                             {/* Header: Student + Status */}
-                            <div className="flex-between items-start mb-6">
-                                <div className="min-w-0">
-                                    <h3 className="text-lg font-extrabold text-primary mb-1 truncate">
+                            <div className={styles.contractCard__header}>
+                                <div className={styles.contractCard__student}>
+                                    <h3 className={styles.contractCard__name}>
                                         {contrato.aluno?.nome || 'N/A'}
                                     </h3>
-                                    <span className="text-sm text-secondary font-semibold">
+                                    <span className={styles.contractCard__service}>
                                         {contrato.servico?.nome || 'N/A'}
                                     </span>
                                 </div>
-                                <span className={`badge ${getStatusBadge(contrato.status)} !text-[0.65rem] !px-3 font-extrabold`}>
-                                    {contrato.status.toUpperCase()}
+                                <span className={`badge ${getStatusBadge(contrato.status)} !text-[0.65rem] !px-3 font-extrabold uppercase`}>
+                                    {contrato.status}
                                 </span>
                             </div>
 
                             {/* Billing Info Box */}
-                            <div className="!bg-primary/5 p-5 rounded-2xl mb-6 flex-between">
+                            <div className={styles.contractCard__billing}>
                                 <div>
-                                    <p className="text-[0.6rem] text-muted uppercase font-extrabold mb-1 tracking-wider">Valor Mensal</p>
-                                    <p className="text-xl font-black text-primary">
+                                    <p className={styles.billingItem__label}>Valor Mensal</p>
+                                    <p className={styles.billingItem__value}>
                                         R$ {parseFloat(contrato.valor_mensal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[0.6rem] text-muted uppercase font-extrabold mb-1 tracking-wider">Prox. Venc.</p>
-                                    <p className="text-sm font-bold text-primary">
+                                    <p className={styles.billingItem__label}>Próx. Venc.</p>
+                                    <p className={styles.billingItem__date}>
                                         {new Date(contrato.data_vencimento).toLocaleDateString('pt-BR')}
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Timeline/Dates */}
-                            <div className="flex gap-6 mb-7 text-[0.8rem] text-muted">
-                                <div className="flex items-center gap-1.5">
-                                    <Icons.Calendar size={14} />
-                                    <span>Início: {new Date(contrato.data_inicio).toLocaleDateString('pt-BR')}</span>
-                                </div>
+                            {/* Timeline Info */}
+                            <div className={styles.contractCard__timeline}>
+                                <Icons.Calendar size={14} />
+                                <span>Início: {new Date(contrato.data_inicio).toLocaleDateString('pt-BR')}</span>
                             </div>
 
                             {/* Actions Group */}
-                            <div className="flex gap-3 mt-auto">
+                            <div className={styles.contractCard__actions}>
                                 <button
-                                    className="btn-icon btn-icon-primary"
+                                    className="btn btn-icon btn-icon-primary !w-10 !h-10"
                                     onClick={() => openEditModal(contrato)}
                                     title="Editar"
                                 >
                                     <Icons.Edit size={18} />
                                 </button>
                                 <button
-                                    className="btn-icon btn-icon-danger"
+                                    className="btn btn-icon btn-icon-danger !w-10 !h-10"
                                     onClick={() => {
                                         setSelectedContrato(contrato);
                                         setShowDeleteDialog(true);
                                     }}
-                                    title="Cancelar/Excluir"
+                                    title="Cancelar ou Excluir"
                                 >
                                     <Icons.Delete size={18} />
                                 </button>
@@ -259,6 +255,7 @@ export default function ContratosPage() {
                 )}
             </div>
 
+            {/* Modal de Formulário */}
             <Modal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
@@ -266,7 +263,7 @@ export default function ContratosPage() {
             >
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="label">Aluno</label>
+                        <label className="label">Aluno *</label>
                         <select
                             className="input"
                             value={formData.aluno_id}
@@ -281,7 +278,7 @@ export default function ContratosPage() {
                     </div>
 
                     <div className="mb-4">
-                        <label className="label">Serviço</label>
+                        <label className="label">Serviço *</label>
                         <select
                             className="input"
                             value={formData.servico_id}
@@ -295,9 +292,9 @@ export default function ContratosPage() {
                         </select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="grid grid-cols-2 gap-4 mb-8">
                         <div>
-                            <label className="label">Data de Início</label>
+                            <label className="label">Data de Início *</label>
                             <input
                                 type="date"
                                 className="input"
@@ -307,7 +304,7 @@ export default function ContratosPage() {
                             />
                         </div>
                         <div>
-                            <label className="label">Valor Mensal (R$)</label>
+                            <label className="label">Valor Mensal (R$) *</label>
                             <input
                                 type="number"
                                 className="input"
@@ -321,7 +318,7 @@ export default function ContratosPage() {
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3 mt-8">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-border">
                         <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
                             Cancelar
                         </button>
@@ -338,38 +335,41 @@ export default function ContratosPage() {
                 onClose={() => setShowDeleteDialog(false)}
                 title="Gerenciar Contrato"
             >
-                <div className="text-center py-4">
-                    <div className="w-16 h-16 rounded-full bg-red-500/10 flex-center mx-auto mb-6 text-red-500">
+                <div className={styles.decisionModal}>
+                    <div className={styles.decisionModal__iconBox}>
                         <Icons.Alert size={32} />
                     </div>
-                    <h3 className="text-xl font-extrabold mb-2">O que deseja fazer?</h3>
-                    <p className="text-sm text-secondary mb-8">
+                    <h3 className={styles.decisionModal__title}>O que deseja fazer?</h3>
+                    <p className={styles.decisionModal__subtitle}>
                         Contrato de <strong className="text-primary">{selectedContrato?.aluno?.nome}</strong>
                     </p>
 
-                    <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl mb-8 flex gap-3 text-left">
+                    <div className={styles.decisionModal__alert}>
                         <Icons.Info size={20} className="text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-xs text-yellow-800 font-medium">Aulas futuras agendadas para este contrato serão <strong className="font-extrabold uppercase">canceladas automaticamente</strong>.</p>
+                        <p className={styles.decisionModal__alertText}>
+                            Aulas futuras agendadas para este contrato serão
+                            <strong className="font-extrabold uppercase"> canceladas automaticamente</strong>.
+                        </p>
                     </div>
 
-                    <div className="flex flex-col gap-3">
+                    <div className={styles.decisionModal__btnGroup}>
                         <button
-                            className="btn btn-secondary !h-14 !justify-center border-yellow-500 text-yellow-600 hover:bg-yellow-50"
+                            className={`btn btn-secondary ${styles.decisionModal__btn} ${styles.decisionModal__btnPrimary}`}
                             onClick={() => handleDelete(false)}
                         >
-                            <div className="text-center">
-                                <p className="font-extrabold text-sm mb-0.5">Apenas Cancelar</p>
-                                <p className="text-[0.65rem] opacity-70">Mantém o registro histórico no sistema</p>
+                            <div>
+                                <p className={styles.decisionModal__btnText}>Apenas Cancelar</p>
+                                <p className={styles.decisionModal__btnSubtext}>Mantém o registro histórico no sistema</p>
                             </div>
                         </button>
 
                         <button
-                            className="btn btn-danger !h-14 !justify-center shadow-lg shadow-red-500/20"
+                            className={`btn btn-danger ${styles.decisionModal__btn} ${styles.decisionModal__btnDanger}`}
                             onClick={() => handleDelete(true)}
                         >
-                            <div className="text-center">
-                                <p className="font-extrabold text-sm mb-0.5">Excluir Definitivamente</p>
-                                <p className="text-[0.65rem] opacity-80 text-white/70">Remove completamente do banco de dados</p>
+                            <div>
+                                <p className={styles.decisionModal__btnText}>Excluir Definitivamente</p>
+                                <p className={styles.decisionModal__btnSubtext}>Remove completamente do banco de dados</p>
                             </div>
                         </button>
 

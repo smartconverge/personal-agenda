@@ -1,0 +1,270 @@
+/* Contracts.module.css — Padrão BEM */
+
+.container {
+    animation: fadeIn 0.3s ease-out both;
+}
+
+.actionBar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-6);
+}
+
+.filterBar {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.filterList {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: var(--space-2) var(--space-5);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    transition: var(--transition-base);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.filterBtn--ativo {
+    border-left: 4px solid var(--color-success);
+}
+
+.filterBtn--vencido {
+    border-left: 4px solid var(--color-warning);
+}
+
+.filterBtn--cancelado {
+    border-left: 4px solid var(--color-danger);
+}
+
+.filterBtn--active {
+    background: var(--color-primary) !important;
+    color: white !important;
+    border-color: var(--color-primary) !important;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-6);
+    padding: var(--space-2);
+}
+
+/* Contract Card */
+.contractCard {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-7);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: var(--transition-smooth);
+}
+
+.contractCard:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--color-primary-light);
+}
+
+.contractCard__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-6);
+}
+
+.contractCard__student {
+    min-width: 0;
+}
+
+.contractCard__name {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.01em;
+}
+
+.contractCard__service {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Billing Info */
+.contractCard__billing {
+    background: rgba(var(--color-primary-rgb), 0.05);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    border: 1px solid rgba(var(--color-primary-rgb), 0.1);
+}
+
+.billingItem__label {
+    font-size: 0.625rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: var(--space-1);
+    letter-spacing: 0.05em;
+}
+
+.billingItem__value {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--color-primary);
+}
+
+.billingItem__date {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Timeline */
+.contractCard__timeline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-6);
+}
+
+.contractCard__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: auto;
+}
+
+/* Empty State */
+.emptyState {
+    grid-column: 1 / -1;
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 5rem 2rem;
+    text-align: center;
+}
+
+.emptyState__icon {
+    margin-bottom: var(--space-4);
+    color: var(--text-muted);
+    opacity: 0.3;
+}
+
+.emptyState__text {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Decision Modal Styles */
+.decisionModal {
+    text-align: center;
+    padding: var(--space-4) 0;
+}
+
+.decisionModal__iconBox {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: rgba(var(--color-danger-rgb), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-6);
+    color: var(--color-danger);
+}
+
+.decisionModal__title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: var(--space-2);
+}
+
+.decisionModal__subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-8);
+}
+
+.decisionModal__alert {
+    background: rgba(var(--color-warning-rgb), 0.1);
+    border: 1px solid rgba(var(--color-warning-rgb), 0.2);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-8);
+    display: flex;
+    gap: var(--space-3);
+    text-align: left;
+}
+
+.decisionModal__alertText {
+    font-size: 0.75rem;
+    color: var(--color-warning-dark);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.decisionModal__btnGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.decisionModal__btn {
+    height: 3.5rem !important;
+    justify-content: center !important;
+}
+
+.decisionModal__btnPrimary {
+    border-color: var(--color-warning) !important;
+    color: var(--color-warning-dark) !important;
+}
+
+.decisionModal__btnDanger {
+    box-shadow: 0 4px 12px rgba(var(--color-danger-rgb), 0.2);
+}
+
+.decisionModal__btnText {
+    font-size: 0.875rem;
+    font-weight: 800;
+    margin-bottom: 2px;
+}
+
+.decisionModal__btnSubtext {
+    font-size: 0.65rem;
+    opacity: 0.7;
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contractCard {
+        padding: var(--space-5);
+    }
+}

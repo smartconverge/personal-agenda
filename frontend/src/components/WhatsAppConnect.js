@@ -98,7 +98,7 @@ export default function WhatsAppConnect() {
     }
 
     return (
-        <div className="card-premium" style={{ padding: '1.5rem' }}>
+        <div className="card" style={{ padding: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
                 <div style={{
                     padding: '0.75rem',
@@ -118,7 +118,7 @@ export default function WhatsAppConnect() {
                 </div>
             </div>
 
-            <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--background-page)', borderRadius: '0.75rem', border: '1px solid var(--border)' }}>
+            <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--bg-page)', borderRadius: '0.75rem', border: '1px solid var(--border-color)' }}>
                 {status === 'loading' && !qrCode ? (
                     <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                         <div className="spinner" style={{ width: '1.5rem', height: '1.5rem', margin: '0 auto 0.5rem' }} />

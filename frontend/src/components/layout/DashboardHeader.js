@@ -1,8 +1,7 @@
-'use client'
-
 import Link from 'next/link'
 import { Icons } from '@/components/Icons'
 import { dashboardMeta } from '@/config/dashboard'
+import styles from './DashboardHeader.module.css'
 
 export default function DashboardHeader({
     pathname,
@@ -26,24 +25,24 @@ export default function DashboardHeader({
     const displaySubtitle = meta.getSubtitle ? meta.getSubtitle(professor) : meta.subtitle;
 
     return (
-        <header className="glass-effect flex-between px-6 py-4 sticky top-0 z-30 min-h-[4.5rem]">
+        <header className={styles.header}>
             <div className="flex items-center gap-4">
                 <button
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="btn-ghost-nav desktop-only p-2"
+                    className={`${styles.btnGhost} ${styles.desktopOnly}`}
                 >
                     <Icons.SidebarToggle size={20} />
                 </button>
 
                 {/* Vertical Separator */}
-                <div className="desktop-only w-px h-6 bg-border mx-2" />
+                <div className={`${styles.desktopOnly} ${styles.separator}`} />
 
-                <div className="header-title-container">
-                    <h1 className="header-title">
+                <div className={styles.titleContainer}>
+                    <h1 className={styles.title}>
                         {displayTitle}
                     </h1>
                     {displaySubtitle && (
-                        <p className="header-subtitle truncate max-w-[300px] md:max-w-none">
+                        <p className={styles.subtitle}>
                             {displaySubtitle}
                         </p>
                     )}
@@ -57,24 +56,26 @@ export default function DashboardHeader({
                         localStorage.setItem('last_notifications_view', Date.now().toString())
                         setNotificacoesCount(0)
                     }}
-                    className="btn-ghost-nav p-2 relative text-decoration-none"
+                    className={styles.btnGhost}
+                    style={{ position: 'relative' }}
                 >
-                    <Icons.Notifications size={22} className="text-secondary" />
+                    <Icons.Notifications size={22} />
                     {notificacoesCount > 0 && (
-                        <span className="absolute top-1 right-1 bg-red-500 text-white text-[0.625rem] font-extrabold px-1.5 py-0.5 rounded-full border-2 border-secondary min-w-[18px] flex items-center justify-center leading-none">
+                        <span className={styles.notifBadge}>
                             {notificacoesCount > 10 ? '10+' : notificacoesCount}
                         </span>
                     )}
                 </Link>
 
                 {/* Profile Dropdown */}
-                <div className="relative">
+                <div className={styles.dropdownContainer}>
                     <button
                         onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                        className={`avatar avatar-sm bg-gradient-to-br from-primary to-primary-light border border-border cursor-pointer transition-all duration-200 ${profileDropdownOpen ? 'scale-95' : 'hover:scale-105 hover:-translate-y-px hover:shadow'}`}
+                        className={`avatar avatar--sm ${profileDropdownOpen ? 'scale-95' : 'hover:scale-105'} transition-all duration-200`}
+                        style={{ border: '1px solid var(--border-color)', cursor: 'pointer' }}
                     >
                         {professor.foto_url ? (
-                            <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
+                            <img src={professor.foto_url} alt={professor.nome} />
                         ) : (
                             professor.nome?.charAt(0) || 'P'
                         )}
@@ -86,35 +87,35 @@ export default function DashboardHeader({
                             {/* Backdrop para fechar ao clicar fora */}
                             <div
                                 onClick={() => setProfileDropdownOpen(false)}
-                                className="backdrop-invisible"
+                                className={styles.backdrop}
                             />
 
-                            <div className="dropdown-menu">
+                            <div className={styles.dropdownMenu}>
                                 {/* User Info */}
-                                <div className="p-4 flex items-center gap-3 border-b border-border">
-                                    <div className="avatar avatar-sm bg-gradient-to-br from-primary to-primary-light border border-border">
+                                <div className={styles.userInfo}>
+                                    <div className="avatar avatar--sm" style={{ border: '1px solid var(--border-color)' }}>
                                         {professor.foto_url ? (
-                                            <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
+                                            <img src={professor.foto_url} alt={professor.nome} />
                                         ) : (
                                             professor.nome?.charAt(0) || 'P'
                                         )}
                                     </div>
-                                    <div className="flex flex-col flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-primary truncate m-0">
+                                    <div className={styles.userTexts}>
+                                        <p className={styles.userName}>
                                             {professor.nome}
                                         </p>
-                                        <p className="text-xs text-muted truncate m-0 mt-1">
+                                        <p className={styles.userEmail}>
                                             {professor.email}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Menu Items */}
-                                <div className="p-2">
+                                <div className={styles.menuBody}>
                                     <Link
                                         href="/dashboard/perfil"
                                         onClick={() => setProfileDropdownOpen(false)}
-                                        className="dropdown-item"
+                                        className={styles.dropdownItem}
                                     >
                                         <Icons.User size={18} />
                                         <span>Meu Perfil</span>
@@ -122,13 +123,13 @@ export default function DashboardHeader({
                                 </div>
 
                                 {/* Logout */}
-                                <div className="p-2 border-t border-border">
+                                <div className={styles.menuFooter}>
                                     <button
                                         onClick={() => {
                                             setProfileDropdownOpen(false)
                                             handleLogout()
                                         }}
-                                        className="dropdown-item dropdown-item-danger w-full text-left"
+                                        className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
                                     >
                                         <Icons.Logout size={18} />
                                         <span>Sair</span>

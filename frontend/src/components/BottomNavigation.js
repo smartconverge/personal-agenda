@@ -1,8 +1,7 @@
-'use client'
-
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Icons } from './Icons'
+import styles from './BottomNavigation.module.css'
 
 export default function BottomNavigation({ notificacoesCount = 0, onMenuClick }) {
     const pathname = usePathname()
@@ -15,7 +14,7 @@ export default function BottomNavigation({ notificacoesCount = 0, onMenuClick })
     ]
 
     return (
-        <nav className="bottom-nav">
+        <nav className={styles.bottomNav}>
             {navItems.map((item) => {
                 const IconComponent = Icons[item.icon]
                 const isActive = pathname === item.href
@@ -24,41 +23,27 @@ export default function BottomNavigation({ notificacoesCount = 0, onMenuClick })
                     <Link
                         key={item.href}
                         href={item.href}
-                        className={`bottom-nav-item ${isActive ? 'active' : ''}`}
+                        className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
                     >
-                        <div style={{ position: 'relative' }}>
-                            <IconComponent size={24} color={isActive ? 'var(--primary)' : 'var(--text-muted)'} />
+                        <div className={styles.iconWrapper}>
+                            <IconComponent size={24} color={isActive ? 'var(--color-primary)' : 'var(--text-muted)'} />
                             {item.badge > 0 && (
-                                <span style={{
-                                    position: 'absolute',
-                                    top: '-4px',
-                                    right: '-6px',
-                                    backgroundColor: 'var(--danger)',
-                                    color: 'white',
-                                    fontSize: '0.625rem',
-                                    fontWeight: '800',
-                                    padding: '2px 5px',
-                                    borderRadius: '10px',
-                                    minWidth: '16px',
-                                    textAlign: 'center',
-                                    border: '2px solid var(--bg-secondary)'
-                                }}>
+                                <span className={styles.badge}>
                                     {item.badge}
                                 </span>
                             )}
                         </div>
-                        <span>{item.label}</span>
+                        <span className={styles.label}>{item.label}</span>
                     </Link>
                 )
             })}
 
             <button
                 onClick={onMenuClick}
-                className="bottom-nav-item"
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                className={styles.navItem}
             >
                 <Icons.Menu size={24} color="var(--text-muted)" />
-                <span>Menu</span>
+                <span className={styles.label}>Menu</span>
             </button>
         </nav>
     )

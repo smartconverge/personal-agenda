@@ -1,5 +1,3 @@
-'use client'
-
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -8,9 +6,9 @@ import { ToastProvider } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
 import BottomNavigation from '@/components/BottomNavigation'
 import Sidebar from '@/components/layout/Sidebar'
-
 import DashboardHeader from '@/components/layout/DashboardHeader'
 import { dashboardRoutes, hasPermission } from '@/config/dashboard'
+import styles from './layout.module.css'
 
 export default function DashboardLayout({ children }) {
     const router = useRouter()
@@ -148,15 +146,15 @@ export default function DashboardLayout({ children }) {
 
     if (!professor) {
         return (
-            <div className="loading-overlay">
-                <div className="spinner !w-12 !h-12" />
+            <div className={styles.loadingOverlay}>
+                <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
             </div>
         )
     }
 
     return (
         <ToastProvider>
-            <div className="min-h-screen relative bg-primary-deep overflow-x-hidden">
+            <div className={styles.container}>
                 {/* Sidebar */}
                 <Sidebar
                     sidebarOpen={sidebarOpen}
@@ -167,30 +165,30 @@ export default function DashboardLayout({ children }) {
                 />
 
                 {/* Main Content */}
-                <div className="main-content"
+                <div
+                    className={styles.mainContent}
                     style={{
                         marginLeft: sidebarOpen ? '16rem' : '5rem',
                         width: sidebarOpen ? 'calc(100% - 16rem)' : 'calc(100% - 5rem)',
-                        minHeight: '100vh'
-                    }}>
+                    }}
+                >
 
-                    {/* Trial Banner */}
                     {/* Trial Banner Premium */}
                     {professor?.plano_expira_em && (new Date(professor.plano_expira_em) > new Date()) && (
-                        <div className="premium-banner px-4 py-2.5 text-center text-[0.75rem] font-bold z-[100] border-b border-white/5 shadow-xl">
-                            <div className="flex items-center justify-center gap-3">
-                                <div className="flex-center w-6 h-6 rounded-md bg-white/20">
-                                    <Icons.Dashboard size={14} className="text-white" />
+                        <div className={styles.premiumBanner}>
+                            <div className={styles.bannerContent}>
+                                <div className={styles.bannerIconBox}>
+                                    <Icons.Dashboard size={14} color="white" />
                                 </div>
-                                <span className="tracking-tight">
-                                    Você está no plano <span className="text-white font-black uppercase underline decoration-2 underline-offset-4 decoration-white/30">{professor.plano || 'STARTER'} (Degustação)</span>.
-                                    Restam <span className="bg-white/20 px-2 py-0.5 rounded-md mx-1">{(() => {
+                                <span>
+                                    Você está no plano <span className="font-black uppercase underline decoration-2 underline-offset-4 decoration-white/30">{professor.plano || 'STARTER'} (Degustação)</span>.
+                                    Restam <span className={styles.bannerBadge}>{(() => {
                                         const diff = new Date(professor.plano_expira_em) - new Date();
                                         const dias = Math.ceil(diff / (1000 * 60 * 60 * 24));
                                         return `${dias} ${dias === 1 ? 'dia' : 'dias'}`;
                                     })()}</span> para o fim do acesso total.
                                 </span>
-                                <Link href="/dashboard/planos" className="bg-white text-primary px-3 py-1 rounded-full text-[0.65rem] font-black uppercase hover:scale-105 transition-transform ml-2 shadow-lg">
+                                <Link href="/dashboard/planos" className={styles.bannerLink}>
                                     Ver Planos
                                 </Link>
                             </div>
@@ -211,7 +209,7 @@ export default function DashboardLayout({ children }) {
                     />
 
                     {/* Page Content */}
-                    <main className="p-6 flex-1 page-enter">
+                    <main className={styles.pageArea}>
                         {children}
                     </main>
                 </div>
@@ -223,38 +221,39 @@ export default function DashboardLayout({ children }) {
                     <>
                         <div
                             onClick={() => setMobileMenuOpen(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] animate-fade-in"
+                            className={styles.mobileMenuOverlay}
                         />
-                        <div className="fixed bottom-[5.5rem] left-4 right-4 bg-secondary rounded-[1.5rem] p-5 z-[120] shadow-2xl border border-border max-h-[80vh] overflow-y-auto animate-slide-up">
-                            <div className="mb-6 text-center">
-                                <div className="w-12 h-1 bg-border rounded-full mx-auto mb-5 opacity-50" />
-                                <h3 className="m-0 text-lg font-extrabold text-primary">Navegação</h3>
+                        <div className={styles.mobileMenu}>
+                            <div className={styles.mobileHeader}>
+                                <div className={styles.mobileHandle} />
+                                <h3 className={styles.mobileTitle}>Navegação</h3>
                             </div>
 
-                            <div className="mobile-nav-grid">
+                            <div className={styles.navGrid}>
                                 {[...dashboardRoutes.main, ...dashboardRoutes.planos].map((item) => {
                                     // Validação de permissão mobile
                                     if (!hasPermission(professor?.plano, item.permission)) return null;
 
                                     const IconComponent = Icons[item.icon]
                                     const isActive = pathname === item.href
-                                    const iconBg = isActive ? 'bg-primary' : 'bg-primary-light'
-                                    const iconColor = isActive ? 'text-white' : 'text-secondary'
 
                                     return (
                                         <Link
                                             key={item.href}
                                             href={item.href}
                                             onClick={() => setMobileMenuOpen(false)}
-                                            className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+                                            className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
                                         >
-                                            <div className={`mobile-nav-icon ${isActive ? 'active' : ''} ${iconBg} ${iconColor}`}>
+                                            <div className={`${styles.navIconBox} ${isActive ? styles.navIconBoxActive : ''}`}>
                                                 <IconComponent size={22} />
                                             </div>
-                                            <span className={`text-xs font-bold leading-tight relative text-center ${isActive ? 'text-primary' : 'text-secondary'}`}>
+                                            <span className={`${styles.navLabel} ${isActive ? styles.navLabelActive : ''}`}>
                                                 {item.label}
                                                 {item.label === 'Meus Planos' && professor?.plano && (
-                                                    <span className="badge badge-primary absolute -top-12 -right-2 text-[0.55rem] px-1.5 py-0.5">
+                                                    <span
+                                                        className="badge badge--success"
+                                                        style={{ position: 'absolute', transform: 'translate(40px, -45px)', fontSize: '0.5rem' }}
+                                                    >
                                                         {professor.plano.toUpperCase()}
                                                     </span>
                                                 )}
@@ -264,15 +263,15 @@ export default function DashboardLayout({ children }) {
                                 })}
                             </div>
 
-                            <div className="mobile-footer-section">
+                            <div className={styles.mobileFooter}>
                                 <Link
                                     href="/dashboard/perfil"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="flex items-center gap-4 p-4 card-flat rounded-2xl"
+                                    className={styles.profileButton}
                                 >
-                                    <div className="avatar avatar-md bg-gradient-to-br from-primary to-primary-light overflow-hidden">
+                                    <div className="avatar avatar--md">
                                         {professor.foto_url ? (
-                                            <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
+                                            <img src={professor.foto_url} alt={professor.nome} />
                                         ) : (
                                             professor.nome?.charAt(0) || 'P'
                                         )}
@@ -281,7 +280,7 @@ export default function DashboardLayout({ children }) {
                                         <p className="text-sm font-bold m-0">{professor.nome}</p>
                                         <p className="text-xs text-muted m-0">Meu Perfil • Editar dados</p>
                                     </div>
-                                    <Icons.ChevronRight size={18} className="text-muted" />
+                                    <Icons.ChevronRight size={18} />
                                 </Link>
 
                                 <button
@@ -289,7 +288,7 @@ export default function DashboardLayout({ children }) {
                                         setMobileMenuOpen(false)
                                         handleLogout()
                                     }}
-                                    className="flex-center gap-3 p-4 font-bold text-sm rounded-2xl cursor-pointer transition-all duration-200 bg-red-500/10 border border-red-500/15 text-red-500"
+                                    className={styles.logoutButton}
                                 >
                                     <Icons.Logout size={20} />
                                     <span>Sair da Conta</span>

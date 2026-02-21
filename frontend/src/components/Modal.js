@@ -26,31 +26,17 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
 
     const modalContent = (
         <div
-            style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                display: 'grid',
-                placeItems: 'center',
-                zIndex: 9999,
-                padding: '2rem 1rem',
-                overflowY: 'auto',
-                backdropFilter: 'blur(4px)'
-            }}
+            className="overlay"
             onClick={onClose}
         >
             <div
-                className="card"
+                className="card animate-scale-in"
                 style={{
                     maxWidth: sizes[size],
                     width: '100%',
                     margin: 'auto',
                     position: 'relative',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                    animation: 'scale-up 0.2s ease-out'
+                    boxShadow: 'var(--shadow-modal)',
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
@@ -60,9 +46,9 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
                     alignItems: 'center',
                     marginBottom: '1.5rem',
                     paddingBottom: '1rem',
-                    borderBottom: '1px solid var(--border)'
+                    borderBottom: '1px solid var(--border-color)'
                 }}>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0, color: 'var(--primary)' }}>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0, color: 'var(--color-primary)' }}>
                         {title}
                     </h2>
                     <button

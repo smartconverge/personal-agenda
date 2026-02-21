@@ -1,48 +1,32 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useCallback } from 'react'
+import styles from './Toast.module.css'
 
-const ToastContext = createContext()
+const ToastContext = createContext(null)
+
+const TOAST_DURATION = 3500
 
 export function ToastProvider({ children }) {
     const [toasts, setToasts] = useState([])
 
-    const showToast = (message, type = 'info') => {
+    const showToast = useCallback((message, type = 'info') => {
         const id = Date.now()
         setToasts(prev => [...prev, { id, message, type }])
         setTimeout(() => {
             setToasts(prev => prev.filter(t => t.id !== id))
-        }, 3000)
-    }
+        }, TOAST_DURATION)
+    }, [])
 
     return (
         <ToastContext.Provider value={{ showToast }}>
             {children}
-            <div style={{
-                position: 'fixed',
-                top: '1rem',
-                right: '1rem',
-                zIndex: 9999,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem'
-            }}>
+            <div className={styles.container} aria-live="polite" aria-atomic="false">
                 {toasts.map(toast => (
                     <div
                         key={toast.id}
-                        className={`toast toast-${toast.type}`}
-                        style={{
-                            padding: '1rem',
-                            borderRadius: '0.5rem',
-                            backgroundColor: toast.type === 'success' ? 'var(--success)' :
-                                toast.type === 'error' ? 'var(--danger)' :
-                                    toast.type === 'warning' ? 'var(--warning)' :
-                                        'var(--primary)',
-                            color: 'white',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            minWidth: '250px',
-                            animation: 'slideIn 0.3s ease-out'
-                        }}
+                        className={`${styles.toast} ${styles[`toast--${toast.type}`] || styles['toast--info']}`}
+                        role="status"
                     >
                         {toast.message}
                     </div>
@@ -55,7 +39,7 @@ export function ToastProvider({ children }) {
 export function useToast() {
     const context = useContext(ToastContext)
     if (!context) {
-        throw new Error('useToast must be used within ToastProvider')
+        throw new Error('useToast deve ser usado dentro de <ToastProvider>')
     }
     return context
 }

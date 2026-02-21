@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Icons } from '@/components/Icons'
 import { dashboardMeta } from '@/config/dashboard'
@@ -12,52 +14,46 @@ export default function DashboardHeader({
     setSidebarOpen,
     profileDropdownOpen,
     setProfileDropdownOpen,
-    handleLogout
+    handleLogout,
 }) {
-    // Match seguro — suporta rotas dinâmicas como /alunos/123
-    const safePathname = pathname || '';
-    const fallbackMeta = { title: 'Personal Agenda', subtitle: '' };
+    const safePathname = pathname || ''
+    const fallback = { title: 'Personal Agenda', subtitle: '' }
     const metaEntry = Object.entries(dashboardMeta)
         .sort((a, b) => b[0].length - a[0].length)
-        .find(([route]) => safePathname.startsWith(route));
-    const meta = metaEntry ? metaEntry[1] : fallbackMeta;
-    const displayTitle = meta.title;
-    const displaySubtitle = meta.getSubtitle ? meta.getSubtitle(professor) : meta.subtitle;
+        .find(([route]) => safePathname.startsWith(route))
+    const meta = metaEntry ? metaEntry[1] : fallback
+    const title = meta.title
+    const subtitle = meta.getSubtitle ? meta.getSubtitle(professor) : meta.subtitle
 
     return (
         <header className={styles.header}>
-            <div className="flex items-center gap-4">
+            <div className={styles.left}>
                 <button
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className={`${styles.btnGhost} ${styles.desktopOnly}`}
+                    className={styles.toggleBtn}
+                    aria-label="Toggle sidebar"
                 >
-                    <Icons.SidebarToggle size={20} />
+                    <Icons.Menu size={20} />
                 </button>
 
-                {/* Vertical Separator */}
-                <div className={`${styles.desktopOnly} ${styles.separator}`} />
+                <div className={styles.separator} />
 
-                <div className={styles.titleContainer}>
-                    <h1 className={styles.title}>
-                        {displayTitle}
-                    </h1>
-                    {displaySubtitle && (
-                        <p className={styles.subtitle}>
-                            {displaySubtitle}
-                        </p>
-                    )}
+                <div className={styles.titleBlock}>
+                    <h1>{title}</h1>
+                    {subtitle && <p>{subtitle}</p>}
                 </div>
             </div>
 
-            <div className="flex items-center gap-5">
+            <div className={styles.right}>
+                {/* Notificações */}
                 <Link
                     href="/dashboard/notificacoes"
+                    className={styles.notifBtn}
                     onClick={() => {
                         localStorage.setItem('last_notifications_view', Date.now().toString())
                         setNotificacoesCount(0)
                     }}
-                    className={styles.btnGhost}
-                    style={{ position: 'relative' }}
+                    aria-label="Notificações"
                 >
                     <Icons.Notifications size={22} />
                     {notificacoesCount > 0 && (
@@ -67,72 +63,61 @@ export default function DashboardHeader({
                     )}
                 </Link>
 
-                {/* Profile Dropdown */}
-                <div className={styles.dropdownContainer}>
+                {/* Perfil */}
+                <div className={styles.dropdownWrapper}>
                     <button
                         onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                        className={`avatar avatar--sm ${profileDropdownOpen ? 'scale-95' : 'hover:scale-105'} transition-all duration-200`}
-                        style={{ border: '1px solid var(--border-color)', cursor: 'pointer' }}
+                        className={`avatar avatar--sm ${styles.profileBtn}`}
+                        aria-label="Menu do perfil"
+                        aria-expanded={profileDropdownOpen}
                     >
-                        {professor.foto_url ? (
-                            <img src={professor.foto_url} alt={professor.nome} />
-                        ) : (
-                            professor.nome?.charAt(0) || 'P'
-                        )}
+                        {professor?.foto_url
+                            ? <img src={professor.foto_url} alt={professor.nome} />
+                            : professor?.nome?.charAt(0) || 'P'
+                        }
                     </button>
 
-                    {/* Dropdown Menu */}
                     {profileDropdownOpen && (
                         <>
-                            {/* Backdrop para fechar ao clicar fora */}
                             <div
+                                className={styles.dropdownBackdrop}
                                 onClick={() => setProfileDropdownOpen(false)}
-                                className={styles.backdrop}
                             />
-
-                            <div className={styles.dropdownMenu}>
-                                {/* User Info */}
-                                <div className={styles.userInfo}>
-                                    <div className="avatar avatar--sm" style={{ border: '1px solid var(--border-color)' }}>
-                                        {professor.foto_url ? (
-                                            <img src={professor.foto_url} alt={professor.nome} />
-                                        ) : (
-                                            professor.nome?.charAt(0) || 'P'
-                                        )}
+                            <div className={styles.dropdown}>
+                                <div className={styles.dropdownUser}>
+                                    <div className="avatar avatar--sm">
+                                        {professor?.foto_url
+                                            ? <img src={professor.foto_url} alt={professor.nome} />
+                                            : professor?.nome?.charAt(0) || 'P'
+                                        }
                                     </div>
-                                    <div className={styles.userTexts}>
-                                        <p className={styles.userName}>
-                                            {professor.nome}
-                                        </p>
-                                        <p className={styles.userEmail}>
-                                            {professor.email}
-                                        </p>
+                                    <div className={styles.dropdownUserInfo}>
+                                        <p>{professor?.nome}</p>
+                                        <p>{professor?.email}</p>
                                     </div>
                                 </div>
 
-                                {/* Menu Items */}
-                                <div className={styles.menuBody}>
+                                <div className={styles.dropdownBody}>
                                     <Link
                                         href="/dashboard/perfil"
                                         onClick={() => setProfileDropdownOpen(false)}
                                         className={styles.dropdownItem}
                                     >
-                                        <Icons.User size={18} />
-                                        <span>Meu Perfil</span>
+                                        <Icons.User size={16} />
+                                        Meu Perfil
                                     </Link>
                                 </div>
 
-                                {/* Logout */}
-                                <div className={styles.menuFooter}>
+                                <div className={styles.dropdownFooter}>
                                     <button
                                         onClick={() => {
                                             setProfileDropdownOpen(false)
                                             handleLogout()
                                         }}
-                                        className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+                                        className={`${styles.dropdownItem} ${styles['dropdownItem--danger']}`}
                                     >
-                                        <Icons.Logout size={18} />
-                                        <span>Sair</span>
+                                        <Icons.Logout size={16} />
+                                        Sair
                                     </button>
                                 </div>
                             </div>

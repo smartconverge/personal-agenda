@@ -1,0 +1,266 @@
+/* Services.module.css — Padrão BEM */
+
+.container {
+    animation: fadeIn 0.3s ease-out both;
+}
+
+.actionBar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    gap: var(--space-4);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-6);
+    padding: var(--space-1);
+}
+
+/* Service Card */
+.serviceCard {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: var(--transition-smooth);
+    overflow: hidden;
+}
+
+.serviceCard:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--color-primary-light);
+}
+
+.serviceCard__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-5);
+}
+
+.serviceCard__iconBox {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    color: var(--color-primary);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-base);
+}
+
+.serviceCard:hover .serviceCard__iconBox {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary-glow);
+}
+
+.serviceCard__status {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.serviceCard__body {
+    flex: 1;
+}
+
+.serviceCard__title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+    letter-spacing: -0.02em;
+}
+
+.serviceCard__description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-5);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.serviceCard__metaList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.serviceCard__metaItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.serviceCard__metaItem span {
+    text-transform: capitalize;
+}
+
+.serviceCard__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border-color);
+}
+
+.serviceCard__priceBox {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.serviceCard__price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.serviceCard__period {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.serviceCard__deleteBtn {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-danger);
+    background: transparent;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: var(--transition-base);
+    z-index: 10;
+}
+
+.serviceCard:hover .serviceCard__deleteBtn {
+    opacity: 1;
+    transform: scale(1);
+    background: rgba(220, 38, 38, 0.05);
+}
+
+.serviceCard__deleteBtn:hover {
+    background: var(--color-danger) !important;
+    color: white !important;
+}
+
+/* Empty State */
+.emptyState {
+    grid-column: 1 / -1;
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 5rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyState__icon {
+    width: 4rem;
+    height: 4rem;
+    color: var(--text-muted);
+    opacity: 0.3;
+    margin-bottom: var(--space-4);
+}
+
+.emptyState__text {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Modal Form Refinements */
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.typeBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-2);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: var(--transition-base);
+    text-transform: capitalize;
+}
+
+.typeBtn--active {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary-glow);
+}
+
+.durationGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+}
+
+.durationBtn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    transition: var(--transition-base);
+}
+
+.durationBtn--active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+}

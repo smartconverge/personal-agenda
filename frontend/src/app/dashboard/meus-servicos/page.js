@@ -6,6 +6,7 @@ import Modal from '@/components/Modal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useToast } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
+import styles from './Services.module.css'
 
 export default function MeusServicosPage() {
     const { showToast } = useToast()
@@ -89,37 +90,27 @@ export default function MeusServicosPage() {
         })
     }
 
-    const getTipoIcon = (tipo) => {
+    const getTipoIcon = (tipo, size = 18) => {
         switch (tipo) {
-            case 'presencial': return <Icons.Fitness size={18} />
-            case 'online': return <Icons.Dashboard size={18} />
-            case 'ficha': return <Icons.Contracts size={18} />
-            default: return <Icons.Services size={18} />
-        }
-    }
-
-    const getTipoBadge = (tipo) => {
-        switch (tipo) {
-            case 'presencial': return 'badge-primary'
-            case 'online': return 'badge-info'
-            case 'ficha': return 'badge-secondary'
-            default: return 'badge-secondary'
+            case 'presencial': return <Icons.Fitness size={size} />
+            case 'online': return <Icons.Dashboard size={size} />
+            case 'ficha': return <Icons.Contracts size={size} />
+            default: return <Icons.Services size={size} />
         }
     }
 
     if (loading) {
         return (
-            <div className="flex-center p-12">
+            <div className="flex justify-center p-20">
                 <div className="spinner !w-12 !h-12" />
             </div>
         )
     }
 
     return (
-        <div className="page-enter">
+        <div className={styles.container}>
             {/* Actions Bar */}
-            <div className="flex-between mb-6 gap-4 flex-wrap">
-                <div className="flex-1" />
+            <div className={styles.actionBar}>
                 <button
                     className="btn btn-primary"
                     onClick={openNewModal}
@@ -129,63 +120,63 @@ export default function MeusServicosPage() {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2">
+            <div className={styles.grid}>
                 {servicos.length === 0 ? (
-                    <div className="card-flat text-center py-16 px-8 col-span-full">
-                        <Icons.Services size={48} className="text-muted opacity-30 mb-4 mx-auto" />
-                        <p className="text-muted font-medium">Nenhum serviço cadastrado</p>
+                    <div className={styles.emptyState}>
+                        <Icons.Services className={styles.emptyState__icon} />
+                        <p className={styles.emptyState__text}>Nenhum serviço cadastrado ainda.</p>
                     </div>
                 ) : (
                     servicos.map((servico) => (
                         <div
                             key={servico.id}
-                            className="card-premium p-7 flex flex-col relative !bg-secondary transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default group"
+                            className={styles.serviceCard}
                         >
                             {/* Header Row */}
-                            <div className="flex-between items-start mb-6">
-                                <div className="w-12 h-12 rounded-xl flex-center text-primary border border-border !bg-secondary">
-                                    {getTipoIcon(servico.tipo)}
+                            <div className={styles.serviceCard__header}>
+                                <div className={styles.serviceCard__iconBox}>
+                                    {getTipoIcon(servico.tipo, 24)}
                                 </div>
-                                <span className="text-[0.65rem] font-extrabold px-3 py-1.5 rounded-full bg-primary-light text-secondary tracking-wider uppercase">
+                                <span className={styles.serviceCard__status}>
                                     ATIVO
                                 </span>
                             </div>
 
                             {/* Content */}
-                            <div className="flex-1">
-                                <h3 className="text-xl font-extrabold text-primary mb-2 tracking-tight">
+                            <div className={styles.serviceCard__body}>
+                                <h3 className={styles.serviceCard__title}>
                                     {servico.nome}
                                 </h3>
-                                <p className="text-sm text-secondary mb-5 leading-relaxed">
+                                <p className={styles.serviceCard__description}>
                                     {servico.tipo === 'presencial' ? 'Sessões presenciais personalizadas com foco em resultados reais.' :
                                         servico.tipo === 'online' ? 'Consultoria remota completa com vídeos e acompanhamento semanal.' :
                                             'Planejamento de treinos detalhado para execução independente.'}
                                 </p>
 
-                                <div className="flex items-center gap-4 text-[0.8rem] text-muted mb-8">
-                                    <div className="flex items-center gap-1.5">
-                                        <Icons.Calendar size={14} />
+                                <div className={styles.serviceCard__metaList}>
+                                    <div className={styles.serviceCard__metaItem}>
+                                        <Icons.Clock size={16} />
                                         <span>{servico.duracao_minutos > 0 ? `${servico.duracao_minutos} min` : 'Duração variável'}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5">
-                                        <Icons.Dashboard size={14} />
-                                        <span className="capitalize">{servico.tipo}</span>
+                                    <div className={styles.serviceCard__metaItem}>
+                                        <Icons.Services size={16} />
+                                        <span>{servico.tipo}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Footer Row */}
-                            <div className="flex-between pt-6 border-t border-border">
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-extrabold text-primary">R$ ---</span>
-                                    <span className="text-xs text-muted">/mês</span>
+                            <div className={styles.serviceCard__footer}>
+                                <div className={styles.serviceCard__priceBox}>
+                                    <span className={styles.serviceCard__price}>R$ ---</span>
+                                    <span className={styles.serviceCard__period}>/mês</span>
                                 </div>
                                 <button
                                     onClick={() => openEditModal(servico)}
                                     className="btn btn-secondary !py-2 !px-4 text-[0.8rem]"
                                 >
-                                    Detalhes
-                                    <Icons.RightArrow size={14} />
+                                    <span>Ver Detalhes</span>
+                                    <Icons.ArrowRight size={14} />
                                 </button>
                             </div>
 
@@ -196,7 +187,8 @@ export default function MeusServicosPage() {
                                     setSelectedServico(servico);
                                     setShowDeleteDialog(true);
                                 }}
-                                className="btn-icon btn-icon-danger absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                className={styles.serviceCard__deleteBtn}
+                                title="Excluir serviço"
                             >
                                 <Icons.Delete size={18} />
                             </button>
@@ -211,28 +203,28 @@ export default function MeusServicosPage() {
                 title={selectedServico ? 'Editar Serviço' : 'Novo Serviço'}
             >
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-5">
-                        <label className="label">Modalidade</label>
-                        <div className="grid grid-cols-3 gap-2">
+                    <div className="mb-6">
+                        <label className="label">Modalidade do Treino</label>
+                        <div className={styles.formGrid}>
                             {['presencial', 'online', 'ficha'].map((t) => (
                                 <button
                                     key={t}
                                     type="button"
-                                    className={`btn ${formData.tipo === t ? 'btn-primary' : 'btn-secondary'} !h-auto !py-3 !px-2 flex-col gap-1.5 text-[0.7rem]`}
+                                    className={`${styles.typeBtn} ${formData.tipo === t ? styles['typeBtn--active'] : ''}`}
                                     onClick={() => setFormData({
                                         ...formData,
                                         tipo: t,
                                         duracao_minutos: t === 'ficha' ? 0 : (formData.duracao_minutos || 60)
                                     })}
                                 >
-                                    {getTipoIcon(t)}
-                                    <span className="capitalize">{t}</span>
+                                    {getTipoIcon(t, 20)}
+                                    <span>{t}</span>
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className="mb-5">
+                    <div className="mb-6">
                         <label className="label">Nome do Serviço</label>
                         <input
                             type="text"
@@ -245,14 +237,14 @@ export default function MeusServicosPage() {
                     </div>
 
                     {formData.tipo !== 'ficha' && (
-                        <div className="mb-6">
-                            <label className="label">Duração (minutos)</label>
-                            <div className="flex gap-2 flex-wrap">
+                        <div className="mb-8">
+                            <label className="label">Duração Padrão (minutos)</label>
+                            <div className={styles.durationGrid}>
                                 {[30, 45, 60, 90].map((m) => (
                                     <button
                                         key={m}
                                         type="button"
-                                        className={`btn ${formData.duracao_minutos === m ? 'btn-primary' : 'btn-secondary'} !h-auto !py-2 !px-4 text-[0.8rem]`}
+                                        className={`${styles.durationBtn} ${formData.duracao_minutos === m ? styles['durationBtn--active'] : ''}`}
                                         onClick={() => setFormData({ ...formData, duracao_minutos: m })}
                                     >
                                         {m} min
@@ -260,9 +252,9 @@ export default function MeusServicosPage() {
                                 ))}
                                 <input
                                     type="number"
-                                    className="input !w-20 !h-10"
+                                    className="input !w-24"
                                     placeholder="Outro"
-                                    value={formData.duracao_minutos}
+                                    value={formData.duracao_minutos || ''}
                                     onChange={(e) => setFormData({ ...formData, duracao_minutos: parseInt(e.target.value) || 0 })}
                                     required
                                 />
@@ -270,12 +262,12 @@ export default function MeusServicosPage() {
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-3 mt-8">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-border">
                         <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
                             Cancelar
                         </button>
                         <button type="submit" className="btn btn-primary">
-                            {selectedServico ? 'Salvar' : 'Criar Serviço'}
+                            {selectedServico ? 'Salvar Alterações' : 'Criar Serviço'}
                         </button>
                     </div>
                 </form>
@@ -286,8 +278,8 @@ export default function MeusServicosPage() {
                 onClose={() => setShowDeleteDialog(false)}
                 onConfirm={handleDelete}
                 title="Excluir Serviço"
-                message={`Tem certeza que deseja excluir ${selectedServico?.nome}?`}
-                confirmText="Excluir"
+                message={`Tem certeza que deseja excluir "${selectedServico?.nome}"? Esta ação não pode ser desfeita.`}
+                confirmText="Sim, Excluir"
                 danger
             />
         </div>

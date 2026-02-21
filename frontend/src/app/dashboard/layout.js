@@ -10,6 +10,7 @@ import BottomNavigation from '@/components/BottomNavigation'
 import Sidebar from '@/components/layout/Sidebar'
 
 import DashboardHeader from '@/components/layout/DashboardHeader'
+import { dashboardRoutes, hasPermission } from '@/config/dashboard'
 
 export default function DashboardLayout({ children }) {
     const router = useRouter()
@@ -21,6 +22,24 @@ export default function DashboardLayout({ children }) {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [whatsappConnected, setWhatsappConnected] = useState(false)
+
+    // ... (restante da lógica mantida conforme pedido)
+
+    // Validação de segurança/permissão de rota (opcional, mas boa prática)
+    useEffect(() => {
+        if (!professor) return;
+
+        // Flatten all routes to check current one
+        const allRoutes = [...dashboardRoutes.main, ...dashboardRoutes.planos, ...dashboardRoutes.sistema];
+        const currentRoute = allRoutes.find(r => r.href === pathname);
+
+        if (currentRoute && !hasPermission(professor.plano, currentRoute.permission)) {
+            console.warn(`[Acesso Negado] Plano ${professor.plano} não permite acesso à rota ${pathname}`);
+            // Aqui poderia haver um redirect, mas manteremos estável conforme solicitado
+        }
+    }, [pathname, professor]);
+
+    // ... (useEffect original mantido)
 
     async function loadProfile() {
         try {
@@ -122,23 +141,6 @@ export default function DashboardLayout({ children }) {
         }
     }, [router, pathname])
 
-    const menuItems = [
-        { href: '/dashboard', label: 'Dashboard', icon: 'Dashboard' },
-        { href: '/dashboard/alunos', label: 'Alunos', icon: 'Students' },
-        { href: '/dashboard/meus-servicos', label: 'Serviços', icon: 'Services' },
-        { href: '/dashboard/contratos', label: 'Contratos', icon: 'Contracts' },
-        { href: '/dashboard/agenda', label: 'Agenda', icon: 'Calendar' },
-        { href: '/dashboard/whatsapp', label: 'WhatsApp', icon: 'Dashboard' },
-        { href: '/dashboard/notificacoes', label: 'Notificações', icon: 'Notifications' },
-    ]
-
-    const planoItems = [
-        { href: '/dashboard/planos', label: 'Meus Planos', icon: 'Star' },
-    ]
-
-    const sistemaItems = [
-        { href: '/dashboard/configuracoes', label: 'Configurações', icon: 'Settings' },
-    ]
 
     if (!professor) {
         return (
@@ -155,9 +157,6 @@ export default function DashboardLayout({ children }) {
                 <Sidebar
                     sidebarOpen={sidebarOpen}
                     pathname={pathname}
-                    menuItems={menuItems}
-                    planoItems={planoItems}
-                    sistemaItems={sistemaItems}
                     professor={professor}
                     whatsappConnected={whatsappConnected}
                     handleLogout={handleLogout}
@@ -229,7 +228,10 @@ export default function DashboardLayout({ children }) {
                             </div>
 
                             <div className="mobile-nav-grid">
-                                {menuItems.concat(planoItems).map((item) => {
+                                {[...dashboardRoutes.main, ...dashboardRoutes.planos].map((item) => {
+                                    // Validação de permissão mobile
+                                    if (!hasPermission(professor?.plano, item.permission)) return null;
+
                                     const IconComponent = Icons[item.icon]
                                     const isActive = pathname === item.href
                                     const iconBg = isActive ? 'bg-primary' : 'bg-primary-light'

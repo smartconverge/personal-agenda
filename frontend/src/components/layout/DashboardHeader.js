@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Icons } from '@/components/Icons'
+import { dashboardMeta } from '@/config/dashboard'
 
 export default function DashboardHeader({
     pathname,
@@ -14,6 +15,11 @@ export default function DashboardHeader({
     setProfileDropdownOpen,
     handleLogout
 }) {
+    // Busca os metadados da rota atual
+    const meta = dashboardMeta[pathname] || { title: 'Personal Agenda', subtitle: '' };
+    const displayTitle = meta.title;
+    const displaySubtitle = meta.getSubtitle ? meta.getSubtitle(professor) : meta.subtitle;
+
     return (
         <header className="glass-effect flex-between px-6 py-4 sticky top-0 z-30 min-h-[4.5rem]">
             <div className="flex items-center gap-4">
@@ -29,59 +35,11 @@ export default function DashboardHeader({
 
                 <div className="header-title-container">
                     <h1 className="header-title">
-                        {pathname === '/dashboard' ? 'Dashboard' :
-                            pathname.includes('/alunos') ? 'Alunos' :
-                                pathname.includes('servicos') ? 'Serviços' :
-                                    pathname.includes('/contratos') ? 'Contratos' :
-                                        pathname.includes('/agenda') ? 'Agenda' :
-                                            pathname.includes('/notificacoes') ? 'Notificações' :
-                                                pathname.includes('/perfil') ? 'Meu Perfil' :
-                                                    pathname.includes('/configuracoes') ? 'Configurações' :
-                                                        pathname.includes('/planos') ? 'Planos' : 'Personal Agenda'}
+                        {displayTitle}
                     </h1>
-                    {pathname === '/dashboard' && professor?.nome && (
+                    {displaySubtitle && (
                         <p className="header-subtitle truncate max-w-[300px] md:max-w-none">
-                            Bem-vindo de volta, {professor.nome.split(' ')[0]}. Aqui está sua visão geral.
-                        </p>
-                    )}
-                    {pathname.includes('/alunos') && (
-                        <p className="header-subtitle">
-                            Gerencie seus alunos cadastrados e seus progressos.
-                        </p>
-                    )}
-                    {pathname.includes('servicos') && (
-                        <p className="header-subtitle">
-                            Configure suas modalidades e durações de treino.
-                        </p>
-                    )}
-                    {pathname.includes('/contratos') && (
-                        <p className="header-subtitle">
-                            Gerencie planos ativos e faturamento mensal.
-                        </p>
-                    )}
-                    {pathname.includes('/agenda') && (
-                        <p className="header-subtitle">
-                            Acompanhe sua agenda de treinos diária e semanal.
-                        </p>
-                    )}
-                    {pathname.includes('/notificacoes') && (
-                        <p className="header-subtitle">
-                            Histórico de mensagens enviadas aos seus alunos.
-                        </p>
-                    )}
-                    {pathname.includes('/perfil') && (
-                        <p className="header-subtitle">
-                            Gerencie suas informações pessoais e profissionais.
-                        </p>
-                    )}
-                    {pathname.includes('/configuracoes') && (
-                        <p className="header-subtitle">
-                            Gerencie as preferências e segurança da conta.
-                        </p>
-                    )}
-                    {pathname.includes('/planos') && (
-                        <p className="header-subtitle">
-                            Evolua sua gestão com recursos Premium.
+                            {displaySubtitle}
                         </p>
                     )}
                 </div>

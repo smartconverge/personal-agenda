@@ -4,18 +4,60 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Icons } from '@/components/Icons'
 import styles from './Sidebar.module.css'
+import { dashboardRoutes, hasPermission } from '@/config/dashboard'
 
 export default function Sidebar({
     sidebarOpen,
     pathname,
-    menuItems,
-    planoItems,
-    sistemaItems,
     professor,
     whatsappConnected,
     handleLogout,
 }) {
     const [hoveredPath, setHoveredPath] = useState(null)
+
+    // Renderiza um item de link de forma padronizada
+    const renderLink = (item, isSistema = false) => {
+        const IconComponent = Icons[item.icon]
+        const isActive = pathname === item.href
+        const isHighlighted = isActive || hoveredPath === item.href
+
+        // Validação de permissão para exibir ou não o item
+        if (!hasPermission(professor?.plano, item.permission)) return null;
+
+        const linkClass = isSistema
+            ? `${styles.sistemaLink} ${isHighlighted ? styles.sistemaLinkActive : ''}`
+            : `${styles.link} ${isHighlighted ? styles.linkActive : ''}`;
+
+        return (
+            <Link
+                key={item.href}
+                href={item.href}
+                onMouseEnter={() => setHoveredPath(item.href)}
+                onMouseLeave={() => setHoveredPath(null)}
+                className={linkClass}
+            >
+                <span className={styles.iconWrap}>
+                    <IconComponent size={20} />
+                </span>
+                {sidebarOpen && (
+                    <div className={styles.contentWrapper}>
+                        <span className={styles.label}>{item.label}</span>
+                        {item.label === 'WhatsApp' && (
+                            <span className={`${styles.badge} ${whatsappConnected ? styles.badgeOnline : styles.badgeOffline}`}>
+                                {whatsappConnected ? 'CONECTADO' : 'OFFLINE'}
+                            </span>
+                        )}
+                        {item.label === 'Meus Planos' && professor?.plano && (
+                            <span className={`${styles.badge} ${professor.plano === 'PREMIUM' ? styles.badgePremium : styles.badgeFree}`}>
+                                {professor.plano.toUpperCase()}
+                            </span>
+                        )}
+                    </div>
+                )}
+                {sidebarOpen && isSistema && <span>{item.label}</span>}
+            </Link>
+        )
+    }
 
     return (
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : styles.collapsed}`}>
@@ -40,99 +82,18 @@ export default function Sidebar({
             {/* Main Navigation - Scrollable Area */}
             <nav className={styles.nav}>
                 {/* Section: MENU */}
-                {sidebarOpen && (
-                    <p className={styles.sectionTitle}>Menu</p>
-                )}
-                {menuItems.map((item) => {
-                    const IconComponent = Icons[item.icon]
-                    const isActive = pathname === item.href
-                    const isHighlighted = isActive || hoveredPath === item.href
-
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            onMouseEnter={() => setHoveredPath(item.href)}
-                            onMouseLeave={() => setHoveredPath(null)}
-                            className={`${styles.link} ${isHighlighted ? styles.linkActive : ''}`}
-                        >
-                            <span className={styles.iconWrap}>
-                                <IconComponent size={20} />
-                            </span>
-                            {sidebarOpen && (
-                                <div className={styles.contentWrapper}>
-                                    <span className={styles.label}>{item.label}</span>
-                                    {item.label === 'WhatsApp' && (
-                                        <span className={`${styles.badge} ${whatsappConnected ? styles.badgeOnline : styles.badgeOffline}`}>
-                                            {whatsappConnected ? 'CONECTADO' : 'OFFLINE'}
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-                        </Link>
-                    )
-                })}
+                {sidebarOpen && <p className={styles.sectionTitle}>Menu</p>}
+                {dashboardRoutes.main.map(item => renderLink(item))}
 
                 {/* Section: PLANOS */}
                 {sidebarOpen && <div className={styles.divider} />}
-                {sidebarOpen && (
-                    <p className={styles.sectionTitle}>Planos</p>
-                )}
-                {planoItems.map((item) => {
-                    const IconComponent = Icons[item.icon]
-                    const isActive = pathname === item.href
-                    const isHighlighted = isActive || hoveredPath === item.href
-
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            onMouseEnter={() => setHoveredPath(item.href)}
-                            onMouseLeave={() => setHoveredPath(null)}
-                            className={`${styles.link} ${isHighlighted ? styles.linkActive : ''}`}
-                        >
-                            <span className={styles.iconWrap}>
-                                <IconComponent size={20} />
-                            </span>
-                            {sidebarOpen && (
-                                <div className={styles.contentWrapper}>
-                                    <span className={styles.label}>{item.label}</span>
-                                    {item.label === 'Meus Planos' && professor?.plano && (
-                                        <span className={`${styles.badge} ${professor.plano === 'PREMIUM' ? styles.badgePremium : styles.badgeFree}`}>
-                                            {professor.plano.toUpperCase()}
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-                        </Link>
-                    )
-                })}
+                {sidebarOpen && <p className={styles.sectionTitle}>Planos</p>}
+                {dashboardRoutes.planos.map(item => renderLink(item))}
 
                 {/* Section: SISTEMA */}
                 {sidebarOpen && <div className={styles.divider} />}
-                {sidebarOpen && (
-                    <p className={styles.sectionTitle}>Sistema</p>
-                )}
-                {sistemaItems.map((item) => {
-                    const IconComponent = Icons[item.icon]
-                    const isActive = pathname === item.href
-                    const isHighlighted = isActive || hoveredPath === item.href
-
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            onMouseEnter={() => setHoveredPath(item.href)}
-                            onMouseLeave={() => setHoveredPath(null)}
-                            className={`${styles.sistemaLink} ${isHighlighted ? styles.sistemaLinkActive : ''}`}
-                        >
-                            <span className={styles.iconWrap}>
-                                <IconComponent size={20} />
-                            </span>
-                            {sidebarOpen && <span>{item.label}</span>}
-                        </Link>
-                    )
-                })}
+                {sidebarOpen && <p className={styles.sectionTitle}>Sistema</p>}
+                {dashboardRoutes.sistema.map(item => renderLink(item, true))}
             </nav>
 
             {/* User Profile + Logout - Fixed at Bottom */}

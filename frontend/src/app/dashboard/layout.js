@@ -24,17 +24,22 @@ export default function DashboardLayout({ children }) {
     const [whatsappConnected, setWhatsappConnected] = useState(false)
 
 
-    // Validação de segurança/permissão de rota (opcional, mas boa prática)
+    // Proteção real de rota — redireciona se plano insuficiente
     useEffect(() => {
         if (!professor) return;
 
-        // Flatten all routes to check current one
-        const allRoutes = [...dashboardRoutes.main, ...dashboardRoutes.planos, ...dashboardRoutes.sistema];
-        const currentRoute = allRoutes.find(r => r.href === pathname);
+        const allRoutes = [
+            ...dashboardRoutes.main,
+            ...dashboardRoutes.planos,
+            ...dashboardRoutes.sistema,
+        ];
 
-        if (currentRoute && !hasPermission(professor.plano, currentRoute.permission)) {
-            console.warn(`[Acesso Negado] Plano ${professor.plano} não permite acesso à rota ${pathname}`);
-            // Aqui poderia haver um redirect, mas manteremos estável conforme solicitado
+        const matchedRoute = allRoutes
+            .sort((a, b) => b.href.length - a.href.length)
+            .find(route => pathname.startsWith(route.href));
+
+        if (matchedRoute && !hasPermission(professor.plano, matchedRoute.permission)) {
+            router.replace('/dashboard');
         }
     }, [pathname, professor]);
 

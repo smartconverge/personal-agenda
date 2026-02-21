@@ -15,8 +15,12 @@ export default function DashboardHeader({
     setProfileDropdownOpen,
     handleLogout
 }) {
-    // Busca os metadados da rota atual
-    const meta = dashboardMeta[pathname] || { title: 'Personal Agenda', subtitle: '' };
+    // Match seguro — suporta rotas dinâmicas como /alunos/123
+    const fallbackMeta = { title: 'Personal Agenda', subtitle: '' };
+    const metaEntry = Object.entries(dashboardMeta)
+        .sort((a, b) => b[0].length - a[0].length)
+        .find(([route]) => pathname.startsWith(route));
+    const meta = metaEntry ? metaEntry[1] : fallbackMeta;
     const displayTitle = meta.title;
     const displaySubtitle = meta.getSubtitle ? meta.getSubtitle(professor) : meta.subtitle;
 

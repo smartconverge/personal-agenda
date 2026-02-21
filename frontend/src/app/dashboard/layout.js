@@ -28,6 +28,7 @@ export default function DashboardLayout({ children }) {
     useEffect(() => {
         if (!professor) return;
 
+        const safePathname = pathname || '';
         const allRoutes = [
             ...dashboardRoutes.main,
             ...dashboardRoutes.planos,
@@ -36,12 +37,12 @@ export default function DashboardLayout({ children }) {
 
         const matchedRoute = allRoutes
             .sort((a, b) => b.href.length - a.href.length)
-            .find(route => pathname.startsWith(route.href));
+            .find(route => safePathname.startsWith(route.href));
 
         if (matchedRoute && !hasPermission(professor.plano, matchedRoute.permission)) {
             router.replace('/dashboard');
         }
-    }, [pathname, professor]);
+    }, [pathname, professor, router]);
 
 
     async function loadProfile() {

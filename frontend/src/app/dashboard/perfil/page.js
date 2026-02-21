@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Icons } from '@/components/Icons'
 import api from '@/lib/api'
 import { useToast } from '@/components/Toast'
+import styles from './Profile.module.css'
 
 export default function PerfilPage() {
     const { addToast } = useToast()
@@ -112,15 +113,13 @@ export default function PerfilPage() {
     }
 
     return (
-        <div className="perfil-container">
-
-
-            <form onSubmit={handleSubmit} className="perfil-form">
-                <div className="perfil-grid">
+        <div className={styles.container}>
+            <form onSubmit={handleSubmit}>
+                <div className={styles.grid}>
                     {/* Coluna da Foto */}
-                    <div className="photo-section card">
-                        <div className="avatar-wrapper">
-                            <div className="avatar-large">
+                    <div className={`${styles.section} ${styles.avatarSection}`}>
+                        <div className={styles.avatarWrapper}>
+                            <div className={styles.avatarLarge}>
                                 {professor.foto_url ? (
                                     <img src={professor.foto_url} alt={professor.nome} />
                                 ) : (
@@ -134,58 +133,68 @@ export default function PerfilPage() {
                                 accept="image/*"
                                 className="hidden"
                             />
-                            <button type="button" className="btn btn-secondary" onClick={handlePhotoClick} disabled={loading}>
+                            <button
+                                type="button"
+                                className="btn btn-secondary !px-6"
+                                onClick={handlePhotoClick}
+                                disabled={loading}
+                            >
                                 <Icons.Edit size={16} /> Alterar Foto
                             </button>
                         </div>
-                        <div className="plan-badge-inline">
-                            <span className="label">Plano Atual:</span>
-                            <span className={professor.plano === 'PREMIUM' ? 'badge-premium' : 'badge-starter'}>
+                        <div className={styles.planBadgeInline}>
+                            <span className={styles.badgeLabel}>Plano Atual:</span>
+                            <span className={professor.plano === 'PREMIUM' ? styles.badgePremium : styles.badgeStarter}>
                                 {professor.plano?.toUpperCase() || 'STARTER'}
                             </span>
                         </div>
                     </div>
 
                     {/* Coluna de Dados Pessoais */}
-                    <div className="data-section card">
-                        <h3 className="card-title">Informações Pessoais</h3>
-                        <div className="input-group-grid">
-                            <div className="input-field">
+                    <div className={styles.section}>
+                        <h3 className={styles.cardTitle}>
+                            <Icons.Students size={20} /> Informações Pessoais
+                        </h3>
+                        <div className={styles.formGrid}>
+                            <div className={styles.inputField}>
                                 <label>Nome Completo</label>
                                 <input
                                     type="text"
                                     name="nome"
+                                    className="input"
                                     value={professor.nome}
                                     onChange={handleChange}
                                     placeholder="Seu nome"
                                     required
                                 />
                             </div>
-                            <div className="input-field">
+                            <div className={styles.inputField}>
                                 <label>E-mail (Login)</label>
                                 <input
                                     type="email"
                                     name="email"
                                     value={professor.email}
                                     disabled
-                                    className="disabled-input"
+                                    className="input !bg-tertiary !cursor-not-allowed !opacity-70"
                                 />
                             </div>
-                            <div className="input-field">
+                            <div className={styles.inputField}>
                                 <label>WhatsApp</label>
                                 <input
                                     type="text"
                                     name="telefone_whatsapp"
+                                    className="input"
                                     value={professor.telefone_whatsapp}
                                     onChange={handleChange}
                                     placeholder="(00) 0 0000-0000"
                                 />
                             </div>
-                            <div className="input-field">
+                            <div className={styles.inputField}>
                                 <label>Data de Nascimento</label>
                                 <input
                                     type="date"
                                     name="data_nascimento"
+                                    className="input"
                                     value={professor.data_nascimento}
                                     onChange={handleChange}
                                 />
@@ -193,34 +202,39 @@ export default function PerfilPage() {
                         </div>
                     </div>
 
-                    {/* Coluna de Dados Profissionais */}
-                    <div className="pro-section card full-width">
-                        <h3 className="card-title">Informações Profissionais</h3>
-                        <div className="input-group-grid">
-                            <div className="input-field">
+                    {/* Dados Profissionais */}
+                    <div className={`${styles.section} ${styles.formGridFull}`}>
+                        <h3 className={styles.cardTitle}>
+                            <Icons.Lock size={20} /> Informações Profissionais
+                        </h3>
+                        <div className={styles.formGrid}>
+                            <div className={styles.inputField}>
                                 <label>CREF</label>
                                 <input
                                     type="text"
                                     name="cref"
+                                    className="input"
                                     value={professor.cref}
                                     onChange={handleChange}
                                     placeholder="000000-G/UF"
                                 />
                             </div>
-                            <div className="input-field">
+                            <div className={styles.inputField}>
                                 <label>Especialidades</label>
                                 <input
                                     type="text"
                                     name="especialidade"
+                                    className="input"
                                     value={professor.especialidade}
                                     onChange={handleChange}
                                     placeholder="Ex: Musculação, Yoga, Pilates"
                                 />
                             </div>
-                            <div className="input-field full-width">
+                            <div className={`${styles.inputField} ${styles.formGridFull}`}>
                                 <label>Bio / Apresentação</label>
                                 <textarea
                                     name="bio"
+                                    className="input !h-auto"
                                     value={professor.bio}
                                     onChange={handleChange}
                                     placeholder="Conte um pouco sobre sua trajetória profissional..."
@@ -231,203 +245,12 @@ export default function PerfilPage() {
                     </div>
                 </div>
 
-                <div className="form-actions">
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                <div className={styles.actions}>
+                    <button type="submit" className="btn btn-primary !px-10 !h-12" disabled={loading}>
                         {loading ? 'Salvando...' : 'Salvar Alterações'}
                     </button>
                 </div>
             </form>
-
-            <style jsx>{`
-                .perfil-container {
-                    max-width: 1000px;
-                    margin: 0 auto;
-                }
-
-                .header-perfil {
-                    margin-bottom: 2rem;
-                }
-
-                .title-section {
-                    font-size: 1.75rem;
-                    color: var(--primary);
-                    margin-bottom: 0.5rem;
-                }
-
-                .subtitle-section {
-                    color: var(--text-muted);
-                    font-size: 0.9375rem;
-                }
-
-                .perfil-grid {
-                    display: grid;
-                    grid-template-columns: 320px 1fr;
-                    gap: 1.5rem;
-                    margin-bottom: 2rem;
-                }
-
-                .card {
-                    background: var(--bg-secondary);
-                    border: 1px solid var(--border);
-                    border-radius: 1rem;
-                    padding: 1.5rem;
-                    box-shadow: var(--shadow-sm);
-                }
-
-                .photo-section {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    gap: 1.5rem;
-                }
-
-                .avatar-wrapper {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 1rem;
-                }
-
-                .avatar-large {
-                    width: 120px;
-                    height: 120px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 3rem;
-                    font-weight: 800;
-                    color: white;
-                    border: 4px solid var(--bg-primary);
-                    box-shadow: var(--shadow);
-                    overflow: hidden;
-                }
-
-                .avatar-large img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-
-                .avatar-large img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-
-                .plan-badge-inline {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    padding: 0.75rem;
-                    background: rgba(var(--primary-rgb), 0.05);
-                    border-radius: 0.75rem;
-                    width: 100%;
-                    justify-content: center;
-                }
-
-                .badge-premium {
-                    background: linear-gradient(135deg, #f59e0b, #d97706);
-                    color: white;
-                    padding: 0.25rem 0.625rem;
-                    border-radius: 2rem;
-                    font-size: 0.7rem;
-                    font-weight: 800;
-                    letter-spacing: 0.05em;
-                }
-
-                .badge-starter {
-                    background: var(--bg-tertiary);
-                    color: var(--text-secondary);
-                    padding: 0.25rem 0.625rem;
-                    border-radius: 2rem;
-                    font-size: 0.7rem;
-                    font-weight: 800;
-                    letter-spacing: 0.05em;
-                    border: 1px solid var(--border);
-                }
-
-                .label {
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    color: var(--text-muted);
-                }
-
-                .card-title {
-                    font-size: 1rem;
-                    font-weight: 700;
-                    color: var(--text-primary);
-                    margin-bottom: 1.5rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
-
-                .input-group-grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 1.25rem;
-                }
-
-                .full-width {
-                    grid-column: span 2;
-                }
-
-                .input-field {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-
-                .input-field label {
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    color: var(--text-secondary);
-                }
-
-                .input-field input, .input-field textarea {
-                    padding: 0.75rem;
-                    border: 1px solid var(--border);
-                    border-radius: 0.625rem;
-                    font-size: 0.875rem;
-                    background: var(--bg-primary);
-                    color: var(--text-primary);
-                    transition: all 0.2s;
-                }
-
-                .input-field input:focus, .input-field textarea:focus {
-                    outline: none;
-                    border-color: var(--primary);
-                    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
-                }
-
-                .disabled-input {
-                    background: var(--bg-tertiary) !important;
-                    cursor: not-allowed;
-                    opacity: 0.7;
-                }
-
-                .form-actions {
-                    display: flex;
-                    justify-content: flex-end;
-                    gap: 1rem;
-                }
-
-                @media (max-width: 768px) {
-                    .perfil-grid {
-                        grid-template-columns: 1fr;
-                    }
-                    .input-group-grid {
-                        grid-template-columns: 1fr;
-                    }
-                    .full-width {
-                        grid-column: span 1;
-                    }
-                }
-            `}</style>
         </div>
     )
 }

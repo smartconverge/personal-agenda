@@ -1,6 +1,6 @@
 /* BottomNavigation.module.css */
 
-.bottomNav {
+.nav {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -8,13 +8,22 @@
     height: 4.5rem;
     background: var(--bg-card);
     border-top: 1px solid var(--border-color);
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
     z-index: var(--z-sticky);
     padding-bottom: env(safe-area-inset-bottom);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.navItem {
+.navInner {
+    width: 100%;
+    max-width: 600px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    height: 100%;
+}
+
+.item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,13 +31,19 @@
     gap: 0.25rem;
     text-decoration: none;
     color: var(--text-muted);
-    transition: var(--transition-fast);
+    transition: var(--transition-base);
     background: transparent;
     border: none;
     cursor: pointer;
+    font-size: 0.65rem;
+    font-weight: 700;
 }
 
-.navItemActive {
+.item span {
+    transition: color var(--transition-base);
+}
+
+.active {
     color: var(--color-primary);
 }
 
@@ -37,11 +52,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform var(--transition-base);
 }
 
-.label {
-    font-size: 0.65rem;
-    font-weight: 700;
+.item:active .iconWrapper {
+    transform: scale(0.9);
 }
 
 .badge {
@@ -52,17 +67,21 @@
     color: white;
     font-size: 0.625rem;
     font-weight: 800;
-    padding: 2px 5px;
+    padding: 0 4px;
     border-radius: 10px;
     min-width: 16px;
+    height: 16px;
     text-align: center;
     border: 2px solid var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     line-height: 1;
 }
 
-/* Esconder em desktops se necessário, mas geralmente o DashboardLayout controla a exibição */
+/* Esconder em desktops */
 @media (min-width: 1024px) {
-    .bottomNav {
+    .nav {
         display: none;
     }
 }

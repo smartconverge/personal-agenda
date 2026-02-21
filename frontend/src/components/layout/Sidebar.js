@@ -107,7 +107,7 @@ export default function Sidebar({
                             {professor.foto_url ? (
                                 <img src={professor.foto_url} alt={professor.nome} />
                             ) : (
-                                professor.nome.charAt(0)
+                                professor.nome?.charAt(0) || 'P'
                             )}
                         </div>
                         <div className={styles.profileInfo}>

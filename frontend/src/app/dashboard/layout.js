@@ -274,7 +274,7 @@ export default function DashboardLayout({ children }) {
                                         {professor.foto_url ? (
                                             <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
                                         ) : (
-                                            professor.nome.charAt(0)
+                                            professor.nome?.charAt(0) || 'P'
                                         )}
                                     </div>
                                     <div className="flex flex-col flex-1">

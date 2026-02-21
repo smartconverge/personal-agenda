@@ -76,7 +76,7 @@ export default function DashboardHeader({
                         {professor.foto_url ? (
                             <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
                         ) : (
-                            professor.nome.charAt(0)
+                            professor.nome?.charAt(0) || 'P'
                         )}
                     </button>
 
@@ -96,7 +96,7 @@ export default function DashboardHeader({
                                         {professor.foto_url ? (
                                             <img src={professor.foto_url} alt={professor.nome} className="w-full h-full rounded-full object-cover" />
                                         ) : (
-                                            professor.nome.charAt(0)
+                                            professor.nome?.charAt(0) || 'P'
                                         )}
                                     </div>
                                     <div className="flex flex-col flex-1 min-w-0">

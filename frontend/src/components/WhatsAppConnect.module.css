@@ -1,0 +1,201 @@
+/* WhatsAppConnect.module.css */
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.iconBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-full);
+    transition: var(--transition-base);
+}
+
+.iconBox--connected {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+}
+
+.iconBox--disconnected {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+}
+
+.cardHeaderText h3 {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.cardHeaderText p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.statusBox {
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.statusRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.statusIndicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-full);
+    position: relative;
+}
+
+.dot--connected {
+    background: var(--color-success);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.dot--disconnected {
+    background: var(--color-danger);
+}
+
+.statusText {
+    display: flex;
+    flex-direction: column;
+}
+
+.statusLabel {
+    font-size: 0.9375rem;
+    font-weight: 700;
+}
+
+.statusLabel--connected {
+    color: var(--color-success);
+}
+
+.statusLabel--disconnected {
+    color: var(--text-secondary);
+}
+
+.statusSub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.btnConnect,
+.btnDisconnect {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-base);
+    font-family: inherit;
+}
+
+.btnConnect {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+}
+
+.btnConnect:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-1px);
+}
+
+.btnDisconnect {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btnDisconnect:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--color-danger);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* QR Code Section */
+.qrBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-4);
+}
+
+.qrInstruction {
+    font-size: 0.9375rem;
+    font-weight: 700;
+}
+
+.qrWrapper {
+    padding: var(--space-4);
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.qrWrapper img {
+    max-width: 240px;
+    display: block;
+}
+
+.qrHint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+@media (max-width: 640px) {
+    .statusRow {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btnConnect,
+    .btnDisconnect {
+        width: 100%;
+    }
+}

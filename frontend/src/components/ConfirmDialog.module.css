@@ -1,0 +1,87 @@
+/* ConfirmDialog.module.css */
+
+.panel {
+    position: relative;
+    width: 100%;
+    max-width: 25rem;
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-modal);
+    animation: scaleIn 0.2s ease-out both;
+    margin: auto;
+}
+
+.title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    margin-bottom: var(--space-3);
+}
+
+.title--default {
+    color: var(--color-primary);
+}
+
+.title--danger {
+    color: var(--color-danger);
+}
+
+.message {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: flex-end;
+}
+
+/* Botões inline simples — não reutilizáveis fora deste componente */
+.btnCancel {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-family: inherit;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btnCancel:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btnConfirm {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-family: inherit;
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-base);
+    color: white;
+}
+
+.btnConfirm--default {
+    background: var(--color-primary);
+}
+
+.btnConfirm--default:hover {
+    background: var(--color-primary-dark);
+}
+
+.btnConfirm--danger {
+    background: var(--color-danger);
+}
+
+.btnConfirm--danger:hover {
+    background: #dc2626;
+}

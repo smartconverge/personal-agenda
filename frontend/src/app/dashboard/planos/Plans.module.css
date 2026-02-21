@@ -1,0 +1,189 @@
+/* Plans.module.css — Padrão BEM */
+
+.container {
+    animation: fadeIn 0.3s ease-out both;
+    padding: var(--space-4);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-8);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-6) 0;
+}
+
+.card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition-smooth);
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(var(--color-primary-rgb), 0.3);
+}
+
+.card--popular {
+    border-color: var(--color-primary);
+    box-shadow: 0 10px 40px -10px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.card--current {
+    border: 2px solid var(--color-primary);
+    background: rgba(var(--color-primary-rgb), 0.02);
+}
+
+/* Badges */
+.badge {
+    position: absolute;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--space-1) var(--space-4);
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.badge--popular {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
+}
+
+.badge--current {
+    background: var(--color-primary);
+    color: white;
+    top: -12px;
+}
+
+/* Header Section */
+.header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+}
+
+.name {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-4);
+}
+
+.price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-1);
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.currency {
+    font-size: 1.25rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.value {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.period {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.desc {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Features List */
+.features {
+    margin-bottom: var(--space-10);
+    flex: 1;
+}
+
+.featureList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.featureItem {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.featureIcon {
+    flex-shrink: 0;
+    color: var(--color-primary);
+    margin-top: 2px;
+}
+
+/* Footer Section */
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.limitInfo {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Adjusting button specifically for active plan */
+.btnCurrent {
+    background: var(--bg-tertiary) !important;
+    color: var(--color-primary) !important;
+    border: 1px solid var(--color-primary) !important;
+    cursor: default !important;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-10);
+    }
+
+    .card {
+        padding: var(--space-6);
+    }
+
+    .value {
+        font-size: 2.75rem;
+    }
+}

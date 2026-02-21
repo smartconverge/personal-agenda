@@ -1,8 +1,8 @@
 'use client'
 
 import { Icons } from '@/components/Icons'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import styles from './Plans.module.css'
 
 export default function PlanosPage() {
     const [professor, setProfessor] = useState(null)
@@ -80,70 +80,58 @@ export default function PlanosPage() {
     ]
 
     return (
-        <div className="planos-container">
-
-
-            <div className="planos-grid">
+        <div className={styles.container}>
+            <div className={styles.grid}>
                 {planos.map((plano) => (
-                    <div key={plano.nome} className={`plano-card card ${plano.popular ? 'popular' : ''} ${plano.current ? 'current-plan-card' : ''}`}>
-                        {plano.popular && <span className="badge-popular">MAIS ESCOLHIDO</span>}
-                        {plano.current && <span className="badge-current">SEU PLANO ATUAL</span>}
+                    <div
+                        key={plano.nome}
+                        className={`
+                            ${styles.card} 
+                            ${plano.popular ? styles['card--popular'] : ''} 
+                            ${plano.current ? styles['card--current'] : ''}
+                        `}
+                    >
+                        {plano.popular && <span className={`${styles.badge} ${styles['badge--popular']}`}>MAIS ESCOLHIDO</span>}
+                        {plano.current && <span className={`${styles.badge} ${styles['badge--current']}`}>SEU PLANO ATUAL</span>}
 
-                        <div className="plano-header">
-                            <span className="plano-nome">{plano.nome}</span>
-                            <div className="plano-preco">
-                                <span className="moeda">{plano.preco === 'Grátis' ? '' : 'R$'}</span>
-                                <span className="valor">{plano.preco.replace('R$', '').trim()}</span>
-                                <span className="periodo">{plano.period}</span>
+                        <div className={styles.header}>
+                            <span className={styles.name}>{plano.nome}</span>
+                            <div className={styles.price}>
+                                <span className={styles.currency}>{plano.preco === 'Grátis' ? '' : 'R$'}</span>
+                                <span className={styles.value}>{plano.preco.replace('R$', '').trim()}</span>
+                                <span className={styles.period}>{plano.period}</span>
                             </div>
-                            <p className="plano-desc">{plano.descricao}</p>
+                            <p className={styles.desc}>{plano.descricao}</p>
                         </div>
 
-                        <div className="plano-features">
-                            <ul className="feature-list">
+                        <div className={styles.features}>
+                            <ul className={styles.featureList}>
                                 {plano.features.map((feature, idx) => (
-                                    <li key={idx} className="feature-item">
-                                        <Icons.CheckCircle size={16} className="feature-icon" />
+                                    <li key={idx} className={styles.featureItem}>
+                                        <Icons.CheckCircle size={16} className={styles.featureIcon} />
                                         <span>{feature}</span>
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        <div className="plano-footer">
-                            <button className={`btn ${plano.current ? 'btn-current-active' : (plano.popular ? 'btn-primary' : 'btn-secondary')} ${plano.current ? 'disabled' : ''} !w-full !h-14 !text-base !rounded-xl`}>
-                                {plano.current ? 'Plano Ativo' : 'Assinar Agora'}
+                        <div className={styles.footer}>
+                            <button
+                                className={`
+                                    btn 
+                                    ${plano.current ? styles.btnCurrent : (plano.popular ? 'btn-primary' : 'btn-secondary')} 
+                                    ${plano.current || plano.disabled ? 'disabled' : ''} 
+                                    !w-full !h-14 !text-base !rounded-xl
+                                `}
+                                disabled={plano.current || plano.disabled}
+                            >
+                                {plano.current ? 'Plano Ativo' : plano.disabled ? 'Em Breve' : 'Assinar Agora'}
                             </button>
-                            <span className="plano-limit-info">{plano.limit}</span>
+                            <span className={styles.limitInfo}>{plano.limit}</span>
                         </div>
                     </div>
                 ))}
             </div>
-            <style jsx>{`
-                .current-plan-card {
-                    border: 2px solid var(--primary) !important;
-                    position: relative;
-                }
-                .badge-current {
-                    position: absolute;
-                    top: -12px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: var(--primary);
-                    color: white;
-                    padding: 0.25rem 0.75rem;
-                    border-radius: 2rem;
-                    font-size: 0.75rem;
-                    font-weight: 800;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                }
-                .btn-current-active {
-                    background: var(--bg-tertiary);
-                    color: var(--primary);
-                    border: 1px solid var(--primary);
-                    cursor: default;
-                }
-            `}</style>
         </div>
     )
 }

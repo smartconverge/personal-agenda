@@ -10,6 +10,7 @@ import { Icons } from '@/components/Icons'
 
 import Pagination from '@/components/Pagination'
 import FileUpload from '@/components/FileUpload'
+import styles from './Students.module.css'
 
 export default function AlunosPage() {
     const router = useRouter()
@@ -175,91 +176,59 @@ export default function AlunosPage() {
 
     if (loading && alunos.length === 0) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-                <div className="spinner" style={{ width: '3rem', height: '3rem' }} />
+            <div className="flex justify-center p-20">
+                <div className="spinner !w-12 !h-12" />
             </div>
         )
     }
 
     return (
-        <div className="page-enter">
+        <div className={styles.container}>
             {/* Actions Bar */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1.5rem',
-                gap: '1rem',
-                flexWrap: 'wrap'
-            }}>
-                <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
-                    <div style={{
-                        position: 'absolute',
-                        left: '1rem',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: 'var(--text-muted)',
-                        pointerEvents: 'none',
-                        display: 'flex',
-                        alignItems: 'center'
-                    }}>
+            <div className={styles.actionBar}>
+                <div className={styles.searchWrapper}>
+                    <div className={styles.searchIcon}>
                         <Icons.Search size={18} strokeWidth={2.5} />
                     </div>
                     <input
                         type="text"
                         placeholder="Buscar por nome..."
-                        className="input"
-                        style={{ paddingLeft: '3rem', height: '2.75rem', borderRadius: '0.75rem' }}
+                        className={`input ${styles.searchInput}`}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <button
-                    onClick={() => setShowImportModal(true)}
-                    className="btn btn-primary"
-                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
-                >
-                    <Icons.Upload size={18} />
-                    <span>Importar</span>
-                </button>
-                <button
-                    onClick={() => {
-                        setEditingAluno(null)
-                        setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '' })
-                        setShowModal(true)
-                    }}
-                    className="btn btn-primary"
-                    style={{ height: '2.75rem', padding: '0 1.5rem' }}
-                >
-                    <Icons.Plus size={18} />
-                    <span>Novo Aluno</span>
-                </button>
+                <div className="flex gap-3 flex-wrap">
+                    <button
+                        onClick={() => setShowImportModal(true)}
+                        className="btn btn-secondary !h-11"
+                    >
+                        <Icons.Upload size={18} />
+                        <span>Importar</span>
+                    </button>
+                    <button
+                        onClick={() => {
+                            setEditingAluno(null)
+                            setFormData({ nome: '', email: '', telefone_whatsapp: '', notificacoes_ativas: true, objetivo: '' })
+                            setShowModal(true)
+                        }}
+                        className="btn btn-primary !h-11"
+                    >
+                        <Icons.Plus size={18} />
+                        <span>Novo Aluno</span>
+                    </button>
+                </div>
             </div>
 
             {/* Students Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                gap: '1.5rem',
-                padding: '0.5rem'
-            }}>
+            <div className={styles.grid}>
                 {alunos.length === 0 ? (
-                    <div className="card-flat" style={{ textAlign: 'center', padding: '5rem 2rem', gridColumn: '1 / -1' }}>
-                        <div style={{
-                            width: '4rem',
-                            height: '4rem',
-                            borderRadius: '1.25rem',
-                            background: 'var(--bg-tertiary)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 1.5rem',
-                            color: 'var(--text-muted)'
-                        }}>
+                    <div className={styles.emptyState}>
+                        <div className={styles.emptyState__iconBox}>
                             <Icons.Students size={32} />
                         </div>
-                        <h3 style={{ fontSize: '1.125rem', fontWeight: '700', marginBottom: '0.5rem' }}>Nenhum aluno encontrado</h3>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                        <h3 className={styles.emptyState__title}>Nenhum aluno encontrado</h3>
+                        <p className={styles.emptyState__text}>
                             {searchTerm ? 'Tente ajustar os termos da busca' : 'Cadastre seu primeiro aluno para começar'}
                         </p>
                     </div>
@@ -267,88 +236,61 @@ export default function AlunosPage() {
                     alunos.map((aluno) => (
                         <div
                             key={aluno.id}
-                            className="card-premium"
-                            style={{
-                                padding: '1.5rem',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                position: 'relative',
-                                background: 'var(--bg-secondary)'
-                            }}
+                            className={styles.studentCard}
                         >
                             {/* Header: Avatar + Info */}
-                            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-                                <div className="avatar" style={{
-                                    width: '3.5rem',
-                                    height: '3.5rem',
-                                    background: 'var(--bg-tertiary)',
-                                    color: 'var(--primary)',
-                                    fontSize: '1.125rem',
-                                    fontWeight: '800',
-                                    border: '1px solid var(--border)'
-                                }}>
+                            <div className={styles.studentCard__header}>
+                                <div className={styles.studentCard__avatar}>
                                     {getInitials(aluno.nome)}
                                 </div>
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <h3 style={{
-                                        fontSize: '1.125rem',
-                                        fontWeight: '800',
-                                        color: 'var(--text-primary)',
-                                        marginBottom: '0.25rem',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
-                                    }}>
+                                <div className={styles.studentCard__info}>
+                                    <h3 className={styles.studentCard__name}>
                                         {aluno.nome}
                                     </h3>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-                                        <Icons.Notifications size={12} color={aluno.notificacoes_ativas ? 'var(--primary)' : 'var(--danger)'} />
+                                    <div className={styles.studentCard__status}>
+                                        <div className={styles.studentCard__statusIcon}>
+                                            <Icons.Notifications
+                                                size={14}
+                                                color={aluno.notificacoes_ativas ? 'var(--color-success)' : 'var(--color-danger)'}
+                                            />
+                                        </div>
                                         <span>{aluno.notificacoes_ativas ? 'Notificações Ativas' : 'Notificações Inativas'}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Details Grid */}
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '1rem',
-                                marginBottom: '1.5rem',
-                                padding: '1rem',
-                                background: 'var(--bg-primary)',
-                                borderRadius: '0.75rem'
-                            }}>
-                                <div>
-                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Contato</p>
-                                    <p style={{ fontSize: '0.8125rem', fontWeight: '600', color: 'var(--text-primary)' }}>{aluno.telefone_whatsapp}</p>
+                            <div className={styles.studentCard__details}>
+                                <div className="detailItem">
+                                    <p className={styles.detailItem__label}>Contato</p>
+                                    <p className={styles.detailItem__value}>{aluno.telefone_whatsapp}</p>
                                 </div>
-                                <div>
-                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Plano Atual</p>
-                                    <p style={{ fontSize: '0.8125rem', fontWeight: '800', color: 'var(--primary)' }}>
+                                <div className="detailItem">
+                                    <p className={styles.detailItem__label}>Plano Atual</p>
+                                    <p className={`${styles.detailItem__value} ${styles['detailItem__value--primary']}`}>
                                         {aluno.contratos?.find(c => c.status === 'ativo')?.servico?.nome || '—'}
                                     </p>
                                 </div>
-                                <div style={{ gridColumn: 'span 2' }}>
-                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700', marginBottom: '0.25rem' }}>Objetivo</p>
-                                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
+                                <div className={styles['formGrid--full']}>
+                                    <p className={styles.detailItem__label}>Objetivo</p>
+                                    <p className={`${styles.detailItem__value} ${styles['detailItem__value--italic']}`}>
                                         {aluno.objetivo || 'Sem objetivo definido'}
                                     </p>
                                 </div>
                             </div>
 
                             {/* Actions Group */}
-                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
+                            <div className={styles.studentCard__actions}>
                                 <button
                                     onClick={() => router.push(`/dashboard/alunos/${aluno.id}`)}
-                                    className="btn btn-primary"
-                                    style={{ flex: 1, height: '2.5rem', fontSize: '0.8125rem' }}
+                                    className="btn btn-primary !flex-1 !h-10 !text-sm"
                                 >
                                     <Icons.Calendar size={14} />
-                                    <span>Agenda</span>
+                                    <span>Ver Agenda</span>
                                 </button>
                                 <button
                                     onClick={() => handleEdit(aluno)}
-                                    className="btn btn-icon btn-icon-primary"
+                                    className="btn btn-icon btn-icon-primary !w-10 !h-10"
                                     title="Editar"
                                 >
                                     <Icons.Edit size={18} />
@@ -362,24 +304,8 @@ export default function AlunosPage() {
                                     setSelectedAluno(aluno);
                                     setShowDeleteDialog(true);
                                 }}
-                                className="delete-btn-hover"
-                                style={{
-                                    position: 'absolute',
-                                    top: '0.75rem',
-                                    right: '0.75rem',
-                                    width: '2rem',
-                                    height: '2rem',
-                                    borderRadius: '50%',
-                                    border: 'none',
-                                    background: 'transparent',
-                                    color: 'var(--danger)',
-                                    opacity: 0,
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    transition: 'all 0.2s'
-                                }}
+                                className={styles.studentCard__deleteBtn}
+                                title="Excluir aluno"
                             >
                                 <Icons.Delete size={16} />
                             </button>
@@ -388,15 +314,15 @@ export default function AlunosPage() {
                 )}
             </div>
 
-            {/* Modal */}
+            {/* Modal de Aluno */}
             <Modal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
                 title={editingAluno ? 'Editar Aluno' : 'Novo Aluno'}
             >
                 <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                        <div style={{ gridColumn: 'span 2' }}>
+                    <div className={styles.formGrid}>
+                        <div className={styles['formGrid--full']}>
                             <label className="label">Nome Completo *</label>
                             <input
                                 type="text"
@@ -408,8 +334,8 @@ export default function AlunosPage() {
                             />
                         </div>
 
-                        <div>
-                            <label className="label">WhatsApp *</label>
+                        <div className={styles['formGrid--full']}>
+                            <label className="label">WhatsApp (DDD + Número) *</label>
                             <input
                                 type="text"
                                 className="input"
@@ -420,7 +346,7 @@ export default function AlunosPage() {
                             />
                         </div>
 
-                        <div style={{ gridColumn: 'span 2' }}>
+                        <div className={styles['formGrid--full']}>
                             <label className="label">Email</label>
                             <input
                                 type="email"
@@ -431,7 +357,7 @@ export default function AlunosPage() {
                             />
                         </div>
 
-                        <div style={{ gridColumn: 'span 2' }}>
+                        <div className={styles['formGrid--full']}>
                             <label className="label">Objetivo de Treino</label>
                             <input
                                 type="text"
@@ -443,53 +369,34 @@ export default function AlunosPage() {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '2rem' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.5rem 0' }}>
+                    <div className="mb-6">
+                        <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-black/5 rounded-lg transition-colors">
                             <input
                                 type="checkbox"
                                 checked={formData.notificacoes_ativas}
                                 onChange={(e) => setFormData({ ...formData, notificacoes_ativas: e.target.checked })}
-                                style={{ width: '1.125rem', height: '1.125rem', accentColor: 'var(--primary)' }}
+                                className="w-5 h-5 accent-primary"
                             />
-                            <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Habilitar notificações automáticas</span>
+                            <span className="text-sm font-bold">Habilitar notificações via WhatsApp</span>
                         </label>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                    <div className="flex justify-end gap-3 pt-4 border-t border-border">
                         <button
                             type="button"
                             onClick={() => setShowModal(false)}
                             className="btn btn-secondary"
-                            style={{ padding: '0.625rem 1.25rem' }}
                         >
                             Cancelar
                         </button>
-                        <button type="submit" className="btn btn-primary" style={{ padding: '0.625rem 2rem' }}>
+                        <button type="submit" className="btn btn-primary !px-8">
                             {editingAluno ? 'Salvar Alterações' : 'Cadastrar Aluno'}
                         </button>
                     </div>
                 </form>
             </Modal>
 
-            <ConfirmDialog
-                isOpen={showDeleteDialog}
-                onClose={() => setShowDeleteDialog(false)}
-                onConfirm={handleDelete}
-                title="Excluir Aluno"
-                message={`Tem certeza que deseja excluir ${selectedAluno?.nome}? Todas as sessões e contratos vinculados serão mantidos no histórico.`}
-                confirmText="Excluir Aluno"
-                danger
-            />
-
-            <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={(newPage) => setPage(newPage)}
-                totalItems={totalItems}
-                itemsPerPage={itemsPerPage}
-            />
-
-            {/* Import Modal */}
+            {/* Modal de Importação */}
             <Modal
                 isOpen={showImportModal}
                 onClose={() => {
@@ -500,98 +407,80 @@ export default function AlunosPage() {
             >
                 {!importResults ? (
                     <div>
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
+                        <p className="text-sm text-secondary mb-6">
                             Suba sua lista de alunos de uma vez usando um arquivo CSV ou Excel.
                             Certifique-se de seguir o modelo abaixo para evitar erros.
                         </p>
 
-                        <div className="card-flat" style={{ marginBottom: '1.5rem', padding: '1rem', borderStyle: 'dashed' }}>
-                            <h4 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '0.5rem' }}>Instruções:</h4>
-                            <ul style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', paddingLeft: '1.25rem', lineHeight: '1.5' }}>
+                        <div className={styles.importInstructions}>
+                            <h4 className={styles.importInstructions__title}>Instruções:</h4>
+                            <ul className={styles.importInstructions__list}>
                                 <li>Formatos aceitos: <strong>.csv</strong>, <strong>.xlsx</strong> ou <strong>.xls</strong></li>
-                                <li>As colunas devem ser: <strong>nome, telefone_whatsapp, notificacoes_ativas</strong></li>
-                                <li>O telefone deve conter apenas números com DDD (ex: 11999999999)</li>
+                                <li>Colunas: <strong>nome, telefone_whatsapp, notificacoes_ativas</strong></li>
+                                <li>Telefone com DDD apenas números (ex: 11999999999)</li>
                             </ul>
                         </div>
 
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div className={styles.importActions}>
                             <button
                                 onClick={downloadTemplate}
-                                className="btn"
-                                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}
+                                className="btn btn-secondary"
                             >
                                 <Icons.Download size={16} />
                                 <span>Baixar Modelo</span>
                             </button>
 
                             <FileUpload
-                                label={importLoading ? 'Importando...' : 'Selecionar e Enviar'}
+                                label={importLoading ? 'Importando...' : 'Selecionar Arquivo'}
                                 onFileSelect={handleImport}
                                 accept=".csv,.xlsx,.xls"
                             />
                         </div>
 
                         {importLoading && (
-                            <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-                                <div className="loading-spinner" style={{ margin: '0 auto 0.5rem' }} />
-                                <p style={{ fontSize: '0.875rem', color: 'var(--primary)' }}>Processando alunos...</p>
+                            <div className="text-center mt-6">
+                                <div className="spinner !mx-auto !mb-2" />
+                                <p className="text-xs text-primary font-bold">Processando lista...</p>
                             </div>
                         )}
                     </div>
                 ) : (
                     <div>
-                        <div style={{ textAlign: 'center', padding: '1rem 0 2rem' }}>
-                            <div style={{
-                                width: '3.5rem',
-                                height: '3.5rem',
-                                background: 'rgba(34, 197, 94, 0.1)',
-                                color: 'rgb(34, 197, 94)',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                margin: '0 auto 1.25rem'
-                            }}>
+                        <div className="text-center py-6">
+                            <div className="w-14 h-14 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <Icons.Check size={32} />
                             </div>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: '800' }}>Importação Finalizada!</h3>
+                            <h3 className="text-xl font-extrabold">Importação Finalizada!</h3>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
-                            <div className="card-flat" style={{ textAlign: 'center', padding: '1rem' }}>
-                                <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary)' }}>
+                        <div className={styles.importResults}>
+                            <div className={styles.resultCard}>
+                                <span className={styles.resultCard__value}>
                                     {importResults.importados || 0}
                                 </span>
-                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>
+                                <span className={styles.resultCard__label}>
                                     Novos Alunos
                                 </span>
                             </div>
-                            <div className="card-flat" style={{ textAlign: 'center', padding: '1rem' }}>
-                                <span style={{ display: 'block', fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-secondary)' }}>
+                            <div className={styles.resultCard}>
+                                <span className={styles.resultCard__value}>
                                     {importResults.atualizados || 0}
                                 </span>
-                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>
+                                <span className={styles.resultCard__label}>
                                     Atualizados
                                 </span>
                             </div>
                         </div>
 
                         {importResults.erros?.length > 0 && (
-                            <div style={{ marginBottom: '2rem' }}>
-                                <h4 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '0.75rem', color: 'var(--danger)' }}>
+                            <div className="mb-8">
+                                <h4 className="text-sm font-bold mb-3 text-danger">
                                     Erros Encontrados ({importResults.erros.length}):
                                 </h4>
-                                <div style={{
-                                    maxHeight: '150px',
-                                    overflowY: 'auto',
-                                    background: 'var(--bg-tertiary)',
-                                    borderRadius: '0.75rem',
-                                    padding: '0.75rem',
-                                    fontSize: '0.75rem'
-                                }}>
+                                <div className={styles.errorList}>
                                     {importResults.erros.map((erro, idx) => (
-                                        <div key={idx} style={{ marginBottom: '0.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.25rem' }}>
-                                            <span style={{ fontWeight: '700', color: 'var(--text-primary)' }}>Linha {idx + 1}:</span> {erro.erro}
+                                        <div key={idx} className={styles.errorItem}>
+                                            <span className={styles.errorItem__label}>Linha {idx + 1}:</span> {erro.erro}
                                         </div>
                                     ))}
                                 </div>
@@ -603,14 +492,31 @@ export default function AlunosPage() {
                                 setShowImportModal(false)
                                 setImportResults(null)
                             }}
-                            className="btn btn-primary"
-                            style={{ width: '100%' }}
+                            className="btn btn-primary w-full"
                         >
                             Concluir e Fechar
                         </button>
                     </div>
                 )}
             </Modal>
+
+            <ConfirmDialog
+                isOpen={showDeleteDialog}
+                onClose={() => setShowDeleteDialog(false)}
+                onConfirm={handleDelete}
+                title="Excluir Aluno"
+                message={`Tem certeza que deseja excluir "${selectedAluno?.nome}"? Todas as sessões e contratos vinculados serão mantidos no histórico.`}
+                confirmText="Excluir Aluno"
+                danger
+            />
+
+            <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={(newPage) => setPage(newPage)}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+            />
         </div>
     )
 }

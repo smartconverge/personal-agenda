@@ -39,7 +39,7 @@ export default function Sidebar({
                 <span className={styles.iconWrap}>
                     <IconComponent size={20} />
                 </span>
-                {sidebarOpen && (
+                {sidebarOpen && !isSistema && (
                     <div className={styles.contentWrapper}>
                         <span className={styles.label}>{item.label}</span>
                         {item.label === 'WhatsApp' && (

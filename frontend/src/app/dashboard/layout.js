@@ -23,7 +23,6 @@ export default function DashboardLayout({ children }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [whatsappConnected, setWhatsappConnected] = useState(false)
 
-    // ... (restante da lógica mantida conforme pedido)
 
     // Validação de segurança/permissão de rota (opcional, mas boa prática)
     useEffect(() => {
@@ -39,7 +38,6 @@ export default function DashboardLayout({ children }) {
         }
     }, [pathname, professor]);
 
-    // ... (useEffect original mantido)
 
     async function loadProfile() {
         try {

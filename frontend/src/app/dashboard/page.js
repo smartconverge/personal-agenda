@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import api from '@/lib/api'
 import { Icons } from '@/components/Icons'
+import styles from './Dashboard.module.css'
 import {
     getInitials,
     getAvatarColor,
@@ -49,7 +50,7 @@ export default function DashboardPage() {
             const sessoesHoje = sessoesHojeRes.data?.data || []
             const sessoesMes = sessoesMesRes.data?.data || []
 
-            let nomeProfessor = 'João'
+            let nomeProfessor = 'Professor'
             try {
                 const professorData = localStorage.getItem('professor')
                 if (professorData) {
@@ -77,12 +78,10 @@ export default function DashboardPage() {
         }
     }
 
-
-
     if (loading) {
         return (
-            <div className="flex-center p-20">
-                <div className="spinner !w-12 !h-12" />
+            <div className="flex justify-center p-20">
+                <div className="spinner spinner--dark" style={{ width: '3rem', height: '3rem' }} />
             </div>
         )
     }
@@ -116,33 +115,39 @@ export default function DashboardPage() {
     ]
 
     return (
-        <div>
+        <div className="animate-fade-in">
             {/* Stats Grid */}
-            <div className="dashboard-grid">
+            <div className={styles.grid}>
                 {statCards.map((stat, index) => {
                     const IconComponent = stat.iconComponent
 
                     return (
                         <div
                             key={index}
-                            className={stat.highlight ? "card-highlight finebank-card" : "finebank-card"}
+                            className={`${styles.statCard} ${stat.highlight ? styles['statCard--highlight'] : ''}`}
                         >
-                            <div className="flex-between items-start">
-                                <p className="finebank-label">
+                            <div className="flex justify-between items-start">
+                                <p className={styles.label}>
                                     {stat.label}
                                 </p>
-                                <div className={`finebank-icon-wrapper ${stat.highlight ? 'bg-white/20 text-white' : 'bg-primary-light text-primary'}`}>
+                                <div className={styles.iconWrapper} style={{
+                                    background: stat.highlight ? 'rgba(255,255,255,0.2)' : 'var(--color-primary-light)',
+                                    color: stat.highlight ? 'white' : 'var(--color-primary)'
+                                }}>
                                     <IconComponent size={24} />
                                 </div>
                             </div>
 
                             <div>
-                                <p className="finebank-value">
+                                <p className={styles.value}>
                                     {stat.value}
                                 </p>
 
                                 <div className="flex items-center gap-2">
-                                    <div className={`text-xs font-extrabold flex items-center gap-1 px-3 py-1.5 rounded-full ${stat.highlight ? 'bg-white/20 text-white' : 'bg-success/10 text-success'}`}>
+                                    <div className={styles.changeBadge} style={{
+                                        background: stat.highlight ? 'rgba(255,255,255,0.2)' : 'rgba(22, 163, 74, 0.1)',
+                                        color: stat.highlight ? 'white' : 'var(--color-success)'
+                                    }}>
                                         <Icons.TrendingUp size={14} />
                                         {stat.change}
                                     </div>
@@ -155,12 +160,12 @@ export default function DashboardPage() {
 
             {/* Today's Sessions */}
             <div className="mt-8">
-                <div className="dashboard-section-header">
+                <div className={styles.sectionHeader}>
                     <div>
-                        <h2 className="dashboard-title">
+                        <h2 className={styles.title}>
                             Sessões de Hoje
                         </h2>
-                        <p className="dashboard-subtitle">
+                        <p className={styles.subtitle}>
                             {sessoes.length} {sessoes.length === 1 ? 'sessão agendada' : 'sessões agendadas'} para hoje
                         </p>
                     </div>
@@ -171,29 +176,29 @@ export default function DashboardPage() {
                 </div>
 
                 {sessoes.length === 0 ? (
-                    <div className="card-flat empty-state-card">
-                        <div className="empty-state-icon-wrapper">
-                            <Icons.Calendar size={32} className="text-muted" />
+                    <div className={styles.emptyState}>
+                        <div className={styles.emptyIconBox}>
+                            <Icons.Calendar size={32} />
                         </div>
                         <h3 className="text-lg font-extrabold mb-2">
                             Dia livre!
                         </h3>
-                        <p className="text-sm">
+                        <p className="text-sm text-muted">
                             Nenhuma sessão agendada para hoje. Aproveite para descansar ou planejar.
                         </p>
                     </div>
                 ) : (
-                    <div className="session-card-grid">
+                    <div className={styles.sessionGrid}>
                         {sessoes.map((sessao, index) => (
                             <div
                                 key={sessao.id}
-                                className="card-premium p-6 flex flex-col justify-between min-h-[160px]"
+                                className={styles.sessionCard}
                             >
                                 {/* Header: Time & Status */}
-                                <div className="flex-between items-start mb-4">
-                                    <div className="session-time-badge">
-                                        <Icons.Clock size={14} className="text-primary" />
-                                        <span className="font-extrabold text-sm text-primary">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className={styles.timeBadge}>
+                                        <Icons.Clock size={14} />
+                                        <span>
                                             {formatTime(sessao.data_hora_inicio)}
                                         </span>
                                     </div>
@@ -206,8 +211,11 @@ export default function DashboardPage() {
                                 <div className="mb-6">
                                     <div className="flex items-center gap-3 mb-2">
                                         <div
-                                            className="avatar avatar-sm font-extrabold text-xs text-white"
-                                            style={{ background: getAvatarColor(index) }}
+                                            className="avatar font-extrabold text-xs text-white"
+                                            style={{
+                                                background: getAvatarColor(index),
+                                                width: '2rem', height: '2rem'
+                                            }}
                                         >
                                             {getInitials(sessao.aluno?.nome)}
                                         </div>
@@ -215,16 +223,16 @@ export default function DashboardPage() {
                                             {sessao.aluno?.nome || 'Aluno não identificado'}
                                         </h3>
                                     </div>
-                                    <p className="text-sm text-muted ml-2 px-10">
+                                    <p className="text-sm text-muted" style={{ paddingLeft: '2.5rem' }}>
                                         {sessao.servico?.nome || 'Serviço'} • {sessao.servico?.duracao_minutos || 0} min
                                     </p>
                                 </div>
 
                                 {/* Footer Action */}
-                                <div className="border-t pt-5 mt-auto">
+                                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.25rem' }}>
                                     <Link
                                         href={`/dashboard/alunos/${sessao.aluno_id}`}
-                                        className="text-xs font-bold text-primary flex items-center gap-2 w-fit"
+                                        className="text-xs font-bold text-primary flex items-center gap-2"
                                     >
                                         Ver Detalhes <Icons.ArrowRight size={14} />
                                     </Link>

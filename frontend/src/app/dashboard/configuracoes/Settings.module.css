@@ -1,0 +1,177 @@
+/* Settings.module.css — Padrão BEM */
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease-out both;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    transition: var(--transition-base);
+}
+
+.section--danger {
+    border-color: rgba(var(--color-danger-rgb), 0.3);
+    background: rgba(var(--color-danger-rgb), 0.02);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.iconBox {
+    width: 3rem;
+    height: 3rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+
+.iconBox--danger {
+    background: rgba(var(--color-danger-rgb), 0.1);
+    color: var(--color-danger);
+}
+
+.sectionTitle {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.sectionSubtitle {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Form Groups */
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.label {
+    font-size: 0.758rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Settings Rows (Toggles) */
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4) 0;
+    gap: var(--space-4);
+}
+
+.row:not(:last-child) {
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.toggleLabel {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.toggleDesc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Switch Component */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 3.5rem;
+    height: 1.875rem;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-tertiary);
+    transition: 0.4s;
+    border-radius: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 1.375rem;
+    width: 1.375rem;
+    left: 3px;
+    bottom: 2.5px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+}
+
+.switch input:checked+.slider {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.switch input:checked+.slider:before {
+    transform: translateX(1.5rem);
+}
+
+/* Danger Zone Specific */
+.dangerTitle {
+    color: var(--color-danger) !important;
+}
+
+.dangerDesc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-8);
+}
+
+@media (min-width: 768px) {
+    .formGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

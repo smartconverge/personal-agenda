@@ -5,6 +5,7 @@ import { Icons } from '@/components/Icons'
 import api from '@/lib/api'
 import { useToast } from '@/components/Toast'
 import WhatsAppConnect from '@/components/WhatsAppConnect'
+import styles from './Settings.module.css'
 
 export default function ConfiguracoesPage() {
     const { addToast } = useToast()
@@ -82,23 +83,23 @@ export default function ConfiguracoesPage() {
     }
 
     return (
-        <div className="max-w-[1000px] mx-auto page-enter">
-            <div className="flex flex-col">
-                {/* Segurança */}
-                <div className="elite-card">
-                    <div className="elite-header">
-                        <div className="elite-icon-box">
-                            <Icons.Lock />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-extrabold text-primary m-0">Segurança da Conta</h3>
-                            <p className="text-xs text-muted m-0">Gerencie sua senha e proteção de acesso</p>
-                        </div>
+        <div className={styles.container}>
+            {/* Segurança */}
+            <div className={styles.section}>
+                <div className={styles.header}>
+                    <div className={styles.iconBox}>
+                        <Icons.Lock size={20} />
                     </div>
+                    <div>
+                        <h3 className={styles.sectionTitle}>Segurança da Conta</h3>
+                        <p className={styles.sectionSubtitle}>Gerencie sua senha e proteção de acesso</p>
+                    </div>
+                </div>
 
-                    <form onSubmit={handleAlterarSenha}>
-                        <div className="elite-input-wrapper">
-                            <label className="elite-label">Senha Atual</label>
+                <form onSubmit={handleAlterarSenha}>
+                    <div className={styles.formGrid}>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Senha Atual</label>
                             <input
                                 type="password"
                                 name="senhaAtual"
@@ -109,8 +110,8 @@ export default function ConfiguracoesPage() {
                                 required
                             />
                         </div>
-                        <div className="elite-input-wrapper">
-                            <label className="elite-label">Nova Senha</label>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Nova Senha</label>
                             <input
                                 type="password"
                                 name="novaSenha"
@@ -121,8 +122,8 @@ export default function ConfiguracoesPage() {
                                 required
                             />
                         </div>
-                        <div className="elite-input-wrapper">
-                            <label className="elite-label">Confirmar Nova Senha</label>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Confirmar Nova Senha</label>
                             <input
                                 type="password"
                                 name="confirmarSenha"
@@ -133,84 +134,84 @@ export default function ConfiguracoesPage() {
                                 required
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary !h-12 !px-10" disabled={loading}>
-                            {loading ? (
-                                <div className="flex items-center gap-2">
-                                    <div className="spinner !w-4 !h-4 !border-white" />
-                                    <span>Processando...</span>
-                                </div>
+                    </div>
+                    <button type="submit" className="btn btn-primary !h-12 !px-10" disabled={loading}>
+                        {loading ? (
+                            <div className="flex items-center gap-2">
+                                <div className="spinner !w-4 !h-4 !border-white" />
+                                <span>Processando...</span>
+                            </div>
+                        ) : (
+                            'Atualizar Minha Senha'
+                        )}
+                    </button>
+                </form>
+            </div>
+
+            {/* Preferências */}
+            <div className={styles.section}>
+                <div className={styles.header}>
+                    <div className={styles.iconBox}>
+                        <Icons.Settings size={20} />
+                    </div>
+                    <div>
+                        <h3 className={styles.sectionTitle}>Preferências do Sistema</h3>
+                        <p className={styles.sectionSubtitle}>Personalize sua interface e notificações</p>
+                    </div>
+                </div>
+
+                <div className="flex flex-col">
+                    <div className={styles.row}>
+                        <div className={styles.toggleInfo}>
+                            <strong className={styles.toggleLabel}>Tema Visual</strong>
+                            <p className={styles.toggleDesc}>Alterne entre o visual claro ou escuro do dashboard.</p>
+                        </div>
+                        <button onClick={toggleTema} className="btn btn-secondary !py-2.5 !px-6">
+                            {preferencias.tema === 'light' ? (
+                                <span className="flex items-center gap-2"><Icons.Moon size={16} /> Modo Escuro</span>
                             ) : (
-                                'Atualizar Minha Senha'
+                                <span className="flex items-center gap-2"><Icons.Sun size={16} /> Modo Claro</span>
                             )}
                         </button>
-                    </form>
-                </div>
-
-                {/* Preferências */}
-                <div className="elite-card">
-                    <div className="elite-header">
-                        <div className="elite-icon-box">
-                            <Icons.Settings />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-extrabold text-primary m-0">Preferências do Sistema</h3>
-                            <p className="text-xs text-muted m-0">Personalize sua interface e notificações</p>
-                        </div>
                     </div>
 
-                    <div className="flex flex-col">
-                        <div className="elite-item-row flex-row-between">
-                            <div>
-                                <strong className="text-sm font-bold block mb-1">Tema Visual</strong>
-                                <p className="text-xs text-muted m-0">Alterne entre o visual claro ou escuro do dashboard.</p>
-                            </div>
-                            <button onClick={toggleTema} className="btn btn-secondary !py-2.5 !px-6">
-                                {preferencias.tema === 'light' ? (
-                                    <><Icons.Moon size={16} /> Modo Escuro</>
-                                ) : (
-                                    <><Icons.Sun size={16} /> Modo Claro</>
-                                )}
-                            </button>
+                    <div className={styles.row}>
+                        <div className={styles.toggleInfo}>
+                            <strong className={styles.toggleLabel}>Alertas via WhatsApp</strong>
+                            <p className={styles.toggleDesc}>Receba avisos automáticos de novos agendamentos.</p>
                         </div>
+                        <label className={styles.switch}>
+                            <input
+                                type="checkbox"
+                                checked={preferencias.notificacoes_whatsapp}
+                                onChange={() => setPreferencias(p => ({ ...p, notificacoes_whatsapp: !p.notificacoes_whatsapp }))}
+                            />
+                            <span className={styles.slider}></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
 
-                        <div className="elite-item-row flex-row-between">
-                            <div>
-                                <strong className="text-sm font-bold block mb-1">Alertas via WhatsApp</strong>
-                                <p className="text-xs text-muted m-0">Receba avisos automáticos de novos agendamentos.</p>
-                            </div>
-                            <label className="elite-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={preferencias.notificacoes_whatsapp}
-                                    onChange={() => setPreferencias(p => ({ ...p, notificacoes_whatsapp: !p.notificacoes_whatsapp }))}
-                                />
-                                <span className="elite-slider"></span>
-                            </label>
-                        </div>
+            {/* Zona de Perigo */}
+            <div className={`${styles.section} ${styles['section--danger']}`}>
+                <div className={styles.header}>
+                    <div className={`${styles.iconBox} ${styles['iconBox--danger']}`}>
+                        <Icons.Delete size={20} />
+                    </div>
+                    <div>
+                        <h3 className={`${styles.sectionTitle} ${styles.dangerTitle}`}>Gestão de Dados Sensíveis</h3>
+                        <p className={styles.sectionSubtitle}>Ações críticas e irreversíveis</p>
                     </div>
                 </div>
 
-                {/* Zona de Perigo */}
-                <div className="elite-card elite-card-danger">
-                    <div className="elite-header">
-                        <div className="elite-icon-box elite-icon-box-danger">
-                            <Icons.Delete />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-extrabold text-red-500 m-0">Gestão de Dados Sensíveis</h3>
-                            <p className="text-xs text-red-500 m-0 opacity-60">Ações críticas e irreversíveis</p>
-                        </div>
-                    </div>
+                <p className={styles.dangerDesc}>
+                    Ao excluir sua conta, todos os seus dados (alunos, contratos e histórico) serão
+                    <strong> apagados permanentemente</strong>. Não há como desfazer esta ação após a confirmação.
+                </p>
 
-                    <p className="text-sm text-muted mb-8 leading-relaxed">
-                        Ao excluir sua conta, todos os seus dados (alunos, contratos e histórico) serão
-                        <strong> apagados permanentemente</strong>. Não há como desfazer esta ação após a confirmação.
-                    </p>
-
-                    <button onClick={handleExcluirConta} className="btn btn-danger !btn-sm !px-10">
-                        Desativar Minha Conta permanentemente
-                    </button>
-                </div>
+                <button onClick={handleExcluirConta} className="btn btn-danger !btn-sm !px-10">
+                    Desativar Minha Conta permanentemente
+                </button>
             </div>
         </div>
     )

@@ -7,6 +7,7 @@ import Modal from '@/components/Modal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useToast } from '@/components/Toast'
 import { Icons } from '@/components/Icons'
+import styles from './Agenda.module.css'
 
 export default function AgendaPage() {
     const router = useRouter()
@@ -51,7 +52,7 @@ export default function AgendaPage() {
             return { start: start.toISOString(), end: end.toISOString() }
         } else if (viewMode === 'semana') {
             const day = start.getDay()
-            const diff = start.getDate() - day
+            const diff = start.getDate() - day + (day === 0 ? -6 : 1) // Start at Monday
             start.setDate(diff)
             const endDay = new Date(start)
             endDay.setDate(start.getDate() + 6)
@@ -146,16 +147,6 @@ export default function AgendaPage() {
         }
     }
 
-    const handleReabrir = async (sessao) => {
-        try {
-            await api.put(`/sessoes/${sessao.id}`, { status: 'agendada' })
-            showToast('Sessão reaberta!', 'success')
-            loadData()
-        } catch (error) {
-            showToast('Erro ao reabrir sessão', 'error')
-        }
-    }
-
     const navigateDate = (direction) => {
         const newDate = new Date(currentDate)
         if (viewMode === 'dia') newDate.setDate(newDate.getDate() + direction)
@@ -174,25 +165,14 @@ export default function AgendaPage() {
         }
     }
 
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'agendada': return <Icons.Calendar size={14} />
-            case 'concluida': return <Icons.CheckCircle size={14} />
-            case 'cancelada': return <Icons.Error size={14} />
-            case 'remarcada': return <Icons.Info size={14} />
-            default: return <Icons.Edit size={14} />
-        }
-    }
-
     const filteredSessoes = sessoes.filter(sessao => {
         if (['cancelada', 'remarcada'].includes(sessao.status)) return false
         return true
     }).sort((a, b) => new Date(a.data_hora_inicio) - new Date(b.data_hora_inicio))
 
     return (
-        <div className="page-enter">
-            <div className="flex-between mb-6">
-                <div />
+        <div className={styles.container}>
+            <div className={styles.actionBar}>
                 <button
                     className="btn btn-primary"
                     onClick={() => { resetForm(); setShowModal(true); }}
@@ -203,19 +183,19 @@ export default function AgendaPage() {
             </div>
 
             {/* View Controls & Navigation */}
-            <div className="card-flat mb-6 p-4">
-                <div className="agenda-controls">
-                    <div className="flex-center gap-4">
-                        <div className="flex gap-2">
+            <div className={styles.controlsCard}>
+                <div className={styles.controlsWrapper}>
+                    <div className={styles.dateNav}>
+                        <div className={styles.navGroup}>
                             <button
-                                className="btn-icon btn-icon-primary"
+                                className="btn btn-icon btn-icon-primary"
                                 onClick={() => navigateDate(-1)}
                                 title="Anterior"
                             >
                                 <Icons.ChevronLeft size={20} />
                             </button>
                             <button
-                                className="btn-icon btn-icon-primary"
+                                className="btn btn-icon btn-icon-primary"
                                 onClick={() => navigateDate(1)}
                                 title="Próximo"
                             >
@@ -223,11 +203,10 @@ export default function AgendaPage() {
                             </button>
                         </div>
 
-                        <div className="datepicker-wrapper">
+                        <div className={styles.datepickerWrapper}>
                             <input
                                 type="date"
-                                id="agenda-datepicker"
-                                className="datepicker-input"
+                                className={styles.datepickerInput}
                                 value={currentDate.toISOString().split('T')[0]}
                                 onChange={(e) => {
                                     if (e.target.value) {
@@ -236,30 +215,30 @@ export default function AgendaPage() {
                                     }
                                 }}
                             />
-                            <h2 className="month-display">
+                            <h2 className={styles.dateDisplay}>
                                 {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
                                 <Icons.ChevronDown size={16} color="var(--text-muted)" />
                             </h2>
                         </div>
                     </div>
 
-                    <div className="flex-center gap-3">
-                        <div className="view-switcher">
+                    <div className="flex items-center gap-3">
+                        <div className={styles.viewSwitcher}>
                             {['semana', 'mes'].map((v) => (
                                 <button
                                     key={v}
                                     onClick={() => setViewMode(v)}
-                                    className={`view-switcher-btn ${viewMode === v ? 'active' : ''}`}
+                                    className={`${styles.viewBtn} ${viewMode === v ? styles['viewBtn--active'] : ''}`}
                                 >
                                     {v === 'semana' ? 'Semana' : 'Mês'}
                                 </button>
                             ))}
                         </div>
                         <button
-                            className="btn btn-secondary"
+                            className="btn btn-secondary !h-10"
                             onClick={() => setCurrentDate(new Date())}
                         >
-                            Ir para Hoje
+                            Hoje
                         </button>
                     </div>
                 </div>
@@ -267,11 +246,11 @@ export default function AgendaPage() {
 
             {/* Calendar Content */}
             {loading ? (
-                <div className="card-flat flex-center py-20">
+                <div className="flex justify-center py-20">
                     <div className="spinner !w-12 !h-12" />
                 </div>
             ) : viewMode === 'semana' ? (
-                <div className="calendar-grid calendar-grid-7">
+                <div className={styles.calendarGrid}>
                     {/* Day Headers (Week View) */}
                     {(() => {
                         const days = []
@@ -286,12 +265,12 @@ export default function AgendaPage() {
                             const isToday = date.toDateString() === new Date().toDateString()
 
                             days.push(
-                                <div key={i} className="calendar-header-cell">
-                                    <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2">
-                                        {date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '').toUpperCase()}
+                                <div key={i} className={`${styles.calendarCell} ${styles['calendarCell--header']}`}>
+                                    <p className={styles.dayLabel}>
+                                        {date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')}
                                     </p>
-                                    <div className={`calendar-day-number mx-auto flex-center w-9 h-9 rounded-full text-base font-extrabold ${isToday ? 'today' : ''}`}>
-                                        <span className={isToday ? 'calendar-today-badge' : ''}>{date.getDate()}</span>
+                                    <div className={`${styles.dayNumber} ${isToday ? styles['dayNumber--today'] : ''}`}>
+                                        {date.getDate()}
                                     </div>
                                 </div>
                             )
@@ -317,20 +296,20 @@ export default function AgendaPage() {
                             )
 
                             columns.push(
-                                <div key={i} className="calendar-day-cell">
+                                <div key={i} className={styles.calendarCell}>
                                     {daySessoes.length === 0 ? (
-                                        <div className="flex-center h-full opacity-10">
+                                        <div className="flex justify-center items-center h-full opacity-10">
                                             <Icons.Calendar size={32} className="text-muted" />
                                         </div>
                                     ) : (
                                         daySessoes.map(sessao => (
                                             <div
                                                 key={sessao.id}
-                                                className={`session-card-mini ${sessao.status === 'agendada' ? 'agendada' : sessao.status === 'concluida' ? 'concluida' : 'warning'}`}
+                                                className={`${styles.sessionCardMini} ${styles[`sessionCardMini--${sessao.status === 'agendada' ? 'agendada' : sessao.status === 'concluida' ? 'concluida' : 'warning'}`]}`}
                                                 onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
                                                 title={`${new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} - ${sessao.aluno?.nome}`}
                                             >
-                                                <span className="font-bold mr-1">
+                                                <span className="font-bold">
                                                     {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                                 <span className="truncate">{sessao.aluno?.nome}</span>
@@ -345,11 +324,11 @@ export default function AgendaPage() {
                 </div>
             ) : viewMode === 'mes' ? (
                 /* Monthly View Grid */
-                <div className="calendar-grid calendar-grid-7">
+                <div className={styles.calendarGrid}>
                     {/* Headers */}
                     {['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM'].map((day, i) => (
-                        <div key={i} className="calendar-header-cell font-bold text-muted text-xs">
-                            {day}
+                        <div key={i} className={`${styles.calendarCell} ${styles['calendarCell--header']}`}>
+                            <span className={styles.dayLabel}>{day}</span>
                         </div>
                     ))}
 
@@ -369,7 +348,7 @@ export default function AgendaPage() {
 
                         // Previous month padding
                         for (let i = 0; i < startDay; i++) {
-                            cells.push(<div key={`pad-${i}`} className="!bg-secondary/5 min-h-[120px]"></div>)
+                            cells.push(<div key={`pad-${i}`} className={styles.calendarCell} style={{ opacity: 0.3 }}></div>)
                         }
 
                         // Days
@@ -379,16 +358,16 @@ export default function AgendaPage() {
                             const isToday = new Date().toISOString().split('T')[0] === dateStr
 
                             cells.push(
-                                <div key={d} className="calendar-day-cell">
-                                    <div className={`calendar-day-number ${isToday ? 'today' : ''}`}>
-                                        {isToday ? <span className="calendar-today-badge">{d}</span> : d}
+                                <div key={d} className={styles.calendarCell}>
+                                    <div className={`${styles.dayNumber} ${isToday ? styles['dayNumber--today'] : ''}`} style={{ margin: '0 0 var(--space-2) auto', fontSize: '0.8rem', width: '1.75rem', height: '1.75rem' }}>
+                                        {d}
                                     </div>
 
                                     {daySessoes.map(sessao => (
                                         <div
                                             key={sessao.id}
                                             onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
-                                            className={`session-card-mini ${sessao.status === 'concluida' ? 'concluida' : 'agendada'}`}
+                                            className={`${styles.sessionCardMini} ${styles[`sessionCardMini--${sessao.status === 'concluida' ? 'concluida' : 'agendada'}`]}`}
                                             title={`${new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} - ${sessao.aluno?.nome}`}
                                         >
                                             <span className="font-bold mr-1">
@@ -404,49 +383,45 @@ export default function AgendaPage() {
                     })()}
                 </div>
             ) : (
-                /* Day View (Simple List) */
-                <div className="card-flat p-0 overflow-hidden">
+                /* Day View fallback */
+                <div className={styles.dayViewGrid}>
                     {filteredSessoes.length === 0 ? (
-                        <div className="text-center py-20 px-8">
-                            <div className="w-16 h-16 !bg-secondary rounded-full flex-center mx-auto mb-6">
-                                <Icons.Calendar size={32} className="text-muted" />
+                        <div className={styles.emptyState}>
+                            <div className={styles.emptyState__icon}>
+                                <Icons.Calendar size={32} />
                             </div>
                             <h3 className="text-xl font-bold mb-2">Dia livre!</h3>
                             <p className="text-muted">Nenhuma sessão agendada para esta data.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-                            {filteredSessoes.map((sessao) => (
-                                <div
-                                    key={sessao.id}
-                                    className={`card-premium p-5 cursor-pointer border-l-4 !bg-white hover:shadow-md transition-shadow group ${sessao.status === 'concluida' ? 'border-success' :
-                                            sessao.status === 'agendada' ? 'border-primary' : 'border-warning'
-                                        }`}
-                                    onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
-                                >
-                                    <div className="flex-between items-start mb-4">
-                                        <div className="min-w-0">
-                                            <h4 className="text-base font-extrabold mb-1 truncate">{sessao.aluno?.nome}</h4>
-                                            <p className="text-sm text-secondary truncate">{sessao.servico?.nome}</p>
-                                        </div>
-                                        <div className="text-right flex-shrink-0">
-                                            <p className="text-xl font-extrabold text-primary mb-1">
-                                                {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                            </p>
-                                            <span className={`badge ${getStatusBadge(sessao.status)} !text-[0.65rem] !px-2`}>
-                                                {sessao.status.toUpperCase()}
-                                            </span>
-                                        </div>
+                        filteredSessoes.map((sessao) => (
+                            <div
+                                key={sessao.id}
+                                className={`${styles.sessionDetailCard} ${sessao.status === 'concluida' ? styles['sessionDetailCard--concluida'] : sessao.status === 'remarcada' ? styles['sessionDetailCard--warning'] : ''}`}
+                                onClick={() => { setSelectedSessao(sessao); setShowDetailModal(true); }}
+                            >
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="min-w-0">
+                                        <h4 className="text-base font-extrabold mb-1 truncate">{sessao.aluno?.nome}</h4>
+                                        <p className="text-sm text-secondary truncate">{sessao.servico?.nome}</p>
                                     </div>
-                                    <div className="flex items-center gap-4 text-sm text-muted">
-                                        <div className="flex items-center gap-1.5">
-                                            <Icons.Clock size={14} />
-                                            <span>{sessao.servico?.duracao_minutos} min</span>
-                                        </div>
+                                    <div className="text-right">
+                                        <p className="text-xl font-extrabold text-primary mb-1">
+                                            {new Date(sessao.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                        <span className={`badge ${getStatusBadge(sessao.status)} !text-[0.65rem] !px-2 uppercase font-bold`}>
+                                            {sessao.status}
+                                        </span>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="flex items-center gap-4 text-sm text-muted">
+                                    <div className="flex items-center gap-1.5">
+                                        <Icons.Clock size={14} />
+                                        <span>{sessao.servico?.duracao_minutos} min</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
                     )}
                 </div>
             )}
@@ -471,10 +446,10 @@ export default function AgendaPage() {
                         </div>
                     </div>
 
-                    <div className="bg-primary-light p-5 rounded-lg border border-border mb-8">
-                        <div className="flex-between mb-5">
+                    <div className={styles.formScheduleBox}>
+                        <div className="flex justify-between items-center mb-5">
                             <h3 className="text-base font-extrabold m-0">Horários da Sessão</h3>
-                            <button type="button" className="btn btn-secondary text-xs px-3 py-1.5" onClick={addHorario}>+ Add Horário</button>
+                            <button type="button" className="btn btn-secondary text-xs !px-3 !py-1.5" onClick={addHorario}>+ Add Horário</button>
                         </div>
                         {formData.horarios.map((horario, index) => (
                             <div key={index} className={`flex gap-4 items-end mb-4 ${index < formData.horarios.length - 1 ? 'pb-4 border-b border-dashed border-border' : ''}`}>
@@ -487,7 +462,7 @@ export default function AgendaPage() {
                                     <input type="time" className="input" value={horario.hora} onChange={(e) => updateHorario(index, 'hora', e.target.value)} required />
                                 </div>
                                 {formData.horarios.length > 1 && (
-                                    <button type="button" className="btn-icon btn-icon-danger" onClick={() => removeHorario(index)}>
+                                    <button type="button" className="btn btn-icon btn-icon-danger !w-10 !h-10" onClick={() => removeHorario(index)}>
                                         <Icons.Delete size={16} />
                                     </button>
                                 )}
@@ -495,9 +470,9 @@ export default function AgendaPage() {
                         ))}
                     </div>
 
-                    <div className="bg-sidebar p-5 text-white rounded-lg mb-8">
-                        <label className="flex items-center gap-4 cursor-pointer">
-                            <div className={`w-10 h-10 rounded-full flex-center transition-all ${formData.recorrente ? 'bg-primary' : 'bg-white/10'}`}>
+                    <div className={styles.recurrenceBox}>
+                        <label className={styles.recurrenceToggle}>
+                            <div className={`${styles.recurrenceIcon} ${formData.recorrente ? styles['recurrenceIcon--active'] : ''}`}>
                                 <Icons.TrendingUp size={18} color="white" />
                             </div>
                             <div className="flex-1">
@@ -522,9 +497,9 @@ export default function AgendaPage() {
                         )}
                     </div>
 
-                    <div className="flex justify-end gap-3">
+                    <div className="flex justify-end gap-3 pt-4">
                         <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                        <button type="submit" className="btn btn-primary">Agendar Sessões</button>
+                        <button type="submit" className="btn btn-primary !px-8">Agendar Sessões</button>
                     </div>
                 </form>
             </Modal>
@@ -534,37 +509,37 @@ export default function AgendaPage() {
                 {selectedSessao && (
                     <div className="flex flex-col gap-6">
                         <div className="flex items-center gap-4">
-                            <div className="avatar bg-secondary-light text-primary">
+                            <div className="avatar !bg-secondary !text-primary font-bold">
                                 {selectedSessao.aluno?.nome?.substring(0, 2).toUpperCase()}
                             </div>
                             <div>
                                 <h3 className="text-lg font-extrabold">{selectedSessao.aluno?.nome}</h3>
                                 <p className="text-sm text-secondary">
-                                    Status: <span className={`badge ${getStatusBadge(selectedSessao.status)}`}>{selectedSessao.status}</span>
+                                    Status: <span className={`badge ${getStatusBadge(selectedSessao.status)} !text-[0.65rem] !px-2 uppercase font-extrabold`}>{selectedSessao.status}</span>
                                 </p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="card-flat p-3">
-                                <p className="text-[0.7rem] text-muted uppercase mb-1">Serviço</p>
+                            <div className="card-flat p-4 !bg-secondary/30">
+                                <p className="text-[0.7rem] text-muted uppercase font-bold mb-1">Serviço</p>
                                 <p className="text-sm font-bold">{selectedSessao.servico?.nome}</p>
                             </div>
-                            <div className="card-flat p-3">
-                                <p className="text-[0.7rem] text-muted uppercase mb-1">Duração</p>
+                            <div className="card-flat p-4 !bg-secondary/30">
+                                <p className="text-[0.7rem] text-muted uppercase font-bold mb-1">Duração</p>
                                 <p className="text-sm font-bold">{selectedSessao.servico?.duracao_minutos} min</p>
                             </div>
-                            <div className="card-flat p-3 col-span-2">
-                                <p className="text-[0.7rem] text-muted uppercase mb-1">Data e Horário</p>
+                            <div className="card-flat p-4 !bg-secondary/30 col-span-2">
+                                <p className="text-[0.7rem] text-muted uppercase font-bold mb-1">Data e Horário</p>
                                 <p className="text-sm font-bold">
                                     {new Date(selectedSessao.data_hora_inicio).toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' })}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 pt-4">
                             <button
-                                className="btn btn-primary flex-1 h-12"
+                                className="btn btn-primary flex-1 !h-12"
                                 onClick={() => router.push(`/dashboard/alunos/${selectedSessao.aluno_id}`)}
                             >
                                 <Icons.Students size={18} className="mr-2" />
@@ -572,7 +547,7 @@ export default function AgendaPage() {
                             </button>
                             {selectedSessao.status === 'agendada' && (
                                 <button
-                                    className="btn btn-success h-12 px-4"
+                                    className="btn btn-success !h-12 !px-5"
                                     onClick={() => setShowConcluirDialog(true)}
                                     title="Concluir Aula"
                                 >

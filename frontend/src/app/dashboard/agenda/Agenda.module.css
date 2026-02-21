@@ -1,0 +1,290 @@
+/* Agenda.module.css — Padrão BEM */
+
+.container {
+    animation: fadeIn 0.3s ease-out both;
+}
+
+.actionBar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-6);
+}
+
+/* Control Bar */
+.controlsCard {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.controlsWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.dateNav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.navGroup {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* Custom DatePicker Styled */
+.datepickerWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.datepickerInput {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.dateDisplay {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* View Switcher */
+.viewSwitcher {
+    display: flex;
+    background: var(--bg-tertiary);
+    padding: 3px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.viewBtn {
+    padding: var(--space-2) var(--space-5);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    transition: var(--transition-base);
+}
+
+.viewBtn--active {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Calendar Grid Base */
+.calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: var(--bg-secondary);
+    /* Base background */
+}
+
+.calendarCell {
+    background: var(--bg-secondary);
+    min-height: 150px;
+    padding: var(--space-3);
+    border: 0.5px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.calendarCell--header {
+    min-height: auto;
+    background: var(--bg-tertiary);
+    padding: var(--space-3) var(--space-2);
+    text-align: center;
+}
+
+.dayLabel {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-2);
+}
+
+.dayNumber {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 auto;
+    border-radius: 50%;
+    color: var(--text-primary);
+}
+
+.dayNumber--today {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(var(--color-primary-rgb), 0.3);
+}
+
+/* Session Cards inside Calendar */
+.sessionCardMini {
+    padding: var(--space-1) var(--space-2);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    border-left: 3px solid transparent;
+}
+
+.sessionCardMini:hover {
+    transform: translateX(2px);
+    filter: brightness(1.1);
+}
+
+.sessionCardMini--agendada {
+    background: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    border-left-color: var(--color-primary);
+}
+
+.sessionCardMini--concluida {
+    background: rgba(var(--color-success-rgb), 0.1);
+    color: var(--color-success-dark);
+    border-left-color: var(--color-success);
+}
+
+.sessionCardMini--warning {
+    background: rgba(var(--color-warning-rgb), 0.1);
+    color: var(--color-warning-dark);
+    border-left-color: var(--color-warning);
+}
+
+/* Day View Styles */
+.dayViewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-4);
+    padding: var(--space-6);
+}
+
+.sessionDetailCard {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    border-left: 4px solid var(--color-primary);
+    transition: var(--transition-smooth);
+}
+
+.sessionDetailCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.sessionDetailCard--concluida {
+    border-left-color: var(--color-success);
+}
+
+.sessionDetailCard--warning {
+    border-left-color: var(--color-warning);
+}
+
+/* Form Styles Section */
+.formScheduleBox {
+    background: rgba(var(--color-primary-rgb), 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-8);
+}
+
+.recurrenceBox {
+    background: var(--sidebar-bg, #1a1a1a);
+    color: white;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-8);
+}
+
+.recurrenceToggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    cursor: pointer;
+}
+
+.recurrenceIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    transition: var(--transition-base);
+}
+
+.recurrenceIcon--active {
+    background: var(--color-primary);
+}
+
+/* Empty States */
+.emptyState {
+    text-align: center;
+    padding: 5rem 2rem;
+}
+
+.emptyState__icon {
+    width: 4rem;
+    height: 4rem;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-6);
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .calendarGrid {
+        display: block;
+        /* Collapse to list on mobile if needed, but keeping grid common for now */
+    }
+
+    .calendarCell {
+        min-height: 80px;
+    }
+
+    .controlsWrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
